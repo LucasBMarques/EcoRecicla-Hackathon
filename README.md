@@ -6,20 +6,32 @@
 
 `SEMESTRE`: 1/2026
 
-Descrever resumidamente, em um ou dois parágrafos, o projeto que está sendo desenvolvido.
+# EcoRecicla
 
-ODS Alinhados:
+## Descrição do Produto
+
+O EcoRecicla é uma plataforma web desenvolvida para incentivar a reciclagem e o consumo responsável através da tecnologia.
+
+O sistema permite que usuários encontrem pontos de coleta de materiais recicláveis, registrem suas ações de reciclagem e acompanhem seu impacto ambiental.
+
+Além disso, a plataforma possui um sistema de ranking que incentiva a participação da comunidade e promove práticas sustentáveis.
+
+## ODS Escolhida
+
+ODS 12 – Consumo e Produção Responsáveis.
+
+Esta ODS busca garantir padrões sustentáveis de produção e consumo, reduzindo desperdícios e incentivando a reciclagem.
 
 ## Integrantes
 
-* Nome completo do aluno 1
-* Nome completo do aluno 2
-* Nome completo do aluno 3
-* Nome completo do aluno 4
+* Lucas Barbosa Marques
+* Maria Eduarda Botelho
+* Carolina Eller Marinho
+* Arthur Jorge Soares
 
 ## Orientador
 
-* Nome completo do professor 1
+* Juliana Padilha
 
 ## Instruções de utilização
 
@@ -45,10 +57,6 @@ Assim que a primeira versão do sistema estiver disponível, deverá complementa
 
 ## Histórico de versões 
 
-* 0.1.1
-    * CHANGE: Atualização das documentações. Código permaneceu inalterado.
-* 0.1.0
-    * Implementação da funcionalidade X pertencente ao processo P.
 * 0.0.1
-    * Trabalhando na modelagem do processo de negócio.
+    * CHANGE: Atualização das documentações (README.md/Contexto.md/Planejamento-Projeto.md). Código permaneceu inalterado.
 
