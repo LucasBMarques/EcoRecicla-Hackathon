@@ -1,0 +1,10 @@
+CREATE DATABASE ecorecicla;
+
+USE ecorecicla;
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(150) UNIQUE,
+    password VARCHAR(200)
+);

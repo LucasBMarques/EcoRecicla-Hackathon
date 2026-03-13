@@ -59,4 +59,6 @@ Assim que a primeira versão do sistema estiver disponível, deverá complementa
 
 * 0.0.1
     * CHANGE: Atualização das documentações (README.md/Contexto.md/Planejamento-Projeto.md). Código permaneceu inalterado.
+* 0.1.0
+    *  CHANGE: Tela login e cadastro criada com banco de dados funcional. Tentativa de uma pagina Home mais sem sucesso.
 

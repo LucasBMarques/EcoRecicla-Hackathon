@@ -1,0 +1,26 @@
+import { useState } from "react";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Home from "./pages/Home";
+
+function App(){
+
+  const [page, setPage] = useState("login");
+
+  if(page === "home"){
+    return <Home setPage={setPage}/>
+  }
+
+  return(
+    <div>
+      {page === "login" ? (
+        <Login setPage={setPage}/>
+      ) : (
+        <Register setPage={setPage}/>
+      )}
+    </div>
+  )
+
+}
+
+export default App

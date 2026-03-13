@@ -138,10 +138,10 @@ O projeto pode utilizar a aba **Projects** do GitHub, porém é **OBRIGATÓRIO p
 
 | Responsável | Papel | Tarefa | Início | Prazo | Status |
 |-------------|--------|--------|--------|--------|--------|
-|Maria Eduarda Botelho|Arquiteto de Dados| Preencher Visão do Produto, ODS e Backlog no README | 06/03 | 13/03 | ✔️ |
-|Lucas Barbosa Marques|Tech Lead| Criar instância do Banco de Dados | 06/03 | 13/03 | 📝 |
-|Lucas Barbosa Marques|Tech Lead| Criar repositório e estruturar pastas | 06/03 | 13/03 | ✔️ |
-|Lucas Barbosa Marques|Tech Lead| Criar tela Hello World conectada à API | 06/03 | 13/03 | 📝 |
+|Lucas Barbosa Marques|Tech Lead| Preencher Visão do Produto, ODS e Backlog no README | 06/03 | 13/03 | ✔️ |
+|Maria Eduarda Botelho|Arquiteto de Dados| Criar instância do Banco de Dados | 06/03 | 13/03 | 📝 |
+|Carolina Eller Marinho|Facilitador Ágil| Criar repositório e estruturar pastas | 06/03 | 13/03 | ✔️ |
+|Arthur Jorge Soares| QA | Criar tela Hello World conectada à API | 06/03 | 13/03 | 📝 |
 
 ---
 
