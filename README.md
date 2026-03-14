@@ -18,16 +18,20 @@ Além disso, a plataforma possui um sistema de ranking que incentiva a participa
 
 ## ODS Escolhida
 
-ODS 12 – Consumo e Produção Responsáveis.
+## ODS Escolhida
 
-Esta ODS busca garantir padrões sustentáveis de produção e consumo, reduzindo desperdícios e incentivando a reciclagem.
+ODS 12 – Consumo e Produção Responsável
+
+A ODS 12 tem como objetivo promover padrões sustentáveis de produção e consumo, incentivando a redução do desperdício de recursos e o aumento da reciclagem.
+
+O sistema EcoRecicla contribui para essa ODS ao facilitar a localização de pontos de coleta de materiais recicláveis, incentivar a participação da comunidade em práticas sustentáveis e permitir que os usuários acompanhem seu impacto ambiental através do registro de ações de reciclagem.
 
 ## Integrantes
 
 * Lucas Barbosa Marques
 * Maria Eduarda Botelho
 * Carolina Eller Marinho
-* Arthur Jorge Soares
+* Arthur Jorge Soares Silveira
 
 ## Orientador
 
