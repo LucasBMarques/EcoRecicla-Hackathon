@@ -18,8 +18,6 @@ Além disso, a plataforma possui um sistema de ranking que incentiva a participa
 
 ## ODS Escolhida
 
-## ODS Escolhida
-
 ODS 12 – Consumo e Produção Responsável
 
 A ODS 12 tem como objetivo promover padrões sustentáveis de produção e consumo, incentivando a redução do desperdício de recursos e o aumento da reciclagem.
