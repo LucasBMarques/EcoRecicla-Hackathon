@@ -1,6 +1,6 @@
 # 1. Introdução
 
-Nesta seção, você vai apresentar **o contexto e a motivação do seu projeto**, explicando o problema que ele resolve, o que pretende alcançar e para quem ele é útil.
+O projeto EcoRecicla foi desenvolvido com o objetivo de facilitar e incentivar a prática da reciclagem, enfrentando a dificuldade que muitas pessoas têm em encontrar pontos de coleta e descartar corretamente seus resíduos. A plataforma permite que os usuários localizem locais de descarte, registrem suas ações de reciclagem e acompanhem seu impacto ambiental, promovendo maior conscientização e engajamento sustentável. O sistema é voltado para a população em geral, especialmente moradores de áreas urbanas interessados em adotar práticas mais responsáveis em relação ao meio ambiente, contribuindo diretamente para a ODS 12 – Consumo e Produção Responsáveis.
 
 ---
 
