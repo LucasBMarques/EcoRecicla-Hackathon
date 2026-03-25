@@ -34,24 +34,40 @@ export default function Home({ setPage }) {
     <div style={{ padding: "30px" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
         <h1>🌱 Mapa de Pontos de Reciclagem</h1>
-        <button 
-          onClick={handleLogout}
-          style={{
-            padding: "10px 20px",
-            background: "#1b9a3d",
-            color: "white",
-            border: "none",
-            borderRadius: "8px",
-            cursor: "pointer"
-          }}
-        >
-          Logout
-        </button>
+        <div style={{ display: "flex", gap: "12px" }}>
+          <button
+            onClick={() => setPage("collection-points")}
+            style={{
+              padding: "10px 20px",
+              background: "white",
+              color: "#1b9a3d",
+              border: "2px solid #1b9a3d",
+              borderRadius: "8px",
+              cursor: "pointer",
+              fontWeight: "600"
+            }}
+          >
+            + Cadastrar ponto de coleta
+          </button>
+          <button
+            onClick={handleLogout}
+            style={{
+              padding: "10px 20px",
+              background: "#1b9a3d",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              cursor: "pointer"
+            }}
+          >
+            Logout
+          </button>
+        </div>
       </div>
 
       {loading && <p>Carregando mapa...</p>}
       {error && <p style={{ color: "red" }}>Erro: {error}</p>}
-      
+
       <Map points={points} />
     </div>
   );
