@@ -7,8 +7,8 @@ export default function Home({ setPage }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetch("http://localhost:3001/api/points")
+  const fetchPoints = () => {
+    fetch("http://localhost:3001/api/collection-points")
       .then(res => {
         if (!res.ok) throw new Error(`Erro ${res.status}`);
         return res.json();
@@ -23,6 +23,10 @@ export default function Home({ setPage }) {
         setPoints([]);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchPoints();
   }, []);
 
   const handleLogout = () => {
@@ -31,9 +35,16 @@ export default function Home({ setPage }) {
   };
 
   return (
-    <div style={{ padding: "30px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
-        <h1>🌱 Mapa de Pontos de Reciclagem</h1>
+    <div style={{ padding: "30px", fontFamily: "'Segoe UI', sans-serif", background: "#f4f7f4", minHeight: "100vh" }}>
+
+      {/* HEADER */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <span style={{ fontSize: "28px" }}>♻️</span>
+          <h1 style={{ margin: 0, fontSize: "22px", color: "#1b5e3f", fontWeight: 700 }}>
+            Mapa de Pontos de Reciclagem
+          </h1>
+        </div>
         <div style={{ display: "flex", gap: "12px" }}>
           <button
             onClick={() => setPage("collection-points")}
@@ -44,7 +55,8 @@ export default function Home({ setPage }) {
               border: "2px solid #1b9a3d",
               borderRadius: "8px",
               cursor: "pointer",
-              fontWeight: "600"
+              fontWeight: "600",
+              fontSize: "14px"
             }}
           >
             + Cadastrar ponto de coleta
@@ -57,7 +69,9 @@ export default function Home({ setPage }) {
               color: "white",
               border: "none",
               borderRadius: "8px",
-              cursor: "pointer"
+              cursor: "pointer",
+              fontWeight: "600",
+              fontSize: "14px"
             }}
           >
             Logout
@@ -65,10 +79,144 @@ export default function Home({ setPage }) {
         </div>
       </div>
 
+      {/* MAPA */}
       {loading && <p>Carregando mapa...</p>}
       {error && <p style={{ color: "red" }}>Erro: {error}</p>}
+      <div style={{ borderRadius: "16px", overflow: "hidden", boxShadow: "0 4px 16px rgba(0,0,0,0.08)" }}>
+        <Map points={points} />
+      </div>
 
-      <Map points={points} />
+      {/* LISTAGEM */}
+      <div style={{ marginTop: "40px" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "20px" }}>
+          <h2 style={{ margin: 0, fontSize: "18px", color: "#1b5e3f", fontWeight: 700 }}>
+            Pontos cadastrados
+          </h2>
+          <span style={{
+            background: "#1b9a3d",
+            color: "white",
+            fontSize: "13px",
+            fontWeight: 600,
+            padding: "4px 14px",
+            borderRadius: "20px"
+          }}>
+            {points.length} {points.length === 1 ? "ponto" : "pontos"}
+          </span>
+        </div>
+
+        {points.length === 0 ? (
+          <div style={{
+            background: "white",
+            borderRadius: "12px",
+            padding: "40px",
+            textAlign: "center",
+            color: "#888"
+          }}>
+            <span style={{ fontSize: "40px" }}>📍</span>
+            <p style={{ margin: "12px 0 0 0", fontSize: "15px" }}>Nenhum ponto cadastrado ainda.</p>
+          </div>
+        ) : (
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+            gap: "16px"
+          }}>
+            {points.map((point) => (
+              <div key={point.id} style={{
+                background: "white",
+                border: "1px solid #e8f0e8",
+                borderRadius: "16px",
+                padding: "0",
+                boxShadow: "0 4px 16px rgba(0,0,0,0.07)",
+                overflow: "hidden",
+                transition: "transform 0.2s, box-shadow 0.2s",
+              }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.transform = "translateY(-4px)";
+                  e.currentTarget.style.boxShadow = "0 8px 24px rgba(0,0,0,0.12)";
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.07)";
+                }}
+              >
+                {/* Topo colorido */}
+                <div style={{
+                  background: "linear-gradient(135deg, #7dc08f 0%, #2f8973 100%)",
+                  padding: "10px 20px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between"
+                }}>
+                  <span style={{ fontSize: "28px" }}>♻️</span>
+                  <span style={{
+                    background: "rgba(255,255,255,0.2)",
+                    color: "white",
+                    fontSize: "11px",
+                    fontWeight: 600,
+                    padding: "4px 10px",
+                    borderRadius: "20px"
+                  }}>
+                    #{point.id}
+                  </span>
+                </div>
+
+                {/* Conteúdo */}
+                <div style={{ padding: "18px 20px" }}>
+                  <h3 style={{
+                    margin: "0 0 14px 0",
+                    fontSize: "16px",
+                    color: "#1b5e3f",
+                    fontWeight: 700,
+                    lineHeight: 1.3
+                  }}>
+                    {point.name}
+                  </h3>
+
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
+                      <span style={{ fontSize: "14px", minWidth: "18px" }}>📍</span>
+                      <span style={{ fontSize: "13px", color: "#666", lineHeight: 1.4 }}>
+                        {point.address}
+                      </span>
+                    </div>
+
+                    {point.materials && (
+                      <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
+                        <span style={{ fontSize: "14px", minWidth: "18px" }}>🗂️</span>
+                        <span style={{ fontSize: "13px", color: "#666", lineHeight: 1.4 }}>
+                          {point.materials}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Rodapé do card */}
+                  <div style={{
+                    marginTop: "16px",
+                    paddingTop: "12px",
+                    borderTop: "1px solid #f0f0f0",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px"
+                  }}>
+                    <span style={{
+                      display: "inline-block",
+                      width: "8px",
+                      height: "8px",
+                      borderRadius: "50%",
+                      background: "#1b9a3d"
+                    }}></span>
+                    <span style={{ fontSize: "12px", color: "#1b9a3d", fontWeight: 500 }}>
+                      Ponto ativo
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
