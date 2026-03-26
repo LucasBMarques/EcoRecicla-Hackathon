@@ -23,3 +23,15 @@ exports.getAll = (req, res) => {
     res.json(result);
   });
 };
+exports.remove = (req, res) => {
+  const { id } = req.params;
+
+  const sql = "DELETE FROM collection_points WHERE id = ?";
+
+  db.query(sql, [id], (err, result) => {
+    if (err) {
+      return res.status(500).json({ error: "Erro ao excluir ponto de coleta" });
+    }
+    res.json({ message: "Ponto de coleta excluído com sucesso" });
+  });
+};

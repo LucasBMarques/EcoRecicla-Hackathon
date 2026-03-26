@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Map from "../components/Map";
+import { deleteCollectionPoint } from "../services/api";
 
 export default function Home({ setPage }) {
 
@@ -28,6 +29,16 @@ export default function Home({ setPage }) {
   useEffect(() => {
     fetchPoints();
   }, []);
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Tem certeza que deseja excluir este ponto de coleta?")) return;
+    const res = await deleteCollectionPoint(id);
+    if (res.message) {
+      setPoints(points.filter(p => p.id !== id));
+    } else {
+      alert("Erro ao excluir ponto de coleta.");
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -126,9 +137,8 @@ export default function Home({ setPage }) {
                 background: "white",
                 border: "1px solid #e8f0e8",
                 borderRadius: "16px",
-                padding: "0",
-                boxShadow: "0 4px 16px rgba(0,0,0,0.07)",
                 overflow: "hidden",
+                boxShadow: "0 4px 16px rgba(0,0,0,0.07)",
                 transition: "transform 0.2s, box-shadow 0.2s",
               }}
                 onMouseEnter={e => {
@@ -140,15 +150,15 @@ export default function Home({ setPage }) {
                   e.currentTarget.style.boxShadow = "0 4px 16px rgba(0,0,0,0.07)";
                 }}
               >
-                {/* Topo colorido */}
+                {/* Topo */}
                 <div style={{
-                  background: "linear-gradient(135deg, #7dc08f 0%, #2f8973 100%)",
+                  background: "linear-gradient(135deg, #1b9a3d 0%, #0f6e56 100%)",
                   padding: "10px 20px",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "space-between"
                 }}>
-                  <span style={{ fontSize: "28px" }}>♻️</span>
+                  <span style={{ fontSize: "22px" }}>♻️</span>
                   <span style={{
                     background: "rgba(255,255,255,0.2)",
                     color: "white",
@@ -180,7 +190,6 @@ export default function Home({ setPage }) {
                         {point.address}
                       </span>
                     </div>
-
                     {point.materials && (
                       <div style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
                         <span style={{ fontSize: "14px", minWidth: "18px" }}>🗂️</span>
@@ -191,25 +200,51 @@ export default function Home({ setPage }) {
                     )}
                   </div>
 
-                  {/* Rodapé do card */}
+                  {/* Rodapé */}
                   <div style={{
                     marginTop: "16px",
                     paddingTop: "12px",
                     borderTop: "1px solid #f0f0f0",
                     display: "flex",
                     alignItems: "center",
-                    gap: "6px"
+                    justifyContent: "space-between"
                   }}>
-                    <span style={{
-                      display: "inline-block",
-                      width: "8px",
-                      height: "8px",
-                      borderRadius: "50%",
-                      background: "#1b9a3d"
-                    }}></span>
-                    <span style={{ fontSize: "12px", color: "#1b9a3d", fontWeight: 500 }}>
-                      Ponto ativo
-                    </span>
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                      <span style={{
+                        display: "inline-block",
+                        width: "8px",
+                        height: "8px",
+                        borderRadius: "50%",
+                        background: "#1b9a3d"
+                      }}></span>
+                      <span style={{ fontSize: "12px", color: "#1b9a3d", fontWeight: 500 }}>
+                        Ponto ativo
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => handleDelete(point.id)}
+                      style={{
+                        background: "transparent",
+                        border: "1.5px solid #E24B4A",
+                        color: "#E24B4A",
+                        borderRadius: "8px",
+                        padding: "5px 12px",
+                        fontSize: "12px",
+                        fontWeight: 600,
+                        cursor: "pointer",
+                        transition: "background 0.2s, color 0.2s"
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.background = "#E24B4A";
+                        e.currentTarget.style.color = "white";
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.background = "transparent";
+                        e.currentTarget.style.color = "#E24B4A";
+                      }}
+                    >
+                      Excluir
+                    </button>
                   </div>
                 </div>
               </div>

@@ -5,5 +5,6 @@ const collectionPointsController = require("../controllers/collectionPointsContr
 
 router.post("/collection-points", collectionPointsController.create);
 router.get("/collection-points", collectionPointsController.getAll);
+router.delete("/collection-points/:id", collectionPointsController.remove);
 
 module.exports = router;
