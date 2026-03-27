@@ -25,3 +25,25 @@ export const registerUser = async (data) => {
 
   return response.json();
 };
+export const createCollectionPoint = async (data) => {
+  const response = await fetch(`${API}/collection-points`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  });
+  return response.json();
+};
+
+export const getCollectionPoints = async () => {
+  const response = await fetch(`${API}/collection-points`);
+  return response.json();
+};
+
+export const deleteCollectionPoint = async (id) => {
+  const response = await fetch(`${API}/collection-points/${id}`, {
+    method: "DELETE",
+  });
+  return response.json();
+};

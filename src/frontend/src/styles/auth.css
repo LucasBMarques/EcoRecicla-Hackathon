@@ -1,120 +1,116 @@
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-  margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #ecf0f1 0%, #d5e8e0 100%);
+  background: #e8f0e9;
 }
 
+/* LAYOUT PRINCIPAL */
 .container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  padding: 20px;
+  min-height: 100vh;
+  width: 100%;
 }
 
 .auth-card {
   display: flex;
-  width: 900px;
-  height: 550px;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 15px 50px rgba(29, 126, 141, 0.15);
-  overflow: hidden;
+  width: 100%;
+  min-height: 100vh;
 }
 
-/* LEFT SECTION - FORM */
+/* LADO ESQUERDO - FORMULÁRIO */
 .left {
-  width: 50%;
-  padding: 55px 45px;
+  flex: 1;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: #fafafa;
+  padding: 60px 60px;
+  background: #ffffff;
 }
 
 .logo-section {
   display: flex;
   align-items: center;
-  margin-bottom: 35px;
   gap: 12px;
+  margin-bottom: 36px;
 }
 
 .logo-icon {
-  font-size: 40px;
+  font-size: 34px;
 }
 
 .left h1 {
-  margin: 0;
-  font-size: 28px;
+  font-size: 26px;
   color: #1b5e3f;
   font-weight: 700;
-  letter-spacing: -0.5px;
 }
 
 .left h2 {
-  margin: 0 0 30px 0;
-  font-size: 24px;
+  font-size: 22px;
   color: #1d3d2d;
   font-weight: 600;
+  margin-bottom: 28px;
 }
 
 .left form {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  max-width: 420px;
 }
 
 .left input {
-  padding: 14px 16px;
-  border: 2px solid #e0e0e0;
+  padding: 13px 16px;
+  border: 1.5px solid #e0e0e0;
   border-radius: 10px;
   font-size: 14px;
   font-family: inherit;
-  transition: all 0.3s ease;
-  background: white;
+  background: #fafafa;
+  transition: border-color 0.2s, background 0.2s;
+  width: 100%;
 }
 
 .left input:focus {
   outline: none;
   border-color: #1b9a3d;
-  box-shadow: 0 0 0 3px rgba(27, 154, 61, 0.1);
+  background: #fff;
 }
 
 .left input::placeholder {
-  color: #999;
+  color: #bbb;
 }
 
 .btn-primary {
-  padding: 14px;
+  padding: 13px;
   border: none;
-  background: linear-gradient(135deg, #1b9a3d 0%, #149235 100%);
+  background: #1b9a3d;
   color: white;
   border-radius: 10px;
   cursor: pointer;
   font-size: 15px;
   font-weight: 600;
-  transition: all 0.3s ease;
-  margin-top: 8px;
+  font-family: inherit;
+  margin-top: 6px;
+  transition: background 0.2s, transform 0.1s;
 }
 
 .btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(27, 154, 61, 0.3);
+  background: #158a33;
 }
 
 .btn-primary:active {
-  transform: translateY(0);
+  transform: scale(0.98);
 }
 
 .toggle-text {
-  margin-top: 18px;
-  text-align: center;
+  margin-top: 20px;
   font-size: 14px;
-  color: #666;
+  color: #888;
+  max-width: 420px;
 }
 
 .toggle-text .link {
@@ -122,44 +118,42 @@ body {
   font-weight: 600;
   cursor: pointer;
   margin-left: 4px;
-  transition: color 0.3s ease;
 }
 
 .toggle-text .link:hover {
-  color: #149235;
   text-decoration: underline;
 }
 
-/* RIGHT SECTION - WELCOME */
+/* LADO DIREITO - INFO */
 .right {
-  width: 50%;
-  background: linear-gradient(135deg, #1b9a3d 0%, #1d7e8d 100%);
+  flex: 1;
+  background: linear-gradient(160deg, #1b9a3d 0%, #0f6e56 100%);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 45px;
-  overflow: hidden;
+  padding: 60px 50px;
   position: relative;
+  overflow: hidden;
 }
 
 .right::before {
   content: '';
   position: absolute;
-  width: 300px;
-  height: 300px;
+  width: 350px;
+  height: 350px;
   background: rgba(255, 255, 255, 0.05);
   border-radius: 50%;
-  bottom: -100px;
-  right: -50px;
+  bottom: -120px;
+  right: -80px;
 }
 
 .right::after {
   content: '';
   position: absolute;
-  width: 200px;
-  height: 200px;
-  background: rgba(255, 255, 255, 0.03);
+  width: 220px;
+  height: 220px;
+  background: rgba(255, 255, 255, 0.04);
   border-radius: 50%;
   top: -80px;
   left: -60px;
@@ -168,77 +162,71 @@ body {
 .right-content {
   position: relative;
   z-index: 1;
+  max-width: 380px;
   text-align: center;
 }
 
 .right h2 {
-  margin: 0 0 15px 0;
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 700;
-  letter-spacing: -0.5px;
+  margin-bottom: 14px;
 }
 
 .right p {
-  margin: 0 0 35px 0;
   font-size: 15px;
-  line-height: 1.6;
-  opacity: 0.95;
-  font-weight: 300;
+  line-height: 1.7;
+  opacity: 0.9;
+  margin-bottom: 36px;
 }
 
 .features {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
   align-items: flex-start;
-  justify-content: center;
 }
 
 .feature-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 14px;
-  opacity: 0.92;
+  gap: 14px;
+  font-size: 15px;
+  opacity: 0.95;
 }
 
-.feature-item span {
-  font-size: 18px;
-  display: inline-flex;
-  align-items: center;
+.feature-item span:first-child {
+  font-size: 20px;
+  min-width: 26px;
+  text-align: center;
 }
 
-.feature-item span:last-child {
-  line-height: 1.4;
-}
-
-/* RESPONSIVE */
+/* RESPONSIVO */
 @media (max-width: 768px) {
-  .auth-card {
-    flex-direction: column;
-    width: 100%;
-    height: auto;
+  .container {
+    padding: 0;
   }
 
-  .left, .right {
-    width: 100%;
+  .auth-card {
+    flex-direction: column;
+    border-radius: 0;
+    min-height: 100vh;
   }
 
   .left {
-    padding: 40px 30px;
+    padding: 40px 28px;
   }
 
   .right {
-    padding: 40px 30px;
-    min-height: 300px;
+    padding: 40px 28px;
+    min-height: 260px;
   }
 
   .left h1 {
-    font-size: 24px;
+    font-size: 22px;
   }
 
   .left h2 {
-    font-size: 20px;
+    font-size: 18px;
   }
 
   .right h2 {

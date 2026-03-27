@@ -2,25 +2,28 @@ import { useState } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Home from "./pages/Home";
+import CollectionPoints from "./pages/CollectionPoints";
 
-function App(){
-
+function App() {
   const [page, setPage] = useState("login");
 
-  if(page === "home"){
-    return <Home setPage={setPage}/>
+  if (page === "home") {
+    return <Home setPage={setPage} />;
   }
 
-  return(
+  if (page === "collection-points") {
+    return <CollectionPoints setPage={setPage} />;
+  }
+
+  return (
     <div>
       {page === "login" ? (
-        <Login setPage={setPage}/>
+        <Login setPage={setPage} />
       ) : (
-        <Register setPage={setPage}/>
+        <Register setPage={setPage} />
       )}
     </div>
-  )
-
+  );
 }
 
-export default App
+export default App;
