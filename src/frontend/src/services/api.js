@@ -2,7 +2,7 @@ const API = "http://localhost:3001/api";
 
 export const loginUser = async (data) => {
 
-  const response = await fetch(`${API}/login`, {
+  const response = await fetch(`${API}/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -15,7 +15,7 @@ export const loginUser = async (data) => {
 
 export const registerUser = async (data) => {
 
-  const response = await fetch(`${API}/register`, {
+  const response = await fetch(`${API}/auth/register`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -25,6 +25,23 @@ export const registerUser = async (data) => {
 
   return response.json();
 };
+
+export const updateProfile = async (data) => {
+  const response = await fetch(`${API}/auth/update-profile`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  });
+  return response.json();
+};
+
+export const getMaterials = async () => {
+  const response = await fetch(`${API}/materials`);
+  return response.json();
+};
+
 export const createCollectionPoint = async (data) => {
   const response = await fetch(`${API}/collection-points`, {
     method: "POST",

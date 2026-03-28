@@ -4,8 +4,11 @@ import { deleteCollectionPoint } from "../services/api";
 
 export default function Home({ setPage }) {
   const [points, setPoints] = useState([]);
+  const [searchMaterial, setSearchMaterial] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [user, setUser] = useState(null);
+  const [userPhoto, setUserPhoto] = useState(null);
 
   const fetchPoints = () => {
     fetch("http://localhost:3001/api/collection-points")
@@ -27,6 +30,15 @@ export default function Home({ setPage }) {
 
   useEffect(() => {
     fetchPoints();
+    
+    // Recuperar dados do usuário
+    const userData = JSON.parse(localStorage.getItem("user"));
+    if (userData) {
+      setUser(userData);
+      if (userData.photo) {
+        setUserPhoto(`data:image/jpeg;base64,${userData.photo}`);
+      }
+    }
   }, []);
 
   const handleDelete = async (id) => {
@@ -40,10 +52,13 @@ export default function Home({ setPage }) {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setPage("login");
-  };
+  const filteredPoints = points.filter((point) => {
+    if (!searchMaterial.trim()) return true;
+    const normalized = searchMaterial.toLowerCase();
+    const nameMatch = point.name?.toLowerCase().includes(normalized);
+    const materialsMatch = point.materials?.toLowerCase().includes(normalized);
+    return nameMatch || materialsMatch;
+  });
 
   return (
     <div
@@ -62,49 +77,112 @@ export default function Home({ setPage }) {
           marginBottom: "24px",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <span style={{ fontSize: "28px" }}>♻️</span>
-          <h1
-            style={{
-              margin: 0,
-              fontSize: "22px",
-              color: "#1b5e3f",
-              fontWeight: 700,
-            }}
-          >
-            Mapa de Pontos de Reciclagem
-          </h1>
-        </div>
-        <div style={{ display: "flex", gap: "12px" }}>
+        <div style={{ display: "flex", gap: "10px" }}>
           <button
-            onClick={() => setPage("collection-points")}
             style={{
-              padding: "10px 20px",
-              background: "white",
-              color: "#1b9a3d",
-              border: "2px solid #1b9a3d",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: "600",
-              fontSize: "14px",
-            }}
-          >
-            + Cadastrar ponto de coleta
-          </button>
-          <button
-            onClick={handleLogout}
-            style={{
-              padding: "10px 20px",
+              padding: "8px 14px",
               background: "#1b9a3d",
               color: "white",
               border: "none",
               borderRadius: "8px",
               cursor: "pointer",
-              fontWeight: "600",
-              fontSize: "14px",
+              fontWeight: 600,
+              fontSize: "13px",
+            }}
+            onClick={() => setPage("home")}
+          >
+            Home
+          </button>
+          <button
+            style={{
+              padding: "8px 14px",
+              background: "white",
+              color: "#1b9a3d",
+              border: "2px solid #1b9a3d",
+              borderRadius: "8px",
+              cursor: "pointer",
+              fontWeight: 600,
+              fontSize: "13px",
+            }}
+            onClick={() => {
+              localStorage.setItem("_collectionPointsInitialView", "list");
+              setPage("collection-points");
             }}
           >
-            Logout
+            Ver pontos cadastrados
+          </button>
+          <button
+            style={{
+              padding: "8px 14px",
+              background: "white",
+              color: "#1b9a3d",
+              border: "2px solid #1b9a3d",
+              borderRadius: "8px",
+              cursor: "pointer",
+              fontWeight: 600,
+              fontSize: "13px",
+            }}
+            onClick={() => setPage("collection-points")}
+          >
+            + Cadastrar ponto de coleta
+          </button>
+        </div>
+
+        <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <span style={{ fontSize: "28px" }}>♻️</span>
+            <div>
+              <h1
+                style={{
+                  margin: 0,
+                  fontSize: "22px",
+                  color: "#1b5e3f",
+                  fontWeight: 700,
+                }}
+              >
+                Mapa de Pontos de Reciclagem
+              </h1>
+              <p style={{ margin: 0, color: "#666", fontSize: "13px" }}>
+                Veja os pontos cadastrados e filtre por material.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => setPage("settings")}
+            style={{
+              padding: "0",
+              background: userPhoto ? "transparent" : "#f0f6f0",
+              color: "#1b5e3f",
+              border: userPhoto ? "2px solid #e8f0e8" : "none",
+              borderRadius: "8px",
+              cursor: "pointer",
+              fontWeight: "600",
+              fontSize: "18px",
+              width: "44px",
+              height: "44px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "all 0.2s",
+              overflow: "hidden",
+            }}
+            title="Configurações"
+          >
+            {userPhoto ? (
+              <img
+                src={userPhoto}
+                alt="Perfil"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  borderRadius: "6px",
+                }}
+              />
+            ) : (
+              "⚙️"
+            )}
           </button>
         </div>
       </div>
@@ -118,10 +196,26 @@ export default function Home({ setPage }) {
           boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
         }}
       >
-        <Map points={points} />
+        <Map points={filteredPoints} />
       </div>
 
       <div style={{ marginTop: "40px" }}>
+        <div style={{ marginBottom: "18px" }}>
+          <input
+            type="text"
+            value={searchMaterial}
+            onChange={(e) => setSearchMaterial(e.target.value)}
+            placeholder="Filtrar por nome ou material..."
+            style={{
+              width: "100%",
+              maxWidth: "420px",
+              padding: "10px 14px",
+              border: "2px solid #1b9a3d",
+              borderRadius: "10px",
+              fontSize: "14px",
+            }}
+          />
+        </div>
         <div
           style={{
             display: "flex",

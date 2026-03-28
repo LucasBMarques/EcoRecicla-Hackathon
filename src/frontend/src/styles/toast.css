@@ -1,0 +1,152 @@
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.toast {
+  background: white;
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 300px;
+  max-width: 400px;
+  animation: slideIn 0.3s ease-out;
+  pointer-events: auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.toast-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.toast-icon {
+  font-size: 20px;
+  font-weight: bold;
+  min-width: 24px;
+}
+
+.toast-message {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.toast-success {
+  border-left: 4px solid #1b9a3d;
+}
+
+.toast-success .toast-icon {
+  color: #1b9a3d;
+}
+
+.toast-error {
+  border-left: 4px solid #e74c3c;
+}
+
+.toast-error .toast-icon {
+  color: #e74c3c;
+}
+
+.toast-info {
+  border-left: 4px solid #3498db;
+}
+
+.toast-info .toast-icon {
+  color: #3498db;
+}
+
+.toast-warning {
+  border-left: 4px solid #f39c12;
+}
+
+.toast-warning .toast-icon {
+  color: #f39c12;
+}
+
+.toast-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: currentColor;
+  animation: slideProgress 3s linear;
+}
+
+.toast-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: #999;
+  font-size: 14px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+}
+
+.toast-close:hover {
+  color: #333;
+}
+
+.toast-success .toast-progress {
+  background: #1b9a3d;
+}
+
+.toast-error .toast-progress {
+  background: #e74c3c;
+}
+
+.toast-info .toast-progress {
+  background: #3498db;
+}
+
+.toast-warning .toast-progress {
+  background: #f39c12;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideProgress {
+  from {
+    width: 100%;
+  }
+  to {
+    width: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .toast-container {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+  }
+
+  .toast {
+    min-width: auto;
+    width: 100%;
+  }
+}
