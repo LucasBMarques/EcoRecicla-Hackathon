@@ -64,3 +64,14 @@ export const deleteCollectionPoint = async (id) => {
   });
   return response.json();
 };
+
+export const updateCollectionPoint = async (id, data) => {
+  const response = await fetch(`${API}/collection-points/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  });
+  return response.json();
+};

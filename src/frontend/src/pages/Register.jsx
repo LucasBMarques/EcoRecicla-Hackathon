@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { registerUser } from "../services/api";
 import "../styles/auth.css";
 
 export default function Register({ setPage }) {
@@ -6,17 +7,14 @@ export default function Register({ setPage }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3001/api/auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password })
-      });
+      const data = await registerUser({ name, email, password });
 
-      if (response.ok) {
+      if (data.message) {
         alert("Cadastro realizado com sucesso! Faça login para continuar.");
         setPage("login");
       } else {
@@ -24,6 +22,7 @@ export default function Register({ setPage }) {
       }
     } catch (error) {
       console.error("Erro ao cadastrar:", error);
+      alert("Erro ao cadastrar");
     }
   };
 
@@ -55,13 +54,22 @@ export default function Register({ setPage }) {
               required
             />
 
-            <input
-              type="password"
-              placeholder="Senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Senha"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "👁️" : "🔒"}
+              </button>
+            </div>
 
             <button type="submit" className="btn-primary">Cadastrar</button>
           </form>

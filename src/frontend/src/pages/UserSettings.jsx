@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { updateProfile } from "../services/api";
 import "../styles/userSettings.css";
 
 export default function UserSettings({ setPage }) {

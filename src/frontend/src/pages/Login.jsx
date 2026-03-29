@@ -1,22 +1,19 @@
 import { useState } from "react";
+import { loginUser } from "../services/api";
 import "../styles/auth.css";
 
 export default function Login({ setPage }) {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3001/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password })
-      });
+      const data = await loginUser({ email, password });
       
-      if (response.ok) {
-        const data = await response.json();
+      if (data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("lastPage", "home");
@@ -26,6 +23,7 @@ export default function Login({ setPage }) {
       }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
+      alert("Erro ao fazer login");
     }
   };
 
@@ -49,13 +47,22 @@ export default function Login({ setPage }) {
               required
             />
 
-            <input
-              type="password"
-              placeholder="Senha"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="password-input-wrapper">
+              <input
+                type={showPassword ? "text" : "password"}
+                placeholder="Senha"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                className="toggle-password"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? "👁️" : "🔒"}
+              </button>
+            </div>
 
             <button type="submit" className="btn-primary">Entrar</button>
           </form>

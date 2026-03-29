@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Map from "../components/Map";
-import { deleteCollectionPoint } from "../services/api";
+import { deleteCollectionPoint, getCollectionPoints } from "../services/api";
 
 export default function Home({ setPage }) {
   const [points, setPoints] = useState([]);
@@ -10,22 +10,17 @@ export default function Home({ setPage }) {
   const [user, setUser] = useState(null);
   const [userPhoto, setUserPhoto] = useState(null);
 
-  const fetchPoints = () => {
-    fetch("http://localhost:3001/api/collection-points")
-      .then((res) => {
-        if (!res.ok) throw new Error(`Erro ${res.status}`);
-        return res.json();
-      })
-      .then((data) => {
-        setPoints(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Erro ao buscar pontos:", err);
-        setError(err.message);
-        setPoints([]);
-        setLoading(false);
-      });
+  const fetchPoints = async () => {
+    try {
+      const data = await getCollectionPoints();
+      setPoints(Array.isArray(data) ? data : []);
+      setLoading(false);
+    } catch (err) {
+      console.error("Erro ao buscar pontos:", err);
+      setError(err.message);
+      setPoints([]);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
