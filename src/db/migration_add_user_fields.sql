@@ -1,10 +1,11 @@
--- Migration: Add new fields to users table
--- Run this if you already have the database created
-
 USE ecorecicla;
 
--- Add new columns to users table if they don't exist
 ALTER TABLE users ADD COLUMN IF NOT EXISTS nickname VARCHAR(100);
 ALTER TABLE users ADD COLUMN IF NOT EXISTS country VARCHAR(100);
 ALTER TABLE users ADD COLUMN IF NOT EXISTS city VARCHAR(100);
 ALTER TABLE users ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS eco_points INT NOT NULL DEFAULT 0;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS level ENUM('Semente','Broto','Árvore','Floresta','Guardião') NOT NULL DEFAULT 'Semente';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS total_kg DECIMAL(10,3) NOT NULL DEFAULT 0.000;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS co2_avoided DECIMAL(10,3) NOT NULL DEFAULT 0.000;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS water_saved DECIMAL(10,3) NOT NULL DEFAULT 0.000;
