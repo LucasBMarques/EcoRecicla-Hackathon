@@ -104,6 +104,9 @@ function CelebrationToast({ result, onClose }) {
       boxShadow: "0 8px 32px rgba(0,0,0,0.18)", borderLeft: "5px solid #1b9a3d",
       maxWidth: 360, animation: "slideInRight 0.4s ease",
     }}>
+      <style>{`
+        @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+      `}</style>
       <div style={{ fontSize: 32, textAlign: "center", marginBottom: 8 }}>🎉</div>
       <div style={{ fontWeight: 700, color: "#1b5e3f", fontSize: 16, marginBottom: 4 }}>
         Registro salvo com sucesso!
@@ -261,6 +264,10 @@ export default function RecyclingDashboard({ setPage }) {
         loadStats(user.id);
         loadBadges(user.id);
         loadHistory(user.id);
+        
+        const updatedUser = { ...user, eco_points: (user.eco_points || 0) + data.points_earned };
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        setUser(updatedUser);
       }
     } catch (e) {
       setError(e.message);
