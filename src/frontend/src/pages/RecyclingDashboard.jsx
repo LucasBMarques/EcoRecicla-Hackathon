@@ -21,6 +21,16 @@ const LEVEL_CONFIG = {
 
 const MONTH_NAMES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 
+function getUnits(material) {
+  try {
+    const raw = material?.units_accepted;
+    if (raw) return typeof raw === "string" ? JSON.parse(raw) : raw;
+  } catch (e) {
+    void e;
+  }
+  return ["kg", "g", "unidade"];
+}
+
 function fmtNum(n, dec = 1) {
   const v = Number(n ?? 0);
   return v >= 1000 ? `${(v / 1000).toFixed(1)}k` : v.toFixed(dec);
@@ -171,18 +181,18 @@ export default function RecyclingDashboard({ setPage }) {
   const [schedLoading, setSchedLoading] = useState(false);
 
   const loadStats = useCallback((uid) =>
-    fetch(`${API}/recycling/stats/${uid}`).then(r => r.json()).then(setStats).catch(() => {}), []);
+    fetch(`${API}/recycling/stats/${uid}`).then(r => r.json()).then(setStats).catch(e => void e), []);
 
   const loadBadges = useCallback((uid) =>
-    fetch(`${API}/recycling/badges/${uid}`).then(r => r.json()).then(setBadges).catch(() => {}), []);
+    fetch(`${API}/recycling/badges/${uid}`).then(r => r.json()).then(setBadges).catch(e => void e), []);
 
   const loadHistory = useCallback((uid) =>
-    fetch(`${API}/recycling/history/${uid}?limit=10`).then(r => r.json()).then(setHistory).catch(() => {}), []);
+    fetch(`${API}/recycling/history/${uid}?limit=10`).then(r => r.json()).then(setHistory).catch(e => void e), []);
 
   useEffect(() => {
     const u = JSON.parse(localStorage.getItem("user"));
     setUser(u);
-    fetch(`${API}/materials`).then(r => r.json()).then(setMaterials).catch(() => {});
+    fetch(`${API}/materials`).then(r => r.json()).then(setMaterials).catch(e => void e);
     if (u?.id) {
       loadStats(u.id);
       loadBadges(u.id);
@@ -235,7 +245,9 @@ export default function RecyclingDashboard({ setPage }) {
         const r = await fetch(`${API}/upload/photo`, { method: "POST", body: fd });
         const d = await r.json();
         photo_url = d.url;
-      } catch {}
+      } catch (e) {
+        void e;
+      }
     }
 
     try {
@@ -264,7 +276,6 @@ export default function RecyclingDashboard({ setPage }) {
         loadStats(user.id);
         loadBadges(user.id);
         loadHistory(user.id);
-        
         const updatedUser = { ...user, eco_points: (user.eco_points || 0) + data.points_earned };
         localStorage.setItem("user", JSON.stringify(updatedUser));
         setUser(updatedUser);
@@ -416,14 +427,9 @@ export default function RecyclingDashboard({ setPage }) {
                   <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Unidade *</label>
                   <select value={unit} onChange={e => setUnit(e.target.value)}
                     style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, background: "white", cursor: "pointer", boxSizing: "border-box" }}>
-                    {(() => {
-                      let accepted = ["kg", "g", "unidade"];
-                      try {
-                        const raw = selectedMaterial?.units_accepted;
-                        if (raw) accepted = typeof raw === "string" ? JSON.parse(raw) : raw;
-                      } catch {}
-                      return accepted.map(u => <option key={u} value={u}>{UNIT_LABELS[u] ?? u}</option>);
-                    })()}
+                    {getUnits(selectedMaterial).map(u => (
+                      <option key={u} value={u}>{UNIT_LABELS[u] ?? u}</option>
+                    ))}
                   </select>
                 </div>
               </div>
@@ -558,10 +564,17 @@ export default function RecyclingDashboard({ setPage }) {
             <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Material (opcional)</label>
-                <select value={selectedMaterial?.id ?? ""} onChange={e => { const m = materials.find(x => x.id === Number(e.target.value)); setSelectedMaterial(m ?? null); }}
+                <select
+                  value={selectedMaterial?.id ?? ""}
+                  onChange={e => {
+                    const m = materials.find(x => x.id === Number(e.target.value));
+                    setSelectedMaterial(m ?? null);
+                  }}
                   style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, background: "white", boxSizing: "border-box" }}>
                   <option value="">-- Qualquer material --</option>
-                  {materials.map(m => <option key={m.id} value={m.id}>{m.icon} {m.name}</option>)}
+                  {materials.map(m => (
+                    <option key={m.id} value={m.id}>{m.icon} {m.name}</option>
+                  ))}
                 </select>
               </div>
               <div>

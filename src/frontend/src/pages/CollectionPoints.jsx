@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+/*import { useState, useEffect } from "react";
 import { createCollectionPoint, getMaterials, deleteCollectionPoint } from "../services/api";
 import Toast from "../components/Toast";
 import PointModal from "../components/PointModal";
@@ -512,4 +512,4 @@ function CollectionPoints({ setPage }) {
   );
 }
 
-export default CollectionPoints;
+export default CollectionPoints;*/
