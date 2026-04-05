@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 
 const API = "http://localhost:3001/api";
-
+// Tela para registro e acompanhamento de reciclagem, além de agendamento de coletas e visualização de estatísticas e conquistas.
 const UNIT_LABELS = {
   kg: "Quilogramas (kg)",
   g: "Gramas (g)",

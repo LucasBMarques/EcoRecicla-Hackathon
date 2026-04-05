@@ -1,0 +1,305 @@
+
+:root {
+  --verde-principal: #3B6D11;
+  --verde-medio: #639922;
+  --verde-claro: #EAF3DE;
+  --branco: #FFFFFF;
+  --fundo-pagina: #F1EFE8;
+  --texto-principal: #444441;
+  --texto-secundario: #888780;
+  --erro: #E24B4A;
+  --radius-8: 8px;
+  --radius-12: 12px;
+}
+
+body {
+  font-family: 'poppins', sans-serif;
+  font-weight: 400;
+  background-color: var(--fundo-pagina);
+  color: var(--texto-principal);
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .navbar h2 {
+  font-weight: 500;
+  color: var(--texto-principal);
+  margin: 0;
+}
+
+/* Container do Gradiente (Hero + Stats) */
+.hero-wrapper {
+  background: linear-gradient(180deg, var(--fundo-pagina) 0%, var(--verde-claro) 50%, #e2f6cb 100%);
+  width: 100%;
+  padding-bottom: 60px;
+}
+
+/* Seção Hero */
+.hero {
+  padding: 80px 20px 40px 20px;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 30px;
+  font-weight: 700;
+  font-family: 'poppins', sans-serif;
+  line-height: 1.2;
+  margin-bottom: 20px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero .destaque {
+  color: var(--verde-principal);
+}
+
+.hero p {
+  font-size: 15px;
+  color: var(--texto-secundario);
+  margin-bottom: 32px;
+}
+
+/* Botões com o mesmo tamanho e alinhamento */
+.hero-btns {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+}
+
+.btn-primary, .btn-secondary {
+  box-sizing: border-box; /* Garante que a borda não aumente a altura */
+  height: 52px;           /* Altura fixa para ambos */
+  min-width: 280px;       /* Largura mínima igual */
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;              /* Espaço para o emoji */
+  
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;       /* Negrito */
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: var(--verde-principal);
+  color: white;
+  border: 2px solid var(--verde-principal);
+}
+
+.btn-primary:hover {
+  background-color: var(--verde-medio);
+  border-color: var(--verde-medio);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--verde-principal);
+  border: 2px solid var(--verde-principal);
+}
+
+.btn-secondary:hover {
+  background-color: rgba(99, 153, 34, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Stats Container */
+.stats-container {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  padding: 20px;
+}
+
+.card-stat {
+  background: transparent;
+  padding: 24px 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 180px;
+}
+
+.stat-val {
+  font-size: 25px;
+  font-weight: 700;
+  color: var(--verde-principal);
+}
+
+.stat-lab {
+  font-size: 13px;
+  color: var(--texto-secundario);
+  font-weight: 500;
+}
+/* Seção de Recursos (Grid) */
+/* Container do Gradiente */
+.features-wrapper {
+  background: linear-gradient(180deg, #e2f6cb 0%, var(--verde-claro) 50%, var(--fundo-pagina) 100%);
+  width: 100%;
+  padding-bottom: 60px;
+}
+
+/* Container Principal da Seção */
+.how-it-works {
+  padding: 60px 24px;
+  text-align: center;
+}
+
+.how-it-works h2 {
+  font-size: 25px;
+  font-weight: 700;
+  color: var(--verde-principal);
+  margin-bottom: 8px;
+}
+
+.how-it-works .subtitle {
+  color: var(--texto-secundario);
+  max-width: 600px;
+  margin: 0 auto 48px auto;
+  font-size: 15px;
+}
+
+/* Grid de Cards */
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Estilo do Card Individual */
+.feature-item {
+  background-color: transparent;
+  color: var(--verde-principal);
+  border: 2px solid var(--verde-principal);
+  padding: 40px 30px;
+  border-radius: 16px; /* Bordas bem redondas */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.feature-item:hover {
+  transform: translateY(-5px);
+}
+
+
+.feature-item h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--verde-principal);
+  margin-bottom: 12px;
+}
+
+.feature-item p {
+  font-size: 14px;
+  color: var(--texto-secundario);
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* Navbar: fundo #3B6D11, altura 56px */
+.navbar {
+  background-color: var(--fundo-pagina);
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  box-sizing: border-box;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Múltiplo de 4px */
+}
+
+.nav-logo {
+  height: 32px; /* Proporcional aos 56px da navbar */
+  width: auto;
+  display: block;
+}
+
+.navbar h2 {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0;
+  color: black; 
+}
+
+.navbar ul {
+  display: flex;
+  gap: 24px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.navbar li {
+  color: black;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 400;
+
+}
+
+.navbar ul li {
+  color: black;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 400;
+  height: 30px; 
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.3s ease;
+}
+
+.navbar ul li.active {
+  font-weight: 500; 
+  border-bottom: 2px solid var(--verde-medio); 
+}
+
+.navbar ul li:hover {
+  border-bottom: 2px solid var(--verde-medio);
+}
+.nav-button {
+  background-color: var(--verde-principal);
+  color: var(--branco);
+  border: 1px solid #FFFFFF;
+  border-radius: var(--radius-8);
+  padding: 6px 16px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* Footer: fundo areia com borda superior sutil */
+.footer-container {
+  background-color: var(--fundo-pagina);
+  border-top: 0.5px solid var(--texto-secundario);
+  padding: 32px 24px;
+  text-align: center;
+  margin-top: 40px;
+}
+
+.footer-container h3 {
+  color: var(--verde-principal);
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.footer-container p {
+  color: var(--texto-secundario);
+  font-size: 12px;
+}

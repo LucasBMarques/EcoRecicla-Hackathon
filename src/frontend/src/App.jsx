@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import Mapa from "./pages/Mapa";
 import Home from "./pages/Home";
+import Navbar from "./components/Navbar";
 import CollectionPoints from "./pages/CollectionPoints";
 import UserSettings from "./pages/UserSettings";
 import RecyclingDashboard from "./pages/RecyclingDashboard";
@@ -14,57 +16,74 @@ function App() {
   useEffect(() => {
     const token = localStorage.getItem("token");
     const lastPage = localStorage.getItem("lastPage");
-    
+
     if (token) {
-      // Se tem token, restaurar a página anterior
-      if (lastPage === "collection-points") {
-        setPage("collection-points");
-      } else {
-        setPage("home");
-      }
+      // Se tiver última página salva, usa ela
+      setPage(lastPage || "home");
     } else {
       setPage("login");
     }
+
     setIsLoading(false);
   }, []);
 
-  // Salvar última página visita
+  // Salvar última página visitada
   const handleSetPage = (newPage) => {
     setPage(newPage);
-    if (newPage !== "login" && newPage !== "register" && newPage !== "settings") {
+
+    if (
+      newPage !== "login" &&
+      newPage !== "register" &&
+      newPage !== "settings"
+    ) {
       localStorage.setItem("lastPage", newPage);
     }
   };
 
   if (isLoading) {
-    return <div></div>;
+    return <div>Carregando...</div>;
   }
 
-  if (page === "home") {
-    return <Home setPage={handleSetPage} />;
-  }
+  switch (page) {
+    case "home":
+      return (
+        <>
+          <Navbar currentPage={page} setPage={handleSetPage} />
+          <Home setPage={handleSetPage} />
+        </>
+      );
 
-  if (page === "collection-points") {
-    return <CollectionPoints setPage={handleSetPage} />;
-  }
+    case "mapa":
+      return (
+        <>
+          <Navbar currentPage={page} setPage={handleSetPage} />
+          <Mapa setPage={handleSetPage} />;
+        </>
+      );
+      
 
-  if (page === "settings") {
-    return <UserSettings setPage={handleSetPage} />;
-  }
+    case "collection-points":
+      return <CollectionPoints setPage={handleSetPage} />;
+        
 
-  if (page === "recycling-dashboard") {
-    return <RecyclingDashboard setPage={handleSetPage} />;
-  }
+    case "settings":
+      return <UserSettings setPage={handleSetPage} />;
 
-  return (
-    <div>
-      {page === "login" ? (
-        <Login setPage={handleSetPage} />
-      ) : (
-        <Register setPage={handleSetPage} />
-      )}
-    </div>
-  );
+    case "recycling-dashboard": 
+      return (
+       <>
+          <Navbar currentPage={page} setPage={handleSetPage} />
+          <RecyclingDashboard setPage={handleSetPage} />;
+        </>
+      );
+
+    case "register":
+      return <Register setPage={handleSetPage} />;
+
+    case "login":
+    default:
+      return <Login setPage={handleSetPage} />;
+  }
 }
 
 export default App;

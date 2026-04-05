@@ -5,7 +5,7 @@ import PointModal from "../components/PointModal";
 import { useToast } from "../hooks/useToast";
 import "../styles/auth.css";
 import "../styles/collectionPointsForm.css";
-
+// Página para cadastro e visualização de pontos de coleta, com integração de CEP e geolocalização, além de filtros por material e modais de detalhes.
 function CollectionPoints({ setPage }) {
   // Verificar se deve começar em modo "list"
   const initialView = localStorage.getItem("_collectionPointsInitialView") || "form";

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { updateProfile } from "../services/api";
 import "../styles/userSettings.css";
 
+// Página de configurações do usuário
 export default function UserSettings({ setPage }) {
   const [activeTab, setActiveTab] = useState("profile");
   const [user, setUser] = useState(null);

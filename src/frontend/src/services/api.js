@@ -144,3 +144,12 @@ export const uploadPhoto = async (file) => {
   });
   return response.json();
 };
+
+export const getStats = async () => {
+  // home
+  return {
+    users: 10,
+    points: 5,
+    recycled: 120
+  };
+};

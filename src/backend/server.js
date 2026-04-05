@@ -8,6 +8,7 @@ const materialsRoutes = require("./routes/materialsRoutes");
 const recyclingRoutes = require("./routes/recyclingRoutes");
 const scheduleRoutes = require("./routes/scheduleRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
+const statsRoutes = require("./routes/homeRoutes");
 
 const app = express();
 
@@ -22,6 +23,7 @@ app.use("/api", materialsRoutes);
 app.use("/api", recyclingRoutes);
 app.use("/api", scheduleRoutes);
 app.use("/api", uploadRoutes);
+app.use("/api", statsRoutes);
 
 app.get("/health", (_req, res) => res.json({ status: "ok" }));
 
