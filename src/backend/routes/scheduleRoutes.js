@@ -63,4 +63,25 @@ router.delete("/schedules/:id", (req, res) => {
   });
 });
 
+router.put("/schedules/:id", (req, res) => {
+  const { material_id, scheduled_date, scheduled_time, notes, status } = req.body;
+
+  if (!scheduled_date)
+    return res.status(400).json({ error: "scheduled_date é obrigatório." });
+
+  const sql = `
+    UPDATE collection_schedules
+    SET material_id = ?, scheduled_date = ?, scheduled_time = ?, notes = ?, status = ?
+    WHERE id = ?
+  `;
+
+  db.query(sql,
+    [material_id ?? null, scheduled_date, scheduled_time ?? null, notes ?? null, status ?? "pendente", req.params.id],
+    (err) => {
+      if (err) return res.status(500).json({ error: "Erro ao atualizar agendamento." });
+      res.json({ message: "Agendamento atualizado!" });
+    }
+  );
+});
+
 module.exports = router;

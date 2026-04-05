@@ -179,6 +179,10 @@ export default function RecyclingDashboard({ setPage }) {
   const [schedTime, setSchedTime] = useState("");
   const [schedNotes, setSchedNotes] = useState("");
   const [schedLoading, setSchedLoading] = useState(false);
+  const [schedules, setSchedules] = useState([]);
+  const [schedulesLoading, setSchedulesLoading] = useState(false);
+  const [schedView, setSchedView] = useState("list");
+  const [editingSchedule, setEditingSchedule] = useState(null);
 
   const loadStats = useCallback((uid) =>
     fetch(`${API}/recycling/stats/${uid}`).then(r => r.json()).then(setStats).catch(e => void e), []);
@@ -189,6 +193,15 @@ export default function RecyclingDashboard({ setPage }) {
   const loadHistory = useCallback((uid) =>
     fetch(`${API}/recycling/history/${uid}?limit=10`).then(r => r.json()).then(setHistory).catch(e => void e), []);
 
+  const loadSchedules = useCallback((uid) => {
+    setSchedulesLoading(true);
+    fetch(`${API}/schedules/${uid}`)
+      .then(r => r.json())
+      .then(data => setSchedules(Array.isArray(data) ? data : []))
+      .catch(() => setSchedules([]))
+      .finally(() => setSchedulesLoading(false));
+  }, []);
+
   useEffect(() => {
     const u = JSON.parse(localStorage.getItem("user"));
     setUser(u);
@@ -197,8 +210,9 @@ export default function RecyclingDashboard({ setPage }) {
       loadStats(u.id);
       loadBadges(u.id);
       loadHistory(u.id);
+      loadSchedules(u.id);
     }
-  }, [loadStats, loadBadges, loadHistory]);
+  }, [loadStats, loadBadges, loadHistory, loadSchedules]);
 
   const handleCalculate = useCallback(async () => {
     if (!selectedMaterial || !quantity) return;
@@ -309,10 +323,63 @@ export default function RecyclingDashboard({ setPage }) {
       setSchedDate("");
       setSchedTime("");
       setSchedNotes("");
+      setSchedView("list");
+      if (user?.id) loadSchedules(user.id);
     } catch (e) {
       setError(e.message);
     } finally {
       setSchedLoading(false);
+    }
+  };
+
+  const handleDeleteSchedule = async (id) => {
+    if (!window.confirm("Deseja excluir este agendamento?")) return;
+    try {
+      const r = await fetch(`${API}/schedules/${id}`, { method: "DELETE" });
+      const data = await r.json();
+      if (data.error) throw new Error(data.error);
+      setSchedules(prev => prev.filter(s => s.id !== id));
+    } catch (e) {
+      alert("Erro ao excluir: " + e.message);
+    }
+  };
+
+  const handleCancelSchedule = async (id) => {
+    if (!window.confirm("Deseja cancelar este agendamento?")) return;
+    try {
+      const r = await fetch(`${API}/schedules/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "cancelado" }),
+      });
+      const data = await r.json();
+      if (data.error) throw new Error(data.error);
+      if (user?.id) loadSchedules(user.id);
+    } catch (e) {
+      alert("Erro ao cancelar: " + e.message);
+    }
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingSchedule?.scheduled_date) { alert("Selecione uma data."); return; }
+    try {
+      const r = await fetch(`${API}/schedules/${editingSchedule.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          material_id: editingSchedule.material_id ?? null,
+          scheduled_date: editingSchedule.scheduled_date,
+          scheduled_time: editingSchedule.scheduled_time || null,
+          notes: editingSchedule.notes || null,
+          status: editingSchedule.status ?? "pendente",
+        }),
+      });
+      const data = await r.json();
+      if (data.error) throw new Error(data.error);
+      setEditingSchedule(null);
+      if (user?.id) loadSchedules(user.id);
+    } catch (e) {
+      alert("Erro ao salvar: " + e.message);
     }
   };
 
@@ -558,54 +625,284 @@ export default function RecyclingDashboard({ setPage }) {
       )}
 
       {tab === "schedule" && (
-        <div style={{ maxWidth: 600 }}>
-          <div style={card}>
-            <h2 style={{ margin: "0 0 20px", color: "#1b5e3f", fontSize: 17 }}>📅 Agendar Coleta de Materiais</h2>
-            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Material (opcional)</label>
-                <select
-                  value={selectedMaterial?.id ?? ""}
-                  onChange={e => {
-                    const m = materials.find(x => x.id === Number(e.target.value));
-                    setSelectedMaterial(m ?? null);
-                  }}
-                  style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, background: "white", boxSizing: "border-box" }}>
-                  <option value="">-- Qualquer material --</option>
-                  {materials.map(m => (
-                    <option key={m.id} value={m.id}>{m.icon} {m.name}</option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Data da Coleta *</label>
-                <input type="date" value={schedDate} min={new Date().toISOString().split("T")[0]} onChange={e => setSchedDate(e.target.value)}
-                  style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, boxSizing: "border-box" }} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Horário (opcional)</label>
-                <input type="time" value={schedTime} onChange={e => setSchedTime(e.target.value)}
-                  style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, boxSizing: "border-box" }} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Observações</label>
-                <textarea value={schedNotes} onChange={e => setSchedNotes(e.target.value)} placeholder="Endereço de coleta, quantidade estimada..." rows={3}
-                  style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 13, resize: "vertical", boxSizing: "border-box", fontFamily: "inherit" }} />
-              </div>
-              {error && (
-                <div style={{ padding: "12px 16px", background: "#fff3f3", border: "1px solid #ffcdd2", borderRadius: 10, color: "#c62828", fontSize: 13 }}>
-                  ⚠️ {error}
+        <div style={{ maxWidth: 720 }}>
+
+          {/* Modal de edição */}
+          {editingSchedule && (
+            <div style={{
+              position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000,
+              display: "flex", alignItems: "center", justifyContent: "center", padding: 20,
+            }}>
+              <div style={{ background: "white", borderRadius: 20, padding: 32, width: "100%", maxWidth: 480, boxShadow: "0 8px 40px rgba(0,0,0,0.2)" }}>
+                <h2 style={{ margin: "0 0 20px", color: "#1b5e3f", fontSize: 18 }}>✏️ Editar Agendamento</h2>
+                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Material (opcional)</label>
+                    <select
+                      value={editingSchedule.material_id ?? ""}
+                      onChange={e => setEditingSchedule(prev => ({ ...prev, material_id: e.target.value ? Number(e.target.value) : null }))}
+                      style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, background: "white", boxSizing: "border-box" }}>
+                      <option value="">-- Qualquer material --</option>
+                      {materials.map(m => (
+                        <option key={m.id} value={m.id}>{m.icon} {m.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Data da Coleta *</label>
+                    <input type="date" value={editingSchedule.scheduled_date?.slice(0, 10) ?? ""}
+                      onChange={e => setEditingSchedule(prev => ({ ...prev, scheduled_date: e.target.value }))}
+                      style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, boxSizing: "border-box" }} />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Horário (opcional)</label>
+                    <input type="time" value={editingSchedule.scheduled_time?.slice(0, 5) ?? ""}
+                      onChange={e => setEditingSchedule(prev => ({ ...prev, scheduled_time: e.target.value }))}
+                      style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, boxSizing: "border-box" }} />
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Status</label>
+                    <select
+                      value={editingSchedule.status ?? "pendente"}
+                      onChange={e => setEditingSchedule(prev => ({ ...prev, status: e.target.value }))}
+                      style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, background: "white", boxSizing: "border-box" }}>
+                      <option value="pendente">⏳ Agendado</option>
+                      <option value="confirmado">✔️ Confirmado</option>
+                      <option value="concluido">✅ Concluído</option>
+                      <option value="cancelado">❌ Cancelado</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Observações</label>
+                    <textarea value={editingSchedule.notes ?? ""}
+                      onChange={e => setEditingSchedule(prev => ({ ...prev, notes: e.target.value }))}
+                      rows={3} placeholder="Endereço de coleta, quantidade estimada..."
+                      style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 13, resize: "vertical", boxSizing: "border-box", fontFamily: "inherit" }} />
+                  </div>
+
+                  <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
+                    <button onClick={() => setEditingSchedule(null)} style={{
+                      flex: 1, padding: "13px", background: "white", color: "#555",
+                      border: "1.5px solid #ddd", borderRadius: 12, fontSize: 14, fontWeight: 700, cursor: "pointer",
+                    }}>
+                      Cancelar
+                    </button>
+                    <button onClick={handleSaveEdit} style={{
+                      flex: 2, padding: "13px", background: "linear-gradient(135deg, #1b9a3d, #0f6e56)",
+                      color: "white", border: "none", borderRadius: 12, fontSize: 14, fontWeight: 700, cursor: "pointer",
+                    }}>
+                      💾 Salvar alterações
+                    </button>
+                  </div>
                 </div>
-              )}
-              <button onClick={handleSchedule} disabled={schedLoading} style={{
-                padding: "14px", background: schedLoading ? "#ccc" : "linear-gradient(135deg, #1b9a3d, #0f6e56)",
-                color: "white", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 700,
-                cursor: schedLoading ? "not-allowed" : "pointer",
-              }}>
-                {schedLoading ? "⏳ Agendando..." : "📅 Confirmar Agendamento"}
+              </div>
+            </div>
+          )}
+
+          {/* Header da aba com toggle */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                onClick={() => setSchedView("list")}
+                style={{
+                  padding: "8px 18px", borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: "pointer",
+                  background: schedView === "list" ? "#1b9a3d" : "white",
+                  color: schedView === "list" ? "white" : "#1b9a3d",
+                  border: "2px solid #1b9a3d",
+                }}
+              >
+                📋 Meus Agendamentos
+              </button>
+              <button
+                onClick={() => setSchedView("new")}
+                style={{
+                  padding: "8px 18px", borderRadius: 8, fontWeight: 700, fontSize: 13, cursor: "pointer",
+                  background: schedView === "new" ? "#1b9a3d" : "white",
+                  color: schedView === "new" ? "white" : "#1b9a3d",
+                  border: "2px solid #1b9a3d",
+                }}
+              >
+                + Novo Agendamento
               </button>
             </div>
           </div>
+
+          {/* LISTA DE AGENDAMENTOS */}
+          {schedView === "list" && (
+            <div>
+              {schedulesLoading ? (
+                <div style={{ ...card, textAlign: "center", color: "#888", padding: 40 }}>
+                  ⏳ Carregando agendamentos...
+                </div>
+              ) : schedules.length === 0 ? (
+                <div style={{ ...card, textAlign: "center", padding: 48 }}>
+                  <div style={{ fontSize: 48, marginBottom: 12 }}>📅</div>
+                  <p style={{ color: "#888", fontSize: 15, margin: 0 }}>Nenhum agendamento encontrado.</p>
+                  <button
+                    onClick={() => setSchedView("new")}
+                    style={{ marginTop: 16, padding: "10px 24px", background: "#1b9a3d", color: "white", border: "none", borderRadius: 10, fontWeight: 700, fontSize: 14, cursor: "pointer" }}
+                  >
+                    + Criar primeiro agendamento
+                  </button>
+                </div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                  {schedules.map(s => {
+                    const isCancelado  = s.status === "cancelado";
+                    const isConcluido  = s.status === "concluido" || s.status === "concluído";
+                    const isConfirmado = s.status === "confirmado";
+
+                    const statusColor = isConcluido ? "#1b9a3d" : isCancelado ? "#E24B4A" : isConfirmado ? "#1565c0" : "#e65100";
+                    const statusLabel = isConcluido ? "✅ Concluído" : isCancelado ? "❌ Cancelado" : isConfirmado ? "✔️ Confirmado" : "📅 Agendado";
+
+                    // Corrigir parse de data vinda do MySQL (pode vir como "2025-05-10T00:00:00.000Z" ou "2025-05-10")
+                    const rawDate = s.scheduled_date;
+                    const dateStr = rawDate
+                      ? new Date(rawDate.slice(0, 10) + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })
+                      : "—";
+
+                    return (
+                      <div key={s.id} style={{
+                        ...card, marginBottom: 0,
+                        borderLeft: `4px solid ${statusColor}`,
+                        opacity: isCancelado ? 0.7 : 1,
+                      }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10 }}>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                              <span style={{ fontSize: 22 }}>{s.icon ?? "📦"}</span>
+                              <span style={{ fontWeight: 700, fontSize: 15, color: "#1b5e3f" }}>
+                                {s.material_name ?? "Qualquer material"}
+                              </span>
+                              <span style={{
+                                fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 20,
+                                background: statusColor + "18", color: statusColor,
+                              }}>
+                                {statusLabel}
+                              </span>
+                            </div>
+
+                            <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+                              <span style={{ fontSize: 13, color: "#555" }}>📅 {dateStr}</span>
+                              {s.scheduled_time && (
+                                <span style={{ fontSize: 13, color: "#555" }}>🕐 {s.scheduled_time.slice(0, 5)}</span>
+                              )}
+                            </div>
+
+                            {s.notes && (
+                              <span style={{ fontSize: 13, color: "#777", fontStyle: "italic" }}>📝 {s.notes}</span>
+                            )}
+                          </div>
+
+                          {/* Ações */}
+                          <div style={{ display: "flex", gap: 8, flexShrink: 0, flexWrap: "wrap" }}>
+                            {!isCancelado && !isConcluido && (
+                              <button
+                                onClick={() => setEditingSchedule(s)}
+                                style={{
+                                  padding: "6px 14px", background: "transparent",
+                                  border: "1.5px solid #1565c0", color: "#1565c0",
+                                  borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer",
+                                }}
+                              >
+                                ✏️ Editar
+                              </button>
+                            )}
+                            {!isCancelado && !isConcluido && (
+                              <button
+                                onClick={() => handleCancelSchedule(s.id)}
+                                style={{
+                                  padding: "6px 14px", background: "transparent",
+                                  border: "1.5px solid #e65100", color: "#e65100",
+                                  borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer",
+                                }}
+                              >
+                                Cancelar
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDeleteSchedule(s.id)}
+                              style={{
+                                padding: "6px 14px", background: "transparent",
+                                border: "1.5px solid #E24B4A", color: "#E24B4A",
+                                borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer",
+                              }}
+                            >
+                              Excluir
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* FORMULÁRIO NOVO AGENDAMENTO */}
+          {schedView === "new" && (
+            <div style={card}>
+              <h2 style={{ margin: "0 0 20px", color: "#1b5e3f", fontSize: 17 }}>📅 Agendar Coleta de Materiais</h2>
+              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Material (opcional)</label>
+                  <select
+                    value={selectedMaterial?.id ?? ""}
+                    onChange={e => {
+                      const m = materials.find(x => x.id === Number(e.target.value));
+                      setSelectedMaterial(m ?? null);
+                    }}
+                    style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, background: "white", boxSizing: "border-box" }}>
+                    <option value="">-- Qualquer material --</option>
+                    {materials.map(m => (
+                      <option key={m.id} value={m.id}>{m.icon} {m.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Data da Coleta *</label>
+                  <input type="date" value={schedDate} min={new Date().toISOString().split("T")[0]} onChange={e => setSchedDate(e.target.value)}
+                    style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, boxSizing: "border-box" }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Horário (opcional)</label>
+                  <input type="time" value={schedTime} onChange={e => setSchedTime(e.target.value)}
+                    style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, boxSizing: "border-box" }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Observações</label>
+                  <textarea value={schedNotes} onChange={e => setSchedNotes(e.target.value)} placeholder="Endereço de coleta, quantidade estimada..." rows={3}
+                    style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 13, resize: "vertical", boxSizing: "border-box", fontFamily: "inherit" }} />
+                </div>
+                {error && (
+                  <div style={{ padding: "12px 16px", background: "#fff3f3", border: "1px solid #ffcdd2", borderRadius: 10, color: "#c62828", fontSize: 13 }}>
+                    ⚠️ {error}
+                  </div>
+                )}
+                <div style={{ display: "flex", gap: 10 }}>
+                  <button onClick={() => setSchedView("list")} style={{
+                    flex: 1, padding: "14px", background: "white", color: "#1b5e3f",
+                    border: "2px solid #1b9a3d", borderRadius: 12, fontSize: 15, fontWeight: 700, cursor: "pointer",
+                  }}>
+                    ← Voltar
+                  </button>
+                  <button onClick={handleSchedule} disabled={schedLoading} style={{
+                    flex: 2, padding: "14px", background: schedLoading ? "#ccc" : "linear-gradient(135deg, #1b9a3d, #0f6e56)",
+                    color: "white", border: "none", borderRadius: 12, fontSize: 15, fontWeight: 700,
+                    cursor: schedLoading ? "not-allowed" : "pointer",
+                  }}>
+                    {schedLoading ? "⏳ Agendando..." : "📅 Confirmar Agendamento"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

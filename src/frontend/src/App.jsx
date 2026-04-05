@@ -4,6 +4,7 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import CollectionPoints from "./pages/CollectionPoints";
 import UserSettings from "./pages/UserSettings";
+import RecyclingDashboard from "./pages/RecyclingDashboard";
 
 function App() {
   const [page, setPage] = useState("login");
@@ -49,6 +50,10 @@ function App() {
 
   if (page === "settings") {
     return <UserSettings setPage={handleSetPage} />;
+  }
+
+  if (page === "recycling-dashboard") {
+    return <RecyclingDashboard setPage={handleSetPage} />;
   }
 
   return (
