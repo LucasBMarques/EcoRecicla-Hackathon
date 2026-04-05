@@ -149,10 +149,10 @@ O projeto pode utilizar a aba **Projects** do GitHub, porém é **OBRIGATÓRIO p
 
 | Responsável | Papel | Tarefa | Início | Prazo | Status |
 |-------------|--------|--------|--------|--------|--------|
-|             |        | Gerar Script do Banco de Dados | 21/03 | 24/03 | ❌ |
-|             |        | Desenvolver Fatia 1 (BD + API + Tela) | 22/03 | 30/03 | ❌ |
-|             |        | Documentar Requisitos do MVP | 25/03 | 02/04 | ❌ |
-|             |        | Revisão técnica e Merge | 02/04 | 05/04 | ❌ |
+|Lucas Barbosa Marques|Tech Lead|Tela de configurações do usuário, tela de login e cadastro| 27/03 | 01/04 | ✔️ |
+|Maria Eduarda Botelho|Arquiteto de Dados|Tela principal : Home| 31/03 |  |📝|
+|Carolina Eller Marinho|Facilitador Ágil| Tela de registro de reciclagem e dashboard | 31\03 | 04\04 | ✔️ |
+|Arthur Jorge Soares| QA | Tela de cadastro de ponto de coleta|27/03| 02/04 | ✔️ |
 
 ---
 
