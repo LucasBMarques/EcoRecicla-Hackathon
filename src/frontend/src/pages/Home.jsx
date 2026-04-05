@@ -121,6 +121,21 @@ export default function Home({ setPage }) {
           >
             + Cadastrar ponto de coleta
           </button>
+          <button
+            style={{
+              padding: "8px 14px",
+              background: "white",
+              color: "#1b9a3d",
+              border: "2px solid #1b9a3d",
+              borderRadius: "8px",
+              cursor: "pointer",
+              fontWeight: 600,
+              fontSize: "13px",
+            }}
+            onClick={() => setPage("recycling-dashboard")}
+          >
+            ♻️ Dashboard de Reciclagem
+          </button>
         </div>
 
         <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>

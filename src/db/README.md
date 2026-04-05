@@ -1,12 +1,18 @@
-## Arquivo .sql
+# Banco de Dados EcoRecicla
 
-# Instância -> código no caminho src > backend > config > db.js 
+## Configuração
+
+### Credenciais de Acesso
+As configurações de conexão estão no arquivo:
+`src/backend/config/db.js`
+
+```javascript
 const mysql = require("mysql2");
 
 const connection = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: "Celta2020@",
+  password: "C@rol007",
   database: "ecorecicla"
 });
 
