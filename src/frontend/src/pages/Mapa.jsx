@@ -8,33 +8,28 @@ export default function Mapa({ setPage }) {
   const [searchMaterial, setSearchMaterial] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [user, setUser] = useState(null);
-  const [userPhoto, setUserPhoto] = useState(null);
-
-  const fetchPoints = async () => {
-    try {
-      const data = await getCollectionPoints();
-      setPoints(Array.isArray(data) ? data : []);
-      setLoading(false);
-    } catch (err) {
-      console.error("Erro ao buscar pontos:", err);
-      setError(err.message);
-      setPoints([]);
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
-    fetchPoints();
-    
-    // Recuperar dados do usuário
-    const userData = JSON.parse(localStorage.getItem("user"));
-    if (userData) {
-      setUser(userData);
-      if (userData.photo) {
-        setUserPhoto(`data:image/jpeg;base64,${userData.photo}`);
-      }
-    }
+    let active = true;
+
+    getCollectionPoints()
+      .then((data) => {
+        if (!active) return;
+        setPoints(Array.isArray(data) ? data : []);
+      })
+      .catch((err) => {
+        if (!active) return;
+        console.error("Erro ao buscar pontos:", err);
+        setError(err.message);
+        setPoints([]);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   const handleDelete = async (id) => {

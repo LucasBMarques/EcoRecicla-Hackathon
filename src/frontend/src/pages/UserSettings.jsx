@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { updateProfile } from "../services/api";
+import { deleteAccount } from "../services/api";
 import "../styles/userSettings.css";
 
 // Página de configurações do usuário
@@ -137,10 +137,8 @@ export default function UserSettings({ setPage }) {
           country: formData.country,
           city: formData.city,
           email: user.email,
+          photo: photo,
         };
-        if (photo) {
-          updatedUser.photo = photo;
-        }
         localStorage.setItem("user", JSON.stringify(updatedUser));
         setUser(updatedUser);
         setPhoto(null);
@@ -193,6 +191,35 @@ export default function UserSettings({ setPage }) {
       localStorage.removeItem("user");
       localStorage.removeItem("lastPage");
       setPage("login");
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (!user?.id) {
+      alert("Usuário inválido para exclusão");
+      return;
+    }
+
+    const confirmed = window.confirm("Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.");
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const result = await deleteAccount(user.id);
+      if (!result.ok) {
+        alert(result.data?.error || "Erro ao excluir conta");
+        return;
+      }
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("lastPage");
+      alert("Conta excluída com sucesso");
+      setPage("login");
+    } catch (error) {
+      console.error("Erro ao excluir conta:", error);
+      alert("Erro ao excluir conta");
     }
   };
 
@@ -703,7 +730,7 @@ export default function UserSettings({ setPage }) {
               <div className="form-section danger-zone">
                 <h3>⚠️ Zona de Perigo</h3>
                 <div className="danger-actions">
-                  <button className="danger-btn">
+                  <button className="danger-btn" onClick={handleDeleteAccount}>
                     🗑️ Excluir Conta
                   </button>
                   <button 

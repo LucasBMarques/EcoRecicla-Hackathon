@@ -11,7 +11,12 @@ CREATE TABLE IF NOT EXISTS users (
     country VARCHAR(100),
     city VARCHAR(100),
     photo LONGBLOB,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    eco_points INT NOT NULL DEFAULT 0,
+    level ENUM('Semente','Broto','Árvore','Floresta','Guardião') NOT NULL DEFAULT 'Semente',
+    total_kg DECIMAL(10,3) NOT NULL DEFAULT 0.000,
+    co2_avoided DECIMAL(10,3) NOT NULL DEFAULT 0.000,
+    water_saved DECIMAL(10,3) NOT NULL DEFAULT 0.000
 );
 
 CREATE TABLE IF NOT EXISTS collection_points (
@@ -116,7 +121,9 @@ INSERT IGNORE INTO materials (name, icon, co2_factor, water_factor, points_per_k
 ('Lâmpadas', '💡', 0.8000, 0.0000, 15, '["unidade","kg"]', 'Fluorescentes, LED.', 'Embale com cuidado para não quebrar.'),
 ('Madeira', '🪵', 0.5000, 0.0000, 6, '["kg","g"]', 'Paletes, móveis.', 'Remova pregos e parafusos.'),
 ('Têxtil', '👕', 0.9200, 10.0000, 20, '["kg","g","unidade"]', 'Roupas, calçados, tecidos.', 'Higienize antes de entregar.'),
-('Pilhas/Baterias', '🔋', 1.8000, 0.0000, 25, '["unidade","kg"]', 'Pilhas AA, AAA, baterias.', 'Guarde em saco plástico separado.');
+('Pilhas/Baterias', '🔋', 1.8000, 0.0000, 25, '["unidade","kg"]', 'Pilhas AA, AAA, baterias.', 'Guarde em saco plástico separado.'),
+('Entulho', '🏗️', 0.2000, 0.0000, 5, '["kg","g"]', 'Resíduos de construção, concreto e tijolos.', 'Separe por tipo para facilitar a reciclagem.'),
+('Aluminio', '🥫', 5.0000, 100.0000, 40, '["kg","g","lata","unidade"]', 'Latas e peças de alumínio.', 'Esmague para reduzir volume.');
 
 INSERT IGNORE INTO badges (name, description, icon, condition_type, condition_value) VALUES
 ('Primeiro Passo', 'Seu primeiro registro.', '🌱', 'logs_count', 1),
@@ -125,13 +132,6 @@ INSERT IGNORE INTO badges (name, description, icon, condition_type, condition_va
 ('Econômico', '500 eco-pontos acumulados.', '💎', 'total_points', 500),
 ('Mestre Verde', '200 kg reciclados.', '🌳', 'total_kg', 200),
 ('Ecologista', '50 registros realizados.', '🌍', 'logs_count', 50);
-
--- ATUALIZAR TABELA USERS COM OS NOVOS CAMPOS
-ALTER TABLE users ADD COLUMN IF NOT EXISTS eco_points INT NOT NULL DEFAULT 0;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS level ENUM('Semente','Broto','Árvore','Floresta','Guardião') NOT NULL DEFAULT 'Semente';
-ALTER TABLE users ADD COLUMN IF NOT EXISTS total_kg DECIMAL(10,3) NOT NULL DEFAULT 0.000;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS co2_avoided DECIMAL(10,3) NOT NULL DEFAULT 0.000;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS water_saved DECIMAL(10,3) NOT NULL DEFAULT 0.000;
 
 -- INSERIR DADOS NA TABELA material_types (se não existir)
 INSERT IGNORE INTO material_types (name, icon, color) VALUES
@@ -142,4 +142,8 @@ INSERT IGNORE INTO material_types (name, icon, color) VALUES
 ('Plástico', '♻️', '#4169E1'),
 ('Vidro', '🥃', '#87CEEB'),
 ('Eletrônicos', '📱', '#000000'),
-('Madeira', '🪵', '#8B4513');
+('Madeira', '🪵', '#8B4513'),
+('Óleo Vegetal', '🫙', '#6B8E23'),
+('Têxtil', '👕', '#DB7093'),
+('Pilhas/Baterias', '🔋', '#4B0082'),
+('Aluminio', '🥫', '#B0C4DE');

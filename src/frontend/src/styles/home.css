@@ -83,6 +83,7 @@ h1, h2, h3, .navbar h2 {
   display: flex;
   gap: 16px;
   justify-content: flex-start; /* Botões alinhados à esquerda junto com o texto */
+  align-items: stretch;
 }
 
 /* Responsividade do Hero */
@@ -97,14 +98,20 @@ h1, h2, h3, .navbar h2 {
     justify-content: center;
     flex-wrap: wrap;
   }
+
+  .home-btn-primary, .home-btn-secondary {
+    width: 100%;
+    min-width: 0;
+  }
 }
 /* ----------------------------------------------- */
 
 /* Botões */
-.btn-primary, .btn-secondary {
+.home-btn-primary, .home-btn-secondary {
   box-sizing: border-box;
   height: 52px;
   min-width: 250px; /* Reduzi levemente para caber melhor lado a lado */
+  width: 250px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -113,29 +120,31 @@ h1, h2, h3, .navbar h2 {
   font-family: 'Poppins', sans-serif;
   font-weight: 600;
   font-size: 15px;
+  line-height: 1;
+  white-space: nowrap;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.btn-primary {
+.home-btn-primary {
   background-color: var(--verde-principal);
   color: white;
   border: 2px solid var(--verde-principal);
 }
 
-.btn-primary:hover {
+.home-btn-primary:hover {
   background-color: var(--verde-medio);
   border-color: var(--verde-medio);
   transform: translateY(-2px);
 }
 
-.btn-secondary {
+.home-btn-secondary {
   background-color: transparent;
   color: var(--verde-principal);
   border: 2px solid var(--verde-principal);
 }
 
-.btn-secondary:hover {
+.home-btn-secondary:hover {
   background-color: rgba(99, 153, 34, 0.1);
   transform: translateY(-2px);
 }
