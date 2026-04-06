@@ -34,10 +34,10 @@ export default function Home({setPage}) {
     <p>Encontre pontos de coleta, registre suas ações e faça parte de uma comunidade comprometida.</p>
     
     <div className="hero-btns">
-      <button className="btn-primary" onClick={() => setPage("mapa")}>
+      <button className="home-btn-primary" onClick={() => setPage("mapa")}>
         📍 Encontrar pontos de coleta
       </button>
-      <button className="btn-secondary" onClick={() => setPage("recycling-dashboard")}>
+      <button className="home-btn-secondary" onClick={() => setPage("recycling-dashboard")}>
         ♻️ Registrar reciclagem
       </button>
     </div>
