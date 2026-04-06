@@ -149,10 +149,19 @@ O projeto pode utilizar a aba **Projects** do GitHub, porém é **OBRIGATÓRIO p
 
 | Responsável | Papel | Tarefa | Início | Prazo | Status |
 |-------------|--------|--------|--------|--------|--------|
-|Lucas Barbosa Marques|Tech Lead|Tela de configurações do usuário, tela de login e cadastro| 27/03 | 01/04 | ✔️ |
+|Lucas Barbosa Marques|Tech Lead|Tela de configurações do usuário, tela de login e cadastro| 25/03 | 01/04 | ✔️ |
 |Maria Eduarda Botelho|Arquiteto de Dados|Tela principal : Home| 31/03 |  |📝|
-|Carolina Eller Marinho|Facilitador Ágil| Tela de registro de reciclagem e dashboard | 31\03 | 04\04 | ✔️ |
-|Arthur Jorge Soares| QA | Tela de cadastro de ponto de coleta|27/03| 02/04 | ✔️ |
+|Carolina Eller Marinho|Facilitador Ágil| Tela de registro de reciclagem e dashboard | 31\03 | 05\04 | ✔️ |
+|Arthur Jorge Soares| QA | Tela de cadastro de ponto de coleta|27/03| 03/04 | ✔️ |
+
+# 🟡 Sprint 2 – MVP - ⚙️ Organização e Documentação do Projeto
+
+| Responsável | Papel | Tarefa | Início | Prazo | Status |
+|-------------|--------|--------|--------|--------|--------|
+|Lucas Barbosa Marques|Tech Lead|Wireframes/Mockups| 20/03 | 24/03 | ✔️ |
+|Maria Eduarda Botelho|Diagrama de Fluxo| 03/04 | 04/04 |✔️|
+|Carolina Eller Marinho|Quadro de tarefas Kanban| 22/03 | 06/04 | ✔️ |
+|Arthur Jorge Soares| QA | Documentação Técnica|27/03| 05/04 | ✔️ |
 
 ---
 
