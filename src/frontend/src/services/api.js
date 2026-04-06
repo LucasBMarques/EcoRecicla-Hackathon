@@ -22,6 +22,19 @@ export const registerUser = async (data) => {
   return response.json();
 };
 
+export const validateSession = async (token) => {
+  const response = await fetch(`${API}/auth/validate-session`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ token })
+  });
+
+  const data = await response.json();
+  return { ok: response.ok, data };
+};
+
 export const updateProfile = async (data) => {
   const response = await fetch(`${API}/auth/update-profile`, {
     method: "POST",
@@ -31,6 +44,19 @@ export const updateProfile = async (data) => {
     body: JSON.stringify(data)
   });
   return response.json();
+};
+
+export const deleteAccount = async (userId) => {
+  const response = await fetch(`${API}/auth/delete-account`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ userId })
+  });
+
+  const data = await response.json();
+  return { ok: response.ok, data };
 };
 
 export const getMaterials = async () => {
@@ -143,4 +169,13 @@ export const uploadPhoto = async (file) => {
     body: formData,
   });
   return response.json();
+};
+
+export const getStats = async () => {
+  // home
+  return {
+    users: 10,
+    points: 5,
+    recycled: 120
+  };
 };

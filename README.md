@@ -39,6 +39,10 @@ O sistema EcoRecicla contribui para essa ODS ao facilitar a localização de pon
 
 Assim que a primeira versão do sistema estiver disponível, deverá complementar com as instruções de utilização. Descreva como instalar eventuais dependências e como executar a aplicação.
 
+Para executar o sistema localmente, consulte o guia:
+
+- [Como Rodar o Projeto](COMO_RODAR_PROJETO.md)
+
 # Documentação
 
 <ol>
@@ -54,13 +58,4 @@ Assim que a primeira versão do sistema estiver disponível, deverá complementa
 
 # Código
 
-<li><a href="src/README.md"> Código Fonte</a></li>  
-
-
-## Histórico de versões 
-
-* 0.0.1
-    * CHANGE: Atualização das documentações (README.md/Contexto.md/Planejamento-Projeto.md). Código permaneceu inalterado.
-* 0.1.0
-    *  CHANGE: Tela login e cadastro criada com banco de dados funcional. Tentativa de uma pagina Home mais sem sucesso.
-
+<li><a href="src/README.md"> Código Fonte</a></li>
