@@ -62,7 +62,7 @@ export default function Mapa({ setPage }) {
       style={{
         padding: "30px",
         fontFamily: "'Segoe UI', sans-serif",
-        background: "#f4f7f4",
+        background: "#F1EFE8",
         minHeight: "100vh",
       }}
     >
@@ -75,21 +75,7 @@ export default function Mapa({ setPage }) {
         }}
       >
         <div style={{ display: "flex", gap: "10px" }}>
-          <button
-            style={{
-              padding: "8px 14px",
-              background: "#1b9a3d",
-              color: "white",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: 600,
-              fontSize: "13px",
-            }}
-            onClick={() => setPage("home")}
-          >
-            Home
-          </button>
+          
           <button
             style={{
               padding: "8px 14px",

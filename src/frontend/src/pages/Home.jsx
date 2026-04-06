@@ -3,8 +3,12 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { getStats } from "../services/api";
 import "../styles/home.css";
+{/*
+import imgCapa from "../assets/public/img/capa.png";
+import imganner from "../assets/public/img/banner.jpg";
+*/}
 
-export default function Home() {
+export default function Home({setPage}) {
   const [stats, setStats] = useState({ users: 0, points: 0, recycled: 0 });
 
   useEffect(() => {
@@ -25,8 +29,10 @@ export default function Home() {
       {/* Wrapper para o fundo gradiente */}
 <div className="hero-wrapper">
   <section className="hero">
+  <div className="hero-content">
     <h1>Transforme o mundo através da <span className="destaque">reciclagem</span></h1>
     <p>Encontre pontos de coleta, registre suas ações e faça parte de uma comunidade comprometida.</p>
+    
     <div className="hero-btns">
       <button className="btn-primary" onClick={() => setPage("mapa")}>
         📍 Encontrar pontos de coleta
@@ -35,7 +41,16 @@ export default function Home() {
         ♻️ Registrar reciclagem
       </button>
     </div>
-  </section>
+  </div>
+  
+  <div className="hero-image">
+    {/* Imagem capa */}
+    <img src="#" alt="Destaque Reciclagem" />
+  </div>
+
+</section>
+
+</div>
 
   <section className="stats-container">
     <div className="card-stat">
@@ -51,7 +66,7 @@ export default function Home() {
       <span className="stat-lab">Materiais Reciclados</span>
     </div>
   </section>
-</div>
+
 
 <div className="features-wrapper">
   <section className="how-it-works">

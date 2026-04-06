@@ -37,7 +37,7 @@ export default function Navbar({ currentPage, setPage }) {
     <nav className="navbar">
       <div className="nav-brand" onClick={() => setPage("home")} style={{ cursor: 'pointer' }}>
         <img src={logoImg} alt="logo ecorecicla" className="nav-logo" />
-        <h2>ecorecicla</h2>
+        <h2>EcoRecicla</h2>
       </div>
       
       <ul>

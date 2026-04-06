@@ -71,7 +71,7 @@ function BarChart({ data, valueKey, labelKey, color = "#1b9a3d", height = 140 })
 function StatCard({ icon, label, value, unit, color = "#1b9a3d" }) {
   return (
     <div style={{
-      background: "white", borderRadius: 16, padding: "20px 24px",
+      background: "#F1EFE8", borderRadius: 16, padding: "20px 24px",
       boxShadow: "0 2px 12px rgba(0,0,0,0.07)", borderLeft: `4px solid ${color}`,
       display: "flex", flexDirection: "column", gap: 6,
     }}>
