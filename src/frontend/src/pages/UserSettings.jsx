@@ -137,10 +137,8 @@ export default function UserSettings({ setPage }) {
           country: formData.country,
           city: formData.city,
           email: user.email,
+          photo: photo,
         };
-        if (photo) {
-          updatedUser.photo = photo;
-        }
         localStorage.setItem("user", JSON.stringify(updatedUser));
         setUser(updatedUser);
         setPhoto(null);
