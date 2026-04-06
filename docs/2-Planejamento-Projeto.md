@@ -159,8 +159,8 @@ O projeto pode utilizar a aba **Projects** do GitHub, porém é **OBRIGATÓRIO p
 | Responsável | Papel | Tarefa | Início | Prazo | Status |
 |-------------|--------|--------|--------|--------|--------|
 |Lucas Barbosa Marques|Tech Lead|Wireframes/Mockups| 20/03 | 24/03 | ✔️ |
-|Maria Eduarda Botelho|Diagrama de Fluxo| 03/04 | 04/04 |✔️|
-|Carolina Eller Marinho|Quadro de tarefas Kanban| 22/03 | 06/04 | ✔️ |
+|Maria Eduarda Botelho|Arquiteto de Dados|Diagrama de Fluxo| 03/04 | 04/04 |✔️|
+|Carolina Eller Marinho|Facilitador Ágil|Quadro de tarefas Kanban| 22/03 | 06/04 | ✔️ |
 |Arthur Jorge Soares| QA | Documentação Técnica|27/03| 05/04 | ✔️ |
 
 ---
