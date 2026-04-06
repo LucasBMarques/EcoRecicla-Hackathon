@@ -1,464 +1,98 @@
 import { useEffect, useState } from "react";
-import Map from "../components/Map";
-import { deleteCollectionPoint, getCollectionPoints } from "../services/api";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
+import { getStats } from "../services/api";
+import "../styles/home.css";
+{/*
+import imgCapa from "../assets/public/img/capa.png";
+import imganner from "../assets/public/img/banner.jpg";
+*/}
 
-export default function Home({ setPage }) {
-  const [points, setPoints] = useState([]);
-  const [searchMaterial, setSearchMaterial] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [user, setUser] = useState(null);
-  const [userPhoto, setUserPhoto] = useState(null);
-
-  const fetchPoints = async () => {
-    try {
-      const data = await getCollectionPoints();
-      setPoints(Array.isArray(data) ? data : []);
-      setLoading(false);
-    } catch (err) {
-      console.error("Erro ao buscar pontos:", err);
-      setError(err.message);
-      setPoints([]);
-      setLoading(false);
-    }
-  };
+export default function Home({setPage}) {
+  const [stats, setStats] = useState({ users: 0, points: 0, recycled: 0 });
 
   useEffect(() => {
-    fetchPoints();
-    
-    // Recuperar dados do usuário
-    const userData = JSON.parse(localStorage.getItem("user"));
-    if (userData) {
-      setUser(userData);
-      if (userData.photo) {
-        setUserPhoto(`data:image/jpeg;base64,${userData.photo}`);
+    const fetchStats = async () => {
+      try {
+        const data = await getStats();
+        setStats(data);
+      } catch (err) {
+        console.error("erro ao buscar stats:", err);
       }
-    }
+    };
+    fetchStats();
   }, []);
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Tem certeza que deseja excluir este ponto de coleta?"))
-      return;
-    const res = await deleteCollectionPoint(id);
-    if (res.message) {
-      setPoints(points.filter((p) => p.id !== id));
-    } else {
-      alert("Erro ao excluir ponto de coleta.");
-    }
-  };
-
-  const filteredPoints = points.filter((point) => {
-    if (!searchMaterial.trim()) return true;
-    const normalized = searchMaterial.toLowerCase();
-    const nameMatch = point.name?.toLowerCase().includes(normalized);
-    const materialsMatch = point.materials?.toLowerCase().includes(normalized);
-    return nameMatch || materialsMatch;
-  });
-
   return (
-    <div
-      style={{
-        padding: "30px",
-        fontFamily: "'Segoe UI', sans-serif",
-        background: "#f4f7f4",
-        minHeight: "100vh",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "24px",
-        }}
-      >
-        <div style={{ display: "flex", gap: "10px" }}>
-          <button
-            style={{
-              padding: "8px 14px",
-              background: "#1b9a3d",
-              color: "white",
-              border: "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: 600,
-              fontSize: "13px",
-            }}
-            onClick={() => setPage("home")}
-          >
-            Home
-          </button>
-          <button
-            style={{
-              padding: "8px 14px",
-              background: "white",
-              color: "#1b9a3d",
-              border: "2px solid #1b9a3d",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: 600,
-              fontSize: "13px",
-            }}
-            onClick={() => {
-              localStorage.setItem("_collectionPointsInitialView", "list");
-              setPage("collection-points");
-            }}
-          >
-            Ver pontos cadastrados
-          </button>
-          <button
-            style={{
-              padding: "8px 14px",
-              background: "white",
-              color: "#1b9a3d",
-              border: "2px solid #1b9a3d",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: 600,
-              fontSize: "13px",
-            }}
-            onClick={() => setPage("collection-points")}
-          >
-            + Cadastrar ponto de coleta
-          </button>
-          <button
-            style={{
-              padding: "8px 14px",
-              background: "white",
-              color: "#1b9a3d",
-              border: "2px solid #1b9a3d",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: 600,
-              fontSize: "13px",
-            }}
-            onClick={() => setPage("recycling-dashboard")}
-          >
-            ♻️ Dashboard de Reciclagem
-          </button>
-        </div>
+    <>
 
-        <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span style={{ fontSize: "28px" }}>♻️</span>
-            <div>
-              <h1
-                style={{
-                  margin: 0,
-                  fontSize: "22px",
-                  color: "#1b5e3f",
-                  fontWeight: 700,
-                }}
-              >
-                Mapa de Pontos de Reciclagem
-              </h1>
-              <p style={{ margin: 0, color: "#666", fontSize: "13px" }}>
-                Veja os pontos cadastrados e filtre por material.
-              </p>
-            </div>
-          </div>
-
-          <button
-            onClick={() => setPage("settings")}
-            style={{
-              padding: "0",
-              background: userPhoto ? "transparent" : "#f0f6f0",
-              color: "#1b5e3f",
-              border: userPhoto ? "2px solid #e8f0e8" : "none",
-              borderRadius: "8px",
-              cursor: "pointer",
-              fontWeight: "600",
-              fontSize: "18px",
-              width: "44px",
-              height: "44px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transition: "all 0.2s",
-              overflow: "hidden",
-            }}
-            title="Configurações"
-          >
-            {userPhoto ? (
-              <img
-                src={userPhoto}
-                alt="Perfil"
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  borderRadius: "6px",
-                }}
-              />
-            ) : (
-              "⚙️"
-            )}
-          </button>
-        </div>
-      </div>
-
-      {loading && <p>Carregando mapa...</p>}
-      {error && <p style={{ color: "red" }}>Erro: {error}</p>}
-      <div
-        style={{
-          borderRadius: "16px",
-          overflow: "hidden",
-          boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
-        }}
-      >
-        <Map points={filteredPoints} />
-      </div>
-
-      <div style={{ marginTop: "40px" }}>
-        <div style={{ marginBottom: "18px" }}>
-          <input
-            type="text"
-            value={searchMaterial}
-            onChange={(e) => setSearchMaterial(e.target.value)}
-            placeholder="Filtrar por nome ou material..."
-            style={{
-              width: "100%",
-              maxWidth: "420px",
-              padding: "10px 14px",
-              border: "2px solid #1b9a3d",
-              borderRadius: "10px",
-              fontSize: "14px",
-            }}
-          />
-        </div>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: "20px",
-          }}
-        >
-          <h2
-            style={{
-              margin: 0,
-              fontSize: "18px",
-              color: "#1b5e3f",
-              fontWeight: 700,
-            }}
-          >
-            Pontos cadastrados
-          </h2>
-          <span
-            style={{
-              background: "#1b9a3d",
-              color: "white",
-              fontSize: "13px",
-              fontWeight: 600,
-              padding: "4px 14px",
-              borderRadius: "20px",
-            }}
-          >
-            {points.length} {points.length === 1 ? "ponto" : "pontos"}
-          </span>
-        </div>
-
-        {points.length === 0 ? (
-          <div
-            style={{
-              background: "white",
-              borderRadius: "12px",
-              padding: "40px",
-              textAlign: "center",
-              color: "#888",
-            }}
-          >
-            <span style={{ fontSize: "40px" }}>📍</span>
-            <p style={{ margin: "12px 0 0 0", fontSize: "15px" }}>
-              Nenhum ponto cadastrado ainda.
-            </p>
-          </div>
-        ) : (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-              gap: "16px",
-            }}
-          >
-            {points.map((point) => (
-              <div
-                key={point.id}
-                style={{
-                  background: "white",
-                  border: "1px solid #e8f0e8",
-                  borderRadius: "16px",
-                  overflow: "hidden",
-                  boxShadow: "0 4px 16px rgba(0,0,0,0.07)",
-                  transition: "transform 0.2s, box-shadow 0.2s",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-4px)";
-                  e.currentTarget.style.boxShadow =
-                    "0 8px 24px rgba(0,0,0,0.12)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "translateY(0)";
-                  e.currentTarget.style.boxShadow =
-                    "0 4px 16px rgba(0,0,0,0.07)";
-                }}
-              >
-                <div
-                  style={{
-                    background:
-                      "linear-gradient(135deg, #1b9a3d 0%, #0f6e56 100%)",
-                    padding: "10px 20px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  <span style={{ fontSize: "22px" }}>♻️</span>
-                  <span
-                    style={{
-                      background: "rgba(255,255,255,0.2)",
-                      color: "white",
-                      fontSize: "11px",
-                      fontWeight: 600,
-                      padding: "4px 10px",
-                      borderRadius: "20px",
-                    }}
-                  >
-                    #{points.indexOf(point) + 1}
-                  </span>
-                </div>
-
-                <div style={{ padding: "18px 20px" }}>
-                  <h3
-                    style={{
-                      margin: "0 0 14px 0",
-                      fontSize: "16px",
-                      color: "#1b5e3f",
-                      fontWeight: 700,
-                      lineHeight: 1.3,
-                    }}
-                  >
-                    {point.name}
-                  </h3>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "8px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "flex-start",
-                        gap: "8px",
-                      }}
-                    >
-                      <span style={{ fontSize: "14px", minWidth: "18px" }}>
-                        📍
-                      </span>
-                      <span
-                        style={{
-                          fontSize: "13px",
-                          color: "#666",
-                          lineHeight: 1.4,
-                        }}
-                      >
-                        {point.address}
-                      </span>
-                    </div>
-                    {point.materials && (
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "flex-start",
-                          gap: "8px",
-                        }}
-                      >
-                        <span style={{ fontSize: "14px", minWidth: "18px" }}>
-                          🗂️
-                        </span>
-                        <span
-                          style={{
-                            fontSize: "13px",
-                            color: "#666",
-                            lineHeight: 1.4,
-                          }}
-                        >
-                          {point.materials}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div
-                    style={{
-                      marginTop: "16px",
-                      paddingTop: "12px",
-                      borderTop: "1px solid #f0f0f0",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: "6px",
-                      }}
-                    >
-                      <span
-                        style={{
-                          display: "inline-block",
-                          width: "8px",
-                          height: "8px",
-                          borderRadius: "50%",
-                          background: "#1b9a3d",
-                        }}
-                      ></span>
-                      <span
-                        style={{
-                          fontSize: "12px",
-                          color: "#1b9a3d",
-                          fontWeight: 500,
-                        }}
-                      >
-                        Ponto ativo
-                      </span>
-                    </div>
-                    <button
-                      onClick={() => handleDelete(point.id)}
-                      style={{
-                        background: "transparent",
-                        border: "1.5px solid #E24B4A",
-                        color: "#E24B4A",
-                        borderRadius: "8px",
-                        padding: "5px 12px",
-                        fontSize: "12px",
-                        fontWeight: 600,
-                        cursor: "pointer",
-                        transition: "background 0.2s, color 0.2s",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.background = "#E24B4A";
-                        e.currentTarget.style.color = "white";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.background = "transparent";
-                        e.currentTarget.style.color = "#E24B4A";
-                      }}
-                    >
-                      Excluir
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+      {/* Wrapper para o fundo gradiente */}
+<div className="hero-wrapper">
+  <section className="hero">
+  <div className="hero-content">
+    <h1>Transforme o mundo através da <span className="destaque">reciclagem</span></h1>
+    <p>Encontre pontos de coleta, registre suas ações e faça parte de uma comunidade comprometida.</p>
+    
+    <div className="hero-btns">
+      <button className="btn-primary" onClick={() => setPage("mapa")}>
+        📍 Encontrar pontos de coleta
+      </button>
+      <button className="btn-secondary" onClick={() => setPage("recycling-dashboard")}>
+        ♻️ Registrar reciclagem
+      </button>
     </div>
+  </div>
+  
+  <div className="hero-image">
+    {/* Imagem capa */}
+    <img src="#" alt="Destaque Reciclagem" />
+  </div>
+
+</section>
+
+</div>
+
+  <section className="stats-container">
+    <div className="card-stat">
+      <span className="stat-val">{stats.users}</span>
+      <span className="stat-lab">Usuários Ativos</span>
+    </div>
+    <div className="card-stat">
+      <span className="stat-val">{stats.points}</span>
+      <span className="stat-lab">Pontos de Coleta</span>
+    </div>
+    <div className="card-stat">
+      <span className="stat-val">{stats.recycled}kg</span>
+      <span className="stat-lab">Materiais Reciclados</span>
+    </div>
+  </section>
+
+
+<div className="features-wrapper">
+  <section className="how-it-works">
+  <h2>Como funciona</h2>
+  <p className="subtitle">Reciclar nunca foi tão simples. Siga estes passos e faça a diferença para o planeta.</p>
+  
+  <div className="features-grid">
+    <div className="feature-item">
+      <h3>1. Encontre</h3>
+      <p>Localize pontos de coleta próximos a você usando nosso mapa interativo.</p>
+    </div>
+
+    <div className="feature-item">
+      <h3>2. Recicle</h3>
+      <p>Leve seus materiais recicláveis aos pontos de coleta apropriados.</p>
+    </div>
+
+    <div className="feature-item">
+      <h3>3. Registre</h3>
+      <p>Registre sua ação e acompanhe seu impacto ambiental positivo.</p>
+    </div>
+  </div>
+</section>
+</div>
+
+      <Footer />
+    </>
   );
 }

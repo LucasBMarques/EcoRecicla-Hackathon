@@ -2,6 +2,7 @@ import { useState } from "react";
 import { registerUser } from "../services/api";
 import "../styles/auth.css";
 
+// Página de registro de usuário
 export default function Register({ setPage }) {
 
   const [name, setName] = useState("");
