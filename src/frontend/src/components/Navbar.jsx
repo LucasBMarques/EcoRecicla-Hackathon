@@ -1,31 +1,15 @@
-import { useEffect, useState } from "react";
 import "../styles/home.css";
 import logoImg from "../assets/public/img/logo.png";
 
 export default function Navbar({ currentPage, setPage }) {
-  const [userPhoto, setUserPhoto] = useState(null);
-  const [userName, setUserName] = useState(""); 
-
-  useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("user"));
-    if (userData) {
-      // 1. Pegamos o nome completo
-      const fullName = userData.name || "Usuário";
-      
-      // 2. Função para colocar a primeira letra de cada nome em maiúscula
-      const capitalized = fullName
-        .toLowerCase()
-        .split(" ")
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(" ");
-
-      setUserName(capitalized);
-      
-      if (userData.photo) {
-        setUserPhoto(`data:image/jpeg;base64,${userData.photo}`);
-      }
-    }
-  }, []);
+  const userData = JSON.parse(localStorage.getItem("user"));
+  const fullName = userData?.name || "Usuário";
+  const userName = fullName
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+  const userPhoto = userData?.photo ? `data:image/jpeg;base64,${userData.photo}` : null;
 
   const menuItems = [
     { id: "home", label: "Início" },

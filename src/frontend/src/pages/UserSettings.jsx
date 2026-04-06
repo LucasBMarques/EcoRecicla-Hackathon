@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { deleteAccount, updateProfile } from "../services/api";
+import { deleteAccount } from "../services/api";
 import "../styles/userSettings.css";
 
 // Página de configurações do usuário

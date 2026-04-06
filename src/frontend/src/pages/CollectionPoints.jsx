@@ -6,6 +6,17 @@ import { useToast } from "../hooks/useToast";
 import "../styles/auth.css";
 import "../styles/collectionPointsForm.css";
 // Página para cadastro e visualização de pontos de coleta, com integração de CEP e geolocalização, além de filtros por material e modais de detalhes.
+const defaultMaterials = [
+  { id: 1, name: "Papel", icon: "📄" },
+  { id: 2, name: "Metal", icon: "🔩" },
+  { id: 3, name: "Lâmpadas", icon: "💡" },
+  { id: 4, name: "Entulho", icon: "🏗️" },
+  { id: 5, name: "Plástico", icon: "♻️" },
+  { id: 6, name: "Vidro", icon: "🥃" },
+  { id: 7, name: "Eletrônicos", icon: "📱" },
+  { id: 8, name: "Madeira", icon: "🪵" },
+];
+
 function CollectionPoints({ setPage }) {
   // Verificar se deve começar em modo "list"
   const initialView = localStorage.getItem("_collectionPointsInitialView") || "form";
@@ -38,17 +49,6 @@ function CollectionPoints({ setPage }) {
   const [userID, setUserID] = useState(null);
   const { toasts, addToast, removeToast } = useToast();
 
-  const defaultMaterials = [
-    { id: 1, name: "Papel", icon: "📄" },
-    { id: 2, name: "Metal", icon: "🔩" },
-    { id: 3, name: "Lâmpadas", icon: "💡" },
-    { id: 4, name: "Entulho", icon: "🏗️" },
-    { id: 5, name: "Plástico", icon: "♻️" },
-    { id: 6, name: "Vidro", icon: "🥃" },
-    { id: 7, name: "Eletrônicos", icon: "📱" },
-    { id: 8, name: "Madeira", icon: "🪵" },
-  ];
-
   useEffect(() => {
     // Carregar materiais disponíveis
     getMaterials()
@@ -60,8 +60,7 @@ function CollectionPoints({ setPage }) {
           setAllMaterials(data);
         }
       })
-      .catch((err) => {
-        console.error("Erro ao carregar materiais:", err);
+        .catch(() => {
         addToast("Erro ao carregar materiais. Lista padrão carregada.", "warning");
         setAllMaterials(defaultMaterials);
       });
@@ -72,12 +71,12 @@ function CollectionPoints({ setPage }) {
       .then((data) => {
         setPoints(Array.isArray(data) ? data : []);
       })
-      .catch((err) => console.error("Erro ao carregar pontos:", err));
+      .catch(() => {});
 
     // Pegar ID do usuário
     const user = JSON.parse(localStorage.getItem("user"));
     setUserID(user?.id);
-  }, []);
+  }, [addToast]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -110,7 +109,7 @@ function CollectionPoints({ setPage }) {
       setCepData(data);
       setForm((prev) => ({ ...prev, address: "" }));
       addToast("CEP encontrado com sucesso!", "success");
-    } catch (err) {
+    } catch {
       addToast("Erro ao buscar CEP", "error");
     }
 
@@ -137,7 +136,7 @@ function CollectionPoints({ setPage }) {
       } else {
         addToast("Localização não encontrada", "warning");
       }
-    } catch (err) {
+    } catch {
       addToast("Erro ao buscar localização", "error");
     } finally {
       setGeoLoading(false);
@@ -207,7 +206,7 @@ function CollectionPoints({ setPage }) {
       } else {
         addToast(res.error || "Erro ao cadastrar ponto de coleta", "error");
       }
-    } catch (error) {
+    } catch {
       addToast("Erro ao cadastrar ponto de coleta", "error");
     } finally {
       setLoading(false);
@@ -229,8 +228,8 @@ function CollectionPoints({ setPage }) {
         setPoints(points.filter((p) => p.id !== id));
         setShowModal(false);
       }
-    } catch (error) {
-      addToast("Erro ao deletar ponto", "error");
+    } catch {
+        addToast("Erro ao deletar ponto", "error");
     }
   };
 

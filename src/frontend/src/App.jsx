@@ -36,7 +36,7 @@ function App() {
           localStorage.removeItem("lastPage");
           setPage("login");
         }
-      } catch (_error) {
+      } catch {
         localStorage.removeItem("token");
         localStorage.removeItem("user");
         localStorage.removeItem("lastPage");
