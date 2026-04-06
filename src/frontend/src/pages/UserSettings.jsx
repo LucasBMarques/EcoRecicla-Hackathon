@@ -230,7 +230,7 @@ export default function UserSettings({ setPage }) {
       {/* HEADER */}
       <header className="settings-header">
         <div className="header-content">
-          <h1>Welcome, <strong>{user?.name || "Usuário"}</strong></h1>
+          <h1>Bem Vindo, <strong>{user?.name || "Usuário"}</strong></h1>
           <button 
             className="back-home-btn"
             onClick={() => setPage("home")}
@@ -264,7 +264,7 @@ export default function UserSettings({ setPage }) {
             className="edit-profile-btn"
             onClick={() => setActiveTab("profile")}
           >
-            Edit
+            Editar
           </button>
         </div>
 
