@@ -11,7 +11,12 @@ CREATE TABLE IF NOT EXISTS users (
     country VARCHAR(100),
     city VARCHAR(100),
     photo LONGBLOB,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    eco_points INT NOT NULL DEFAULT 0,
+    level ENUM('Semente','Broto','Árvore','Floresta','Guardião') NOT NULL DEFAULT 'Semente',
+    total_kg DECIMAL(10,3) NOT NULL DEFAULT 0.000,
+    co2_avoided DECIMAL(10,3) NOT NULL DEFAULT 0.000,
+    water_saved DECIMAL(10,3) NOT NULL DEFAULT 0.000
 );
 
 CREATE TABLE IF NOT EXISTS collection_points (
@@ -125,13 +130,6 @@ INSERT IGNORE INTO badges (name, description, icon, condition_type, condition_va
 ('Econômico', '500 eco-pontos acumulados.', '💎', 'total_points', 500),
 ('Mestre Verde', '200 kg reciclados.', '🌳', 'total_kg', 200),
 ('Ecologista', '50 registros realizados.', '🌍', 'logs_count', 50);
-
--- ATUALIZAR TABELA USERS COM OS NOVOS CAMPOS
-ALTER TABLE users ADD COLUMN IF NOT EXISTS eco_points INT NOT NULL DEFAULT 0;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS level ENUM('Semente','Broto','Árvore','Floresta','Guardião') NOT NULL DEFAULT 'Semente';
-ALTER TABLE users ADD COLUMN IF NOT EXISTS total_kg DECIMAL(10,3) NOT NULL DEFAULT 0.000;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS co2_avoided DECIMAL(10,3) NOT NULL DEFAULT 0.000;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS water_saved DECIMAL(10,3) NOT NULL DEFAULT 0.000;
 
 -- INSERIR DADOS NA TABELA material_types (se não existir)
 INSERT IGNORE INTO material_types (name, icon, color) VALUES
