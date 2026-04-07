@@ -74,17 +74,17 @@ export default function Home({setPage}) {
   <p className="subtitle">Reciclar nunca foi tão simples. Siga estes passos e faça a diferença para o planeta.</p>
   
   <div className="features-grid">
-    <div className="feature-item">
+    <div className="feature-item1">
       <h3>1. Encontre</h3>
       <p>Localize pontos de coleta próximos a você usando nosso mapa interativo.</p>
     </div>
 
-    <div className="feature-item">
+    <div className="feature-item1">
       <h3>2. Recicle</h3>
       <p>Leve seus materiais recicláveis aos pontos de coleta apropriados.</p>
     </div>
 
-    <div className="feature-item">
+    <div className="feature-item1">
       <h3>3. Registre</h3>
       <p>Registre sua ação e acompanhe seu impacto ambiental positivo.</p>
     </div>

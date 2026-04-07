@@ -212,7 +212,7 @@ h1, h2, h3, .navbar h2 {
   margin: 0 auto;
 }
 
-.feature-item {
+.feature-item1 {
   background-color: transparent;
   color: var(--verde-principal);
   border: 2px solid var(--verde-principal);
@@ -224,18 +224,18 @@ h1, h2, h3, .navbar h2 {
   transition: transform 0.3s ease;
 }
 
-.feature-item:hover {
+.feature-item1:hover {
   transform: translateY(-5px);
 }
 
-.feature-item h3 {
+.feature-item1 h3 {
   font-size: 18px;
   font-weight: 700;
   color: var(--verde-principal);
   margin-bottom: 12px;
 }
 
-.feature-item p {
+.feature-item1 p {
   font-size: 14px;
   color: var(--texto-secundario);
   line-height: 1.6;
