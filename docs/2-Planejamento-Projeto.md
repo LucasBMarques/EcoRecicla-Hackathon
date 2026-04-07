@@ -1,8 +1,5 @@
 # 2. Planejamento do Projeto
 
-Esta seção apresenta como o grupo organizará o trabalho ao longo do semestre.  
-O projeto adota uma metodologia ágil, simulando o ambiente de uma Software House.
-
 ---
 
 ### 🚨 Regra de Ouro: 

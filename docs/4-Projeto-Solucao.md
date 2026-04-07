@@ -15,24 +15,10 @@ Apresente um **diagrama macro** demonstrando como os componentes do sistema se c
 A arquitetura deve refletir o modelo de **fatias verticais**, evidenciando o fluxo:
 
 **Front-end → API (Back-end) → Banco de Dados**
-
-Semelhante à imagem abaixo:
-
-![Exemplo de Arquitetura](https://uds.com.br/blog/wp-content/uploads/2024/09/Imagem-1-Comparativo-ilustrativo-das-diferencas-entre-front-end-e-back-end.jpg)
-
-
-
- **Fonte:** [Guia Completo de Desenvolvimento de Software - UDS](https://uds.com.br/blog/desenvolvimento-de-software-guia-completo/) <br><br>
  
  ### 📎 Inserir o Diagrama de Arquitetura do Projeto do Grupo
-🚨 O grupo deverá inserir aqui a imagem
+![Diagrama de Arquitetura](/docs/images/Diagrama.png)
 
-
----
-🔧**Ferramentas recomendadas:**
-- Draw.io
-- Lucidchart
-- Figma
 
 ---
 
@@ -42,15 +28,10 @@ Descreva as tecnologias, linguagens, frameworks, bibliotecas e serviços escolhi
 
 | Dimensão | Tecnologia Escolhida |
 |----------|----------------------|
-| Banco de Dados (SGBD) | Ex: SQL Server, PostgreSQL ou MongoDB |
-| Back-end (API) | Ex: C# (.NET Core) |
-| Front-end / Mobile | Ex: HTML + CSS + JavaScript, React ou Flutter |
-| Hospedagem / Deploy | Ex: Azure, AWS, Render ou Railway |
+| Banco de Dados (SGBD) | MySQL Workbanch |
+| Back-end (API) | Node |
+| Front-end / Mobile |  HTML + CSS + JavaScript, React |
 | Gestão e Versionamento | GitHub e GitHub Projects (Kanban) |
-
- ⚠️ **Observação:**
- - GitHub Pages não executa back-end.
- - Utilize apenas tecnologias realmente implementadas.
 
 ---
 
