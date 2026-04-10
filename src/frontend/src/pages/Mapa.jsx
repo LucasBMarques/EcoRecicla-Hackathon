@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Map from "../components/Map";
 import { deleteCollectionPoint, getCollectionPoints } from "../services/api";
 
@@ -6,6 +6,10 @@ import { deleteCollectionPoint, getCollectionPoints } from "../services/api";
 export default function Mapa({ setPage }) {
   const [points, setPoints] = useState([]);
   const [searchMaterial, setSearchMaterial] = useState("");
+  const [selectedMaterial, setSelectedMaterial] = useState("");
+  const [userLocation, setUserLocation] = useState(null);
+  const [geoLoading, setGeoLoading] = useState(false);
+  const [geoError, setGeoError] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -44,12 +48,59 @@ export default function Mapa({ setPage }) {
   };
 
   const filteredPoints = points.filter((point) => {
-    if (!searchMaterial.trim()) return true;
-    const normalized = searchMaterial.toLowerCase();
+    const normalized = searchMaterial.trim().toLowerCase();
     const nameMatch = point.name?.toLowerCase().includes(normalized);
     const materialsMatch = point.materials?.toLowerCase().includes(normalized);
-    return nameMatch || materialsMatch;
+
+    const textMatch = !normalized || nameMatch || materialsMatch;
+    const chipMatch =
+      !selectedMaterial ||
+      point.materials
+        ?.toLowerCase()
+        .includes(selectedMaterial.toLowerCase());
+
+    return textMatch && chipMatch;
   });
+
+  const availableMaterials = useMemo(() => {
+    const set = new Set();
+
+    points.forEach((point) => {
+      if (!point.materials) return;
+      point.materials
+        .split(",")
+        .map((item) => item.trim())
+        .filter(Boolean)
+        .forEach((material) => set.add(material));
+    });
+
+    return Array.from(set).sort((a, b) => a.localeCompare(b, "pt-BR"));
+  }, [points]);
+
+  const handleUseMyLocation = () => {
+    if (!navigator.geolocation) {
+      setGeoError("Geolocalização não suportada neste navegador.");
+      return;
+    }
+
+    setGeoLoading(true);
+    setGeoError("");
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setUserLocation([
+          position.coords.latitude,
+          position.coords.longitude,
+        ]);
+        setGeoLoading(false);
+      },
+      () => {
+        setGeoError("Não foi possível obter sua localização.");
+        setGeoLoading(false);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+    );
+  };
 
   return (
     <>
@@ -152,12 +203,56 @@ export default function Mapa({ setPage }) {
           boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
         }}
       >
-        <Map points={filteredPoints} />
+        <Map points={filteredPoints} center={userLocation || [-19.85, -43.96]} userLocation={userLocation} />
       </div>
 
       {/* ... restante do código (filtro e lista) permanece igual ... */}
       <div style={{ marginTop: "40px" }}>
         <div style={{ marginBottom: "18px" }}>
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "12px" }}>
+            <button
+              onClick={handleUseMyLocation}
+              style={{
+                padding: "8px 14px",
+                background: "#1b9a3d",
+                color: "white",
+                border: "2px solid #1b9a3d",
+                borderRadius: "999px",
+                cursor: "pointer",
+                fontWeight: 600,
+                fontSize: "13px",
+              }}
+            >
+              {geoLoading ? "Localizando..." : "📍 Usar minha localização"}
+            </button>
+            {(selectedMaterial || searchMaterial) && (
+              <button
+                onClick={() => {
+                  setSelectedMaterial("");
+                  setSearchMaterial("");
+                }}
+                style={{
+                  padding: "8px 14px",
+                  background: "white",
+                  color: "#1b9a3d",
+                  border: "2px solid #1b9a3d",
+                  borderRadius: "999px",
+                  cursor: "pointer",
+                  fontWeight: 600,
+                  fontSize: "13px",
+                }}
+              >
+                Limpar filtros
+              </button>
+            )}
+          </div>
+
+          {geoError && (
+            <p style={{ margin: "0 0 10px 0", color: "#c2410c", fontSize: "13px" }}>
+              {geoError}
+            </p>
+          )}
+
           <input
             type="text"
             value={searchMaterial}
@@ -172,6 +267,29 @@ export default function Mapa({ setPage }) {
               fontSize: "14px",
             }}
           />
+
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "12px" }}>
+            {availableMaterials.map((material) => (
+              <button
+                key={material}
+                onClick={() =>
+                  setSelectedMaterial((prev) => (prev === material ? "" : material))
+                }
+                style={{
+                  padding: "6px 12px",
+                  borderRadius: "999px",
+                  border: selectedMaterial === material ? "2px solid #166534" : "1px solid #cfe5d4",
+                  background: selectedMaterial === material ? "#dcfce7" : "#f5fbf6",
+                  color: "#1f6a3d",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                {material}
+              </button>
+            ))}
+          </div>
         </div>
         <div
           style={{

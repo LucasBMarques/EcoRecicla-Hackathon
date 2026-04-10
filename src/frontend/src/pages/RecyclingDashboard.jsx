@@ -151,7 +151,7 @@ function EducationWidget({ material }) {
         {material.icon} Como preparar: {material.name}
       </div>
       <p style={{ margin: 0, fontSize: 13, color: "#444", lineHeight: 1.6 }}>
-        {material.preparation_tip || "Mantenha o material limpo e seco antes de descartar."}
+        {material.preparation_tip || material.description || "Mantenha o material limpo e seco antes de descartar."}
       </p>
     </div>
   );
