@@ -264,7 +264,7 @@ function CollectionPoints({ setPage }) {
 
       {view === "form" ? (
         <div className="container">
-          <div className="auth-card">
+          <div className="auth-card collection-points-layout">
             <div className="left">
               <div className="logo-section">
                 <div className="logo-icon">♻️</div>
@@ -272,8 +272,18 @@ function CollectionPoints({ setPage }) {
               </div>
 
               <h2>Cadastrar ponto de coleta</h2>
+              <p className="collection-subtitle">
+                Preencha os dados abaixo para adicionar um novo ponto e ajudar mais pessoas a reciclar.
+              </p>
 
               <form onSubmit={handleSubmit} className="collection-form">
+                <div className="collection-form-status">
+                  <span className="status-pill">{selectedMaterials.length} materiais selecionados</span>
+                  <span className={`status-pill ${latitude && longitude ? "ready" : "pending"}`}>
+                    {latitude && longitude ? "Localização confirmada" : "Aguardando localização"}
+                  </span>
+                </div>
+
                 <div className="form-section">
                   <h3>Informações Básicas</h3>
                   <input
@@ -341,8 +351,10 @@ function CollectionPoints({ setPage }) {
                           checked={selectedMaterials.includes(material.id)}
                           onChange={() => handleMaterialChange(material.id)}
                         />
-                        <span className="material-icon">{material.icon}</span>
-                        <span className="material-name">{material.name}</span>
+                        <div className="material-option-content">
+                          <span className="material-icon">{material.icon}</span>
+                          <span className="material-name">{material.name}</span>
+                        </div>
                       </label>
                     ))}
                   </div>
@@ -378,27 +390,32 @@ function CollectionPoints({ setPage }) {
               </form>
             </div>
 
-            <div className="right">
-              <div className="right-content">
+            <div className="right collection-right">
+              <div className="right-content collection-right-content">
+                <span className="collection-right-badge">Guia rapido</span>
                 <h2>Pontos de coleta</h2>
                 <p>Cadastre um novo ponto de coleta e ajude sua comunidade a reciclar mais!</p>
-                <div className="features">
-                  <div className="feature-item">
+                <div className="features collection-features">
+                  <div className="feature-item collection-feature-item">
                     <span>📍</span>
                     <span>Digite o CEP e o endereço é preenchido automaticamente</span>
                   </div>
-                  <div className="feature-item">
+                  <div className="feature-item collection-feature-item">
                     <span>♻️</span>
                     <span>Selecione os materiais que você aceita</span>
                   </div>
-                  <div className="feature-item">
+                  <div className="feature-item collection-feature-item">
                     <span>📞</span>
                     <span>Adicione telefone e horário de funcionamento</span>
                   </div>
-                  <div className="feature-item">
+                  <div className="feature-item collection-feature-item">
                     <span>🌱</span>
                     <span>Contribua com o meio ambiente</span>
                   </div>
+                </div>
+
+                <div className="collection-highlight">
+                  <strong>Dica:</strong> informe o horário de funcionamento para facilitar o uso do ponto pela comunidade.
                 </div>
               </div>
             </div>

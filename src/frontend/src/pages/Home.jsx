@@ -3,10 +3,8 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { getStats } from "../services/api";
 import "../styles/home.css";
-{/*
-import imgCapa from "../assets/public/img/capa.png";
-import imganner from "../assets/public/img/banner.jpg";
-*/}
+import imgCapa from "../assets/public/img/imagem-home.png";
+import imgOds12 from "../assets/public/img/ODS-12.jpg";
 
 export default function Home({setPage}) {
   const [stats, setStats] = useState({ users: 0, points: 0, recycled: 0 });
@@ -45,7 +43,7 @@ export default function Home({setPage}) {
   
   <div className="hero-image">
     {/* Imagem capa */}
-    <img src="#" alt="Destaque Reciclagem" />
+    <img src={imgCapa} alt="Pessoas separando materiais para reciclagem" />
   </div>
 
 </section>
@@ -92,7 +90,35 @@ export default function Home({setPage}) {
 </section>
 </div>
 
-      <Footer />
+<section className="impact-wrapper">
+  <div className="impact-content">
+    <div className="impact-left">
+      <div className="impact-tag">
+        <span aria-hidden="true">🌿</span>
+        <h2>ODS 12</h2>
+      </div>
+
+      <p className="impact-subtitle">Consumo e Produção Responsável</p>
+
+      <h3>Alinhado aos Objetivos Globais</h3>
+      <p className="impact-description">
+        O EcoRecicla apoia diretamente o ODS 12, promovendo práticas de consumo consciente e descarte correto por meio de ações simples no dia a dia.
+      </p>
+
+      <ul className="impact-list">
+        <li>Reduz a geração de resíduos com prevenção e reciclagem</li>
+        <li>Incentiva práticas sustentáveis nas comunidades</li>
+        <li>Aumenta a taxa de recicláveis destinados corretamente</li>
+      </ul>
+    </div>
+
+    <div className="impact-right">
+      <img src={imgOds12} alt="Ilustração relacionada ao ODS 12 e à reciclagem" />
+    </div>
+  </div>
+</section>
+
+      <Footer setPage={setPage} />
     </>
   );
 }

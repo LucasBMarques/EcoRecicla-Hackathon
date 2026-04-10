@@ -1,5 +1,4 @@
 import "../styles/home.css";
-import logoImg from "../assets/public/img/logo.png";
 
 export default function Navbar({ currentPage, setPage }) {
   const userData = JSON.parse(localStorage.getItem("user"));
@@ -20,7 +19,7 @@ export default function Navbar({ currentPage, setPage }) {
   return (
     <nav className="navbar">
       <div className="nav-brand" onClick={() => setPage("home")} style={{ cursor: 'pointer' }}>
-        <img src={logoImg} alt="logo ecorecicla" className="nav-logo" />
+        <span className="nav-logo-icon" aria-hidden="true">♻️</span>
         <h2>EcoRecicla</h2>
       </div>
       

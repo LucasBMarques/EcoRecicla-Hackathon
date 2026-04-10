@@ -1,7 +1,7 @@
 const db = require("../config/db");
 
 exports.getAll = (req, res) => {
-  const sql = "SELECT id, name, icon, co2_factor, water_factor, points_per_kg, units_accepted FROM materials ORDER BY name";
+  const sql = "SELECT id, name, icon, co2_factor, water_factor, points_per_kg, units_accepted, description, preparation_tip FROM materials ORDER BY name";
 
   db.query(sql, (err, result) => {
     if (err) {
