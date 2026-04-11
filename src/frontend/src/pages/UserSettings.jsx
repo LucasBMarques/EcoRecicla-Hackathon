@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { deleteAccount } from "../services/api";
 import "../styles/userSettings.css";
 
-// Página de configurações do usuário
 export default function UserSettings({ setPage }) {
   const [activeTab, setActiveTab] = useState("profile");
   const [user, setUser] = useState(null);
@@ -51,12 +50,11 @@ export default function UserSettings({ setPage }) {
       }
     }
 
-    // Calcular estatísticas (mock data - futuramente virá do backend)
     calculateStats();
   }, []);
 
   const calculateStats = () => {
-    // TODO: Fazer fetch do backend para obter dados reais
+  
     setStats({
       totalRecycled: "45kg",
       totalRecords: 12,
@@ -227,7 +225,6 @@ export default function UserSettings({ setPage }) {
 
   return (
     <div className="settings-wrapper">
-      {/* HEADER */}
       <header className="settings-header">
         <div className="header-content">
           <h1>Bem Vindo, <strong>{user?.name || "Usuário"}</strong></h1>
@@ -242,7 +239,6 @@ export default function UserSettings({ setPage }) {
       </header>
 
       <main className="settings-main">
-        {/* PROFILE CARD */}
         <div className="profile-card">
           <div className="profile-avatar-section">
             {photoPreview ? (
@@ -268,7 +264,6 @@ export default function UserSettings({ setPage }) {
           </button>
         </div>
 
-        {/* TABS NAVIGATION */}
         <div className="tabs-nav">
           <button 
             className={`tab-btn ${activeTab === "profile" ? "active" : ""}`}
@@ -302,15 +297,12 @@ export default function UserSettings({ setPage }) {
           </button>
         </div>
 
-        {/* TAB CONTENT */}
         <div className="tabs-content">
-          {/* PROFILE TAB */}
           {activeTab === "profile" && (
             <div className="tab-panel">
               <h2>Informações Pessoais</h2>
               
               <form onSubmit={handleSavePersonal} className="settings-form">
-                {/* PHOTO SECTION */}
                 <div className="form-section">
                   <h3>Foto de Perfil</h3>
                   <div className="photo-upload">
@@ -353,7 +345,6 @@ export default function UserSettings({ setPage }) {
                   </div>
                 </div>
 
-                {/* PERSONAL INFO */}
                 <div className="form-section">
                   <h3>Dados Básicos</h3>
                   <div className="form-grid">
@@ -422,7 +413,6 @@ export default function UserSettings({ setPage }) {
             </div>
           )}
 
-          {/* STATISTICS TAB */}
           {activeTab === "stats" && (
             <div className="tab-panel">
               <h2>Estatísticas de Reciclagem</h2>
@@ -461,7 +451,6 @@ export default function UserSettings({ setPage }) {
                 </div>
               </div>
 
-              {/* LEVEL PROGRESS */}
               <div className="level-section">
                 <h3>Nível Sustentável</h3>
                 <div className="level-info">
@@ -478,7 +467,6 @@ export default function UserSettings({ setPage }) {
             </div>
           )}
 
-          {/* HISTORY TAB */}
           {activeTab === "history" && (
             <div className="tab-panel">
               <h2>Histórico de Reciclagem</h2>
@@ -535,7 +523,6 @@ export default function UserSettings({ setPage }) {
             </div>
           )}
 
-          {/* RANKING TAB */}
           {activeTab === "ranking" && (
             <div className="tab-panel">
               <h2>Ranking e Progresso</h2>
@@ -602,12 +589,10 @@ export default function UserSettings({ setPage }) {
             </div>
           )}
 
-          {/* SETTINGS TAB */}
           {activeTab === "settings" && (
             <div className="tab-panel">
               <h2>Configurações da Conta</h2>
 
-              {/* CHANGE PASSWORD */}
               <div className="form-section password-section">
                 <h3>🔐 Alterar Senha</h3>
                 <form onSubmit={handleChangePassword} className="settings-form">
@@ -707,7 +692,6 @@ export default function UserSettings({ setPage }) {
                 </form>
               </div>
 
-              {/* PREFERENCES */}
               <div className="form-section">
                 <h3>📍 Preferências</h3>
                 <div className="preferences-group">
@@ -726,7 +710,6 @@ export default function UserSettings({ setPage }) {
                 </div>
               </div>
 
-              {/* DANGER ZONE */}
               <div className="form-section danger-zone">
                 <h3>⚠️ Zona de Perigo</h3>
                 <div className="danger-actions">

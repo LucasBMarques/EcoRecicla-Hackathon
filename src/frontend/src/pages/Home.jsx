@@ -24,7 +24,7 @@ export default function Home({setPage}) {
   return (
     <>
 
-      {/* Wrapper para o fundo gradiente */}
+      
 <div className="hero-wrapper">
   <section className="hero">
   <div className="hero-content">
@@ -42,7 +42,6 @@ export default function Home({setPage}) {
   </div>
   
   <div className="hero-image">
-    {/* Imagem capa */}
     <img src={imgCapa} alt="Pessoas separando materiais para reciclagem" />
   </div>
 

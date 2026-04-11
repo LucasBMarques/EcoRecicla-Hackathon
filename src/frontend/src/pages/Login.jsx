@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { loginUser } from "../services/api";
 import "../styles/auth.css";
-// Página de login de usuário
 export default function Login({ setPage }) {
 
   const [email, setEmail] = useState("");

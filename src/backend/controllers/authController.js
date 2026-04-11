@@ -30,7 +30,6 @@ exports.login = (req, res) => {
 
     const token = `token_${result[0].id}_${Date.now()}`;
     
-    // Converter foto de buffer para base64
     const user = {
       id: result[0].id,
       name: result[0].name,

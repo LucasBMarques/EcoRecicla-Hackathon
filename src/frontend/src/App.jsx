@@ -13,7 +13,6 @@ function App() {
   const [page, setPage] = useState("login");
   const [isLoading, setIsLoading] = useState(true);
 
-  // Verificar sessão ao carregar
   useEffect(() => {
     const checkSession = async () => {
       const token = localStorage.getItem("token");
@@ -49,7 +48,6 @@ function App() {
     checkSession();
   }, []);
 
-  // Salvar última página visitada
   const handleSetPage = (newPage) => {
     setPage(newPage);
 

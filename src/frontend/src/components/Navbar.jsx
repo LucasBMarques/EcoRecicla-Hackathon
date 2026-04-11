@@ -35,7 +35,7 @@ export default function Navbar({ currentPage, setPage }) {
         ))}
       </ul>
 
-      {/* Container do Perfil: Configurações de conta */}
+      
       <div 
         onClick={() => setPage("settings")} 
         style={{ 
@@ -50,7 +50,7 @@ export default function Navbar({ currentPage, setPage }) {
           color: "black", 
           fontSize: "14px", 
           fontWeight: "600",
-          whiteSpace: "nowrap" // Garante que o nome não quebre linha
+          whiteSpace: "nowrap" 
         }}>
           {userName}
         </span>
@@ -68,7 +68,7 @@ export default function Navbar({ currentPage, setPage }) {
             alignItems: "center",
             justifyContent: "center",
             overflow: "hidden",
-            flexShrink: 0 // Impede que o botão amasse se o nome for longo
+            flexShrink: 0 
           }}
         >
           {userPhoto ? (

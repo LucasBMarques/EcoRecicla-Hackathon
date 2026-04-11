@@ -26,14 +26,12 @@ h1, h2, h3, .navbar h2 {
   margin: 0;
 }
 
-/* Container do Gradiente (Hero + Stats) */
 .hero-wrapper {
   background: linear-gradient(180deg, var(--fundo-pagina) 0%, var(--verde-claro) 50%, #e2f6cb 100%);
   width: 100%;
   padding-bottom: 60px;
 }
 
-/* --- SEÇÃO HERO ALTERADA PARA INCLUIR IMAGEM --- */
 .hero {
   padding: 80px 24px 40px 24px;
   display: flex;
@@ -42,7 +40,7 @@ h1, h2, h3, .navbar h2 {
   gap: 40px;
   max-width: 1200px;
   margin: 0 auto;
-  text-align: left; /* Alinhado à esquerda para compor com a imagem lateral */
+  text-align: left; 
 }
 
 .hero-content {
@@ -59,11 +57,10 @@ h1, h2, h3, .navbar h2 {
   max-width: 100%;
   height: auto;
   border-radius: var(--radius-12);
-  /* box-shadow: 0 10px 30px rgba(0,0,0,0.1); Opcional: sombra para destaque */
 }
 
 .hero h1 {
-  font-size: 38px; /* Aumentado levemente para aproveitar o espaço lateral */
+  font-size: 38px; 
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: 20px;
@@ -82,11 +79,10 @@ h1, h2, h3, .navbar h2 {
 .hero-btns {
   display: flex;
   gap: 16px;
-  justify-content: flex-start; /* Botões alinhados à esquerda junto com o texto */
+  justify-content: flex-start; 
   align-items: stretch;
 }
 
-/* Responsividade do Hero */
 @media (max-width: 900px) {
   .hero {
     flex-direction: column;
@@ -104,13 +100,11 @@ h1, h2, h3, .navbar h2 {
     min-width: 0;
   }
 }
-/* ----------------------------------------------- */
 
-/* Botões */
 .home-btn-primary, .home-btn-secondary {
   box-sizing: border-box;
   height: 52px;
-  min-width: 250px; /* Reduzi levemente para caber melhor lado a lado */
+  min-width: 250px; 
   width: 250px;
   display: flex;
   align-items: center;
@@ -149,7 +143,6 @@ h1, h2, h3, .navbar h2 {
   transform: translateY(-2px);
 }
 
-/* Stats Container */
 .stats-container {
   display: flex;
   justify-content: center;
@@ -178,7 +171,6 @@ h1, h2, h3, .navbar h2 {
   font-weight: 500;
 }
 
-/* Features Section */
 .features-wrapper {
   background: linear-gradient(180deg, #e2f6cb 0%, var(--verde-claro) 50%, var(--fundo-pagina) 100%);
   width: 100%;
@@ -242,7 +234,6 @@ h1, h2, h3, .navbar h2 {
   margin: 0;
 }
 
-/* ODS Section */
 .impact-wrapper {
   background: linear-gradient(180deg, var(--fundo-pagina) 0%, var(--verde-claro) 50%, var(--fundo-pagina) 100%);
   width: 100%;
@@ -341,7 +332,6 @@ h1, h2, h3, .navbar h2 {
   background: #07180f;
 }
 
-/* Navbar */
 .navbar {
   background-color: var(--fundo-pagina);
   height: 56px;
@@ -395,7 +385,6 @@ h1, h2, h3, .navbar h2 {
   border-bottom: 2px solid var(--verde-medio); 
 }
 
-/* Footer */
 .footer-container {
   background-color: var(--fundo-pagina);
   color: var(--texto-principal);

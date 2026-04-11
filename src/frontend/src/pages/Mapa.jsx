@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import Map from "../components/Map";
 import { deleteCollectionPoint, getCollectionPoints } from "../services/api";
 
-// Página inicial com mapa e lista de pontos de coleta
 export default function Mapa({ setPage }) {
   const [points, setPoints] = useState([]);
   const [searchMaterial, setSearchMaterial] = useState("");
@@ -172,7 +171,6 @@ export default function Mapa({ setPage }) {
           </button>
         </div>
 
-        {/* MANTIDO O TÍTULO E DESCRIÇÃO, REMOVIDO APENAS O BOTÃO */}
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <span style={{ fontSize: "28px" }}>♻️</span>
           <div>
@@ -206,7 +204,6 @@ export default function Mapa({ setPage }) {
         <Map points={filteredPoints} center={userLocation || [-19.85, -43.96]} userLocation={userLocation} />
       </div>
 
-      {/* ... restante do código (filtro e lista) permanece igual ... */}
       <div style={{ marginTop: "40px" }}>
         <div style={{ marginBottom: "18px" }}>
           <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "12px" }}>

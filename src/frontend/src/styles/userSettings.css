@@ -10,7 +10,6 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* HEADER */
 .settings-header {
   background: white;
   border-bottom: 1px solid #e0e0e0;
@@ -55,14 +54,12 @@
   color: white;
 }
 
-/* MAIN CONTENT */
 .settings-main {
   max-width: 1200px;
   margin: 30px auto;
   padding: 0 30px;
 }
 
-/* PROFILE CARD */
 .profile-card {
   background: white;
   border-radius: 16px;
@@ -142,7 +139,6 @@
   box-shadow: 0 6px 16px rgba(27, 154, 61, 0.3);
 }
 
-/* TABS NAVIGATION */
 .tabs-nav {
   display: flex;
   gap: 12px;
@@ -177,7 +173,6 @@
   border-color: #1b9a3d;
 }
 
-/* TABS CONTENT */
 .tabs-content {
   background: white;
   border-radius: 16px;
@@ -208,7 +203,6 @@
   font-weight: 700;
 }
 
-/* FORM SECTIONS */
 .form-section {
   margin-bottom: 40px;
   padding-bottom: 30px;
@@ -283,7 +277,6 @@
   font-weight: 600;
 }
 
-/* PASSWORD SECTION IMPROVEMENTS */
 .password-section {
   background: linear-gradient(135deg, #f0fdf4 0%, #f8fffe 100%);
   padding: 24px;
@@ -405,11 +398,10 @@
   }
 
   .password-input-wrapper input {
-    font-size: 16px; /* Prevents zoom on iOS */
+    font-size: 16px; 
   }
 }
 
-/* PHOTO UPLOAD */
 .photo-upload {
   display: grid;
   grid-template-columns: auto 1fr;
@@ -477,7 +469,6 @@
   color: white;
 }
 
-/* STATISTICS */
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -514,7 +505,6 @@
   margin: 0;
 }
 
-/* LEVEL SECTION */
 .level-section {
   background: linear-gradient(135deg, #1b9a3d 0%, #0f6e56 100%);
   color: white;
@@ -565,7 +555,6 @@
   opacity: 0.9;
 }
 
-/* HISTORY TABLE */
 .table-container {
   overflow-x: auto;
   margin-bottom: 30px;
@@ -617,7 +606,6 @@
   cursor: pointer;
 }
 
-/* RANKING */
 .ranking-card {
   background: linear-gradient(135deg, #1b9a3d 0%, #0f6e56 100%);
   color: white;
@@ -652,7 +640,6 @@
   margin: 0;
 }
 
-/* LEVEL PROGRESSION */
 .level-progression {
   margin-bottom: 40px;
 }
@@ -710,7 +697,6 @@
   font-size: 12px;
 }
 
-/* LEADERBOARD */
 .top-recyclers {
   margin-top: 40px;
 }
@@ -759,7 +745,6 @@
   font-weight: 600;
 }
 
-/* PREFERENCES */
 .preferences-group {
   display: flex;
   flex-direction: column;
@@ -782,7 +767,6 @@
   accent-color: #1b9a3d;
 }
 
-/* DANGER ZONE */
 .danger-zone {
   background: #ffebee;
   border: 1px solid #ffcdd2;
@@ -831,7 +815,6 @@
   transform: translateY(-2px);
 }
 
-/* BUTTONS */
 .save-btn {
   background: linear-gradient(135deg, #1b9a3d 0%, #0f6e56 100%);
   color: white;
@@ -855,7 +838,6 @@
   cursor: not-allowed;
 }
 
-/* RESPONSIVENESS */
 @media (max-width: 768px) {
   .settings-main {
     padding: 0 16px;

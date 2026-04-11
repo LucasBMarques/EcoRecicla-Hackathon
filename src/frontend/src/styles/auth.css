@@ -9,7 +9,6 @@ body {
   background: #e8f0e9;
 }
 
-/* LAYOUT PRINCIPAL */
 .container {
   display: flex;
   min-height: 100vh;
@@ -22,7 +21,6 @@ body {
   min-height: 100vh;
 }
 
-/* LADO ESQUERDO - FORMULÁRIO */
 .left {
   flex: 1;
   display: flex;
@@ -124,7 +122,6 @@ body {
   text-decoration: underline;
 }
 
-/* LADO DIREITO - INFO */
 .right {
   flex: 1;
   background: linear-gradient(160deg, #1b9a3d 0%, #0f6e56 100%);
@@ -200,7 +197,6 @@ body {
   text-align: center;
 }
 
-/* RESPONSIVO */
 @media (max-width: 768px) {
   .container {
     padding: 0;
@@ -234,7 +230,6 @@ body {
   }
 }
 
-/* PASSWORD INPUT WITH TOGGLE */
 .password-input-wrapper {
   position: relative;
   display: flex;

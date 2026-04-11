@@ -172,7 +172,6 @@ export const uploadPhoto = async (file) => {
 };
 
 export const getStats = async () => {
-  // home
   return {
     users: 10,
     points: 5,

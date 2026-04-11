@@ -5,7 +5,7 @@ import PointModal from "../components/PointModal";
 import { useToast } from "../hooks/useToast";
 import "../styles/auth.css";
 import "../styles/collectionPointsForm.css";
-// Página para cadastro e visualização de pontos de coleta, com integração de CEP e geolocalização, além de filtros por material e modais de detalhes.
+
 const defaultMaterials = [
   { id: 1, name: "Papel", icon: "📄" },
   { id: 2, name: "Metal", icon: "🔩" },
@@ -18,12 +18,11 @@ const defaultMaterials = [
 ];
 
 function CollectionPoints({ setPage }) {
-  // Verificar se deve começar em modo "list"
   const initialView = localStorage.getItem("_collectionPointsInitialView") || "form";
   if (localStorage.getItem("_collectionPointsInitialView")) {
     localStorage.removeItem("_collectionPointsInitialView");
   }
-  const [view, setView] = useState(initialView); // "form" ou "list"
+  const [view, setView] = useState(initialView); 
   const [form, setForm] = useState({
     name: "",
     cep: "",
@@ -50,7 +49,7 @@ function CollectionPoints({ setPage }) {
   const { toasts, addToast, removeToast } = useToast();
 
   useEffect(() => {
-    // Carregar materiais disponíveis
+    
     getMaterials()
       .then((data) => {
         if (!Array.isArray(data) || data.length === 0) {
@@ -65,7 +64,7 @@ function CollectionPoints({ setPage }) {
         setAllMaterials(defaultMaterials);
       });
 
-    // Carregar pontos
+    
     fetch("http://localhost:3001/api/collection-points")
       .then((res) => res.json())
       .then((data) => {
@@ -73,7 +72,7 @@ function CollectionPoints({ setPage }) {
       })
       .catch(() => {});
 
-    // Pegar ID do usuário
+    
     const user = JSON.parse(localStorage.getItem("user"));
     setUserID(user?.id);
   }, [addToast]);
@@ -195,7 +194,7 @@ function CollectionPoints({ setPage }) {
         setLongitude("");
         setCepData(null);
         
-        // Recarregar pontos
+        
         fetch("http://localhost:3001/api/collection-points")
           .then((res) => res.json())
           .then((data) => {

@@ -242,7 +242,6 @@
   }
 }
 
-/* Responsividade */
 @media (max-width: 768px) {
   .collection-points-layout .left {
     padding-top: 34px;
