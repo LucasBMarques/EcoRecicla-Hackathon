@@ -35,17 +35,10 @@ Descreva as tecnologias, linguagens, frameworks, bibliotecas e serviços escolhi
 
 ---
 
-##  4.3 Wireframes ou Mockups (A partir da Sprint 2)
-
-Apresente os protótipos das telas (Wireframes/Mockups) apenas das funcionalidades que estão sendo implementadas na Sprint atual.
-
-Cada Wireframe ou Mockups devem estar associados a pelo menos:
-
-- Um Requisito Funcional (RF-XX)
-- Uma História de Usuário
+##  4.3 Wireframes ou Mockups
 
 
-## 📌 Exemplo Ilustrativo – Tela de Cadastro (RF-01)
+📌 Exemplo Ilustrativo – Tela de Cadastro (RF-01)
 
 **História associada:** Como usuário, quero criar uma conta para acessar o sistema.
 
@@ -54,19 +47,6 @@ Representação simplificada do Wireframe:
 <img src="images/Registro.png" width="80%">
 
 **Descrição:** A interface contempla todos os campos exigidos pelo RF-01 e permite persistência no banco após validação no backend.
-
----
-🔧 **Ferramentas sugeridas:**
-- Figma  
-- MarvelApp  
-- Balsamiq  
----
-
-### 📎 Inserir AQUI Wireframes/ Mockups do Projeto de Software
-
-🚨 O grupo deverá inserir aqui a imagem
-
-
 
 ---
 
@@ -82,46 +62,33 @@ A documentação do banco seguirá a abordagem de **entrega contínua**, sendo e
 
 Para a primeira fatia vertical (MVP), o Squad deverá entregar o **script de criação das tabelas ou coleções utilizadas**.
 
-#### 🔹 Para Banco Relacional (SQL)
+#### 🔹 Banco Relacional (SQL)
 
-Incluir:
-
-- Comandos `CREATE TABLE`
-- Definição de chave primária (PK)
-- Definição de chaves estrangeiras (FK)
-
-**Exemplo:**
+**Parte do codigo:**
 
 ```sql
-CREATE TABLE Usuario (
-    Id INT PRIMARY KEY,
-    Nome VARCHAR(100),
-    Email VARCHAR(150) UNIQUE,
-    Senha VARCHAR(200)
+CREATE DATABASE IF NOT EXISTS ecorecicla;
+
+USE ecorecicla;
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(150) UNIQUE,
+    password VARCHAR(200),
+    nickname VARCHAR(100),
+    country VARCHAR(100),
+    city VARCHAR(100),
+    photo LONGBLOB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    eco_points INT NOT NULL DEFAULT 0,
+    level ENUM('Semente','Broto','Árvore','Floresta','Guardião') NOT NULL DEFAULT 'Semente',
+    total_kg DECIMAL(10,3) NOT NULL DEFAULT 0.000,
+    co2_avoided DECIMAL(10,3) NOT NULL DEFAULT 0.000,
+    water_saved DECIMAL(10,3) NOT NULL DEFAULT 0.000
 );
 ```
-
----
-
-### Para Banco NoSQL
-
-Incluir a estrutura dos documentos JSON (Schema).
-
-**Exemplo:**
-
-```json
-{
-  "nome": "João Silva",
-  "email": "joao@email.com",
-  "senha": "hash_da_senha"
-}
-```
-
-### 📁 Obrigatório
-
-O arquivo .sql ou .js deve ser salvo na pasta: src/bd
-
- - É permitido colar um trecho do script no README apenas para visualização rápida.
+<a href="../src/db/database.sql"> Clique para ir para Banco de dados relacional completo </a>
  
 ---
 ### 4.4.2 Representação do Modelo Físico de Dados (Entrega na Sprint 3 - Core)
