@@ -17,7 +17,22 @@
 | RF-07 | O sistema deve permitir que o usuário visualize uma prévia dos dados antes de finalizar o cadastro. | 🟡 MÉDIA |
 | RF-08 | O sistema deve permitir que o usuário altere os dados antes de confirmar o cadastro. | 🟡 MÉDIA |
 | RF-09 | O sistema deve redirecionar o usuário para a tela de login após o cadastro bem-sucedido. | 🔴 ALTA |
-
+| RF-10 | O sistema deve permitir que o usuário realize login utilizando e-mail e senha. | 🔴 ALTA |
+| RF-11 | O sistema deve validar as credenciais informadas durante o login. | 🔴 ALTA |
+| RF-12 | O sistema deve permitir que o usuário encerre a sessão através do logout. | 🟡 MÉDIA |
+| RF-13 | O sistema deve listar os pontos de coleta cadastrados. | 🔴 ALTA |
+| RF-14 | O sistema deve permitir visualizar detalhes dos pontos de coleta. | 🟡 MÉDIA |
+| RF-15 | O sistema deve permitir cadastrar novos pontos de coleta. | 🔴 ALTA |
+| RF-16 | O sistema deve permitir editar informações dos pontos de coleta. | 🟡 MÉDIA |
+| RF-17 | O sistema deve permitir excluir pontos de coleta cadastrados. | 🟡 MÉDIA |
+| RF-18 | O sistema deve exibir os materiais recicláveis aceitos em cada ponto de coleta. | 🔴 ALTA |
+| RF-19 | O sistema deve permitir associar materiais recicláveis aos pontos de coleta. | 🔴 ALTA |
+| RF-20 | O sistema deve permitir a comunicação entre front-end e back-end por meio de API REST. | 🔴 ALTA |
+| RF-21 | O sistema deve armazenar os dados no banco de dados MySQL. | 🔴 ALTA |
+| RF-22 | O sistema deve permitir pesquisar pontos de coleta. | 🟡 MÉDIA |
+| RF-23 | O sistema deve exibir mensagens de sucesso e erro nas operações realizadas. | 🟡 MÉDIA |
+| RF-24 | O sistema deve permitir atualização dos dados do usuário. | 🟡 MÉDIA |
+| RF-25 | O sistema deve permitir navegação entre as páginas da aplicação. | 🟡 MÉDIA |
 
 ---
 
@@ -39,7 +54,7 @@ Para que eu possa utilizar a plataforma.
 
 Como sistema,  
 Eu quero validar se o e-mail já existe,  
-Para que evitar contas duplicadas.
+Para evitar contas duplicadas.
 
 ---
 
@@ -94,11 +109,136 @@ Para corrigir possíveis erros.
 ### História 9 (relacionada ao RF-09)
 
 Como usuário,
-Eu quero receber um e-mail de confirmação após o cadastro,
-Para validar que minha conta foi criada com sucesso.
+Eu quero ser redirecionado para a tela de login após o cadastro,
+Para acessar minha conta no sistema.
 
 ---
 
+### História 10 (relacionada ao RF-10)
+
+Como usuário,
+Quero realizar login no sistema,
+Para acessar minhas funcionalidades.
+
+---
+
+### História 11 (relacionada ao RF-11)
+
+Como sistema,
+Quero validar os dados de login,
+Para garantir acesso apenas a usuários cadastrados.
+
+---
+
+### História 12 (relacionada ao RF-12)
+
+Como usuário,
+Quero realizar logout da plataforma,
+Para encerrar minha sessão com segurança.
+
+---
+
+### História 13 (relacionada ao RF-13)
+
+Como usuário,
+Quero visualizar os pontos de coleta cadastrados,
+Para encontrar locais de reciclagem.
+
+---
+
+### História 14 (relacionada ao RF-14)
+
+Como usuário,
+Quero visualizar detalhes dos pontos de coleta,
+Para conhecer informações do local.
+
+---
+
+### História 15 (relacionada ao RF-15)
+
+Como administrador,
+Quero cadastrar novos pontos de coleta,
+Para disponibilizar novos locais no sistema.
+
+---
+
+### História 16 (relacionada ao RF-16)
+
+Como administrador,
+Quero editar os dados dos pontos de coleta,
+Para manter as informações atualizadas.
+
+---
+
+### História 17 (relacionada ao RF-17)
+
+Como administrador,
+Quero remover pontos de coleta,
+Para excluir locais desatualizados.
+
+---
+
+### História 18 (relacionada ao RF-18)
+
+Como usuário,
+Quero visualizar os materiais recicláveis aceitos,
+Para saber onde descartar corretamente.
+
+---
+
+### História 19 (relacionada ao RF-19)
+
+Como administrador,
+Quero associar materiais aos pontos de coleta,
+Para informar os tipos de reciclagem disponíveis.
+
+---
+
+### História 20 (relacionada ao RF-20)
+
+Como sistema,
+Quero integrar front-end e back-end através de API,
+Para permitir comunicação entre as partes do sistema.
+
+---
+
+### História 21 (relacionada ao RF-21)
+
+Como sistema,
+Quero armazenar os dados no banco MySQL,
+Para garantir persistência das informações.
+
+---
+
+### História 22 (relacionada ao RF-22)
+
+Como usuário,
+Quero pesquisar pontos de coleta,
+Para encontrar locais específicos rapidamente.
+
+---
+
+### História 23 (relacionada ao RF-23)
+
+Como usuário,
+Quero receber mensagens de sucesso e erro,
+Para entender o resultado das ações realizadas.
+
+---
+
+### História 24 (relacionada ao RF-24)
+
+Como usuário,
+Quero atualizar meus dados cadastrais,
+Para manter minhas informações corretas.
+
+---
+
+### História 25 (relacionada ao RF-25)
+
+Como usuário,
+Quero navegar entre as páginas da aplicação,
+Para utilizar os recursos do sistema.
 
 # 3.3 Requisitos Não Funcionais
 
@@ -112,7 +252,15 @@ Para validar que minha conta foi criada com sucesso.
 | RNF-04 | A interface deve ser responsiva (funcionar em celular e desktop). | 🟡 MÉDIA |
 | RNF-05 | O sistema deve garantir segurança contra entradas inválidas (ex: SQL Injection). | 🔴 ALTA |
 | RNF-06 | O sistema deve ser compatível com os principais navegadores (Chrome, Edge, Firefox). | 🟡 MÉDIA |
-
+| RNF-07 | O sistema deve utilizar arquitetura cliente-servidor. | 🔴 ALTA |
+| RNF-08 | A API deve retornar dados no formato JSON. | 🔴 ALTA |
+| RNF-09 | O sistema deve possuir organização modular no back-end. | 🟡 MÉDIA |
+| RNF-10 | O sistema deve manter persistência dos dados após reinicialização do servidor. | 🔴 ALTA |
+| RNF-11 | O sistema deve garantir integridade dos dados armazenados no banco. | 🔴 ALTA |
+| RNF-12 | O sistema deve possuir código versionado utilizando GitHub. | 🟡 MÉDIA |
+| RNF-13 | O sistema deve ser desenvolvido utilizando React no front-end. | 🟡 MÉDIA |
+| RNF-14 | O sistema deve utilizar Node.js no back-end. | 🟡 MÉDIA |
+| RNF-15 | O sistema deve utilizar MySQL como banco de dados. | 🔴 ALTA |
 ---
 
 # 3.4 Restrições do Projeto
