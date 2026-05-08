@@ -35,52 +35,76 @@ export default function Navbar({ currentPage, setPage }) {
         ))}
       </ul>
 
-      
-      <div 
-        onClick={() => setPage("settings")} 
-        style={{ 
-          display: "flex", 
-          alignItems: "center", 
-          gap: "12px", 
-          cursor: "pointer",
-          marginLeft: "20px" 
-        }}
-      >
-        <span style={{ 
-          color: "black", 
-          fontSize: "14px", 
-          fontWeight: "600",
-          whiteSpace: "nowrap" 
-        }}>
-          {userName}
-        </span>
-
+      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
         <button
-          className="nav-button"
+          onClick={() => {
+            localStorage.setItem("settingsTab", "ranking");
+            setPage("settings");
+          }}
+          title="Ver Ranking"
           style={{
-            padding: "0",
-            background: userPhoto ? "transparent" : "#f0f6f0",
-            border: userPhoto ? "2px solid #e8f0e8" : "none",
+            background: "transparent",
+            border: "none",
+            fontSize: "20px",
+            cursor: "pointer",
+            padding: "8px",
             borderRadius: "8px",
-            width: "40px",
-            height: "40px",
+            transition: "all 0.3s ease",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            overflow: "hidden",
-            flexShrink: 0 
+          }}
+          onMouseEnter={(e) => e.target.style.background = "#f0f6f0"}
+          onMouseLeave={(e) => e.target.style.background = "transparent"}
+        >
+          🏆
+        </button>
+
+        <div 
+          onClick={() => setPage("settings")} 
+          style={{ 
+            display: "flex", 
+            alignItems: "center", 
+            gap: "12px", 
+            cursor: "pointer",
           }}
         >
-          {userPhoto ? (
-            <img
-              src={userPhoto}
-              alt="perfil"
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
-          ) : (
-            "👤"
-          )}
-        </button>
+          <span style={{ 
+            color: "black", 
+            fontSize: "14px", 
+            fontWeight: "600",
+            whiteSpace: "nowrap" 
+          }}>
+            {userName}
+          </span>
+
+          <button
+            className="nav-button"
+            style={{
+              padding: "0",
+              background: userPhoto ? "transparent" : "#f0f6f0",
+              border: userPhoto ? "2px solid #e8f0e8" : "none",
+              borderRadius: "8px",
+              width: "40px",
+              height: "40px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              overflow: "hidden",
+              flexShrink: 0 
+            }}
+          >
+            {userPhoto ? (
+              <img
+                src={userPhoto}
+                alt="perfil"
+                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+              />
+            ) : (
+              "👤"
+            )}
+          </button>
+        </div>
       </div>
     </nav>
   );

@@ -287,12 +287,22 @@ export default function RecyclingDashboard({ setPage }) {
       setCelebration(data);
 
       if (user?.id) {
+        // Buscar perfil atualizado do backend
+        try {
+          const updatedUserProfile = await fetch(`${API}/auth/profile/${user.id}`).then(r => r.json());
+          localStorage.setItem("user", JSON.stringify(updatedUserProfile));
+          setUser(updatedUserProfile);
+        } catch (err) {
+          console.error("Erro ao atualizar perfil:", err);
+          // Fallback: atualizar apenas eco_points
+          const fallbackUser = { ...user, eco_points: (user.eco_points || 0) + data.points_earned };
+          localStorage.setItem("user", JSON.stringify(fallbackUser));
+          setUser(fallbackUser);
+        }
+        
         loadStats(user.id);
         loadBadges(user.id);
         loadHistory(user.id);
-        const updatedUser = { ...user, eco_points: (user.eco_points || 0) + data.points_earned };
-        localStorage.setItem("user", JSON.stringify(updatedUser));
-        setUser(updatedUser);
       }
     } catch (e) {
       setError(e.message);

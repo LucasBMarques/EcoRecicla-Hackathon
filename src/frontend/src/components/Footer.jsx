@@ -58,7 +58,7 @@ export default function Footer({ setPage }) {
           <h4>Contato</h4>
           <ul>
             <li>contato@ecorecicla.com</li>
-            <li>(11) 9999-9999</li>
+            <li>(31) 9999-9999</li>
             <li>@ecorecicla</li>
           </ul>
         </div>
