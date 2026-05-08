@@ -178,3 +178,13 @@ export const getStats = async () => {
     recycled: 120
   };
 };
+
+export const getRanking = async () => {
+  const response = await fetch(`${API}/ranking`);
+  return response.json();
+};
+
+export const getUserProfile = async (userId) => {
+  const response = await fetch(`${API}/auth/profile/${userId}`);
+  return response.json();
+};

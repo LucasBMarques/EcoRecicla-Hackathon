@@ -37,7 +37,12 @@ exports.login = (req, res) => {
       nickname: result[0].nickname || "",
       country: result[0].country || "",
       city: result[0].city || "",
-      photo: result[0].photo ? result[0].photo.toString('base64') : null
+      photo: result[0].photo ? result[0].photo.toString('base64') : null,
+      eco_points: result[0].eco_points || 0,
+      level: result[0].level || "Semente",
+      total_kg: result[0].total_kg || 0,
+      co2_avoided: result[0].co2_avoided || 0,
+      water_saved: result[0].water_saved || 0
     };
 
     res.json({ message: "Login realizado com sucesso", user, token });
@@ -61,7 +66,7 @@ exports.validateSession = (req, res) => {
     return res.status(401).json({ valid: false, message: "Token inválido" });
   }
 
-  const sql = "SELECT id, name, email, nickname, country, city, photo FROM users WHERE id = ?";
+  const sql = "SELECT id, name, email, nickname, country, city, photo, eco_points, level, total_kg, co2_avoided, water_saved FROM users WHERE id = ?";
   db.query(sql, [userId], (err, result) => {
     if (err) {
       return res.status(500).json({ valid: false, message: "Erro ao validar sessão" });
@@ -79,6 +84,11 @@ exports.validateSession = (req, res) => {
       country: result[0].country || "",
       city: result[0].city || "",
       photo: result[0].photo ? result[0].photo.toString("base64") : null,
+      eco_points: result[0].eco_points || 0,
+      level: result[0].level || "Semente",
+      total_kg: result[0].total_kg || 0,
+      co2_avoided: result[0].co2_avoided || 0,
+      water_saved: result[0].water_saved || 0
     };
 
     return res.json({ valid: true, user });
@@ -113,7 +123,7 @@ exports.getUserProfile = (req, res) => {
     return res.status(400).json({ error: "ID do usuário não fornecido" });
   }
 
-  const sql = "SELECT id, name, email, photo FROM users WHERE id = ?";
+  const sql = "SELECT id, name, email, nickname, country, city, photo, eco_points, level, total_kg, co2_avoided, water_saved FROM users WHERE id = ?";
 
   db.query(sql, [userId], (err, result) => {
     if (err) {
@@ -129,7 +139,15 @@ exports.getUserProfile = (req, res) => {
       id: result[0].id,
       name: result[0].name,
       email: result[0].email,
-      photo: result[0].photo ? result[0].photo.toString('base64') : null
+      nickname: result[0].nickname || "",
+      country: result[0].country || "",
+      city: result[0].city || "",
+      photo: result[0].photo ? result[0].photo.toString('base64') : null,
+      eco_points: result[0].eco_points || 0,
+      level: result[0].level || "Semente",
+      total_kg: result[0].total_kg || 0,
+      co2_avoided: result[0].co2_avoided || 0,
+      water_saved: result[0].water_saved || 0
     };
 
     res.json(user);

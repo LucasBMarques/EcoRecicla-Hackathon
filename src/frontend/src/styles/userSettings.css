@@ -640,6 +640,13 @@
   margin: 0;
 }
 
+.ranking-score {
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 8px;
+  opacity: 1;
+}
+
 .level-progression {
   margin-bottom: 40px;
 }
@@ -649,6 +656,22 @@
   color: #1b5e3f;
   margin-bottom: 20px;
   font-weight: 600;
+}
+
+.current-level-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #f0f6f0;
+  border-radius: 12px;
+  border: 2px solid #1b9a3d;
+}
+
+.level-badge {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1b5e3f;
 }
 
 .levels-timeline {
@@ -708,6 +731,66 @@
   font-weight: 600;
 }
 
+.material-breakdown {
+  margin: 40px 0;
+  background: #f9f9f9;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.material-breakdown h3 {
+  font-size: 18px;
+  color: #1b5e3f;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.material-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.material-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+  border-left: 4px solid #1b9a3d;
+  transition: all 0.3s ease;
+}
+
+.material-item:hover {
+  box-shadow: 0 2px 8px rgba(27, 154, 61, 0.1);
+  transform: translateX(4px);
+}
+
+.material-icon {
+  font-size: 24px;
+  min-width: 30px;
+  text-align: center;
+}
+
+.material-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.material-name {
+  font-weight: 600;
+  color: #333;
+  font-size: 14px;
+}
+
+.material-info small {
+  color: #666;
+  font-size: 12px;
+}
+
 .leaderboard {
   display: flex;
   flex-direction: column;
@@ -723,6 +806,19 @@
   background: #f9f9f9;
   border-radius: 8px;
   border-left: 4px solid #1b9a3d;
+  transition: all 0.3s ease;
+}
+
+.leaderboard-item.current-user {
+  background: #f0f6f0;
+  border-left-color: #0f6e56;
+  box-shadow: 0 2px 8px rgba(27, 154, 61, 0.15);
+}
+
+.leaderboard-item .user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .leaderboard-item .rank {
@@ -736,6 +832,11 @@
   color: #333;
 }
 
+.leaderboard-item .level-text {
+  color: #666;
+  font-size: 12px;
+}
+
 .leaderboard-item .score {
   background: #1b9a3d;
   color: white;
@@ -743,6 +844,21 @@
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
+}
+
+.leaderboard.leaderboard-compact {
+  gap: 8px;
+}
+
+.leaderboard-item.compact {
+  padding: 10px;
+  border-left: none;
+  background: white;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.leaderboard-item.compact .rank {
+  min-width: 35px;
 }
 
 .preferences-group {
