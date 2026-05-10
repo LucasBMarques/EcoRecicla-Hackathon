@@ -94,7 +94,11 @@ CREATE TABLE IF NOT EXISTS users (
 ### 4.4.2 Representação do Modelo Físico de Dados (Entrega na Sprint 3 - Core)
 
 
-<img src="./images/DER-Enhegaria_Reversa.mwb" width="85%">
+<img src="./images/DER.engenharia-reversa.png" width="85%">
+
+
+📎 Arquivo editável do MySQL Workbench:  
+[Baixar arquivo .mwb](docs/DER-Enhegaria_Reversa.mwb)
 
 <br>O grupo deverá gerar um diagrama físico do banco de dados (estrutura real das tabelas), evidenciando PKs, FKs e relacionamentos, conforme implementado no código.
 
