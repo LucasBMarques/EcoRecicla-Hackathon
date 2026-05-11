@@ -17,7 +17,7 @@ A arquitetura deve refletir o modelo de **fatias verticais**, evidenciando o flu
 **Front-end → API (Back-end) → Banco de Dados**
  
  ### 📎 Inserir o Diagrama de Arquitetura do Projeto do Grupo
-![Diagrama de Arquitetura](/docs/images/Diagrama.png)
+![Diagrama de Arquitetura](/docs/images/diagrama_arquitetura.png)
 
 
 ---
