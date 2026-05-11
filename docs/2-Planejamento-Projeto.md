@@ -167,7 +167,7 @@ O projeto pode utilizar a aba **Projects** do GitHub, porém é **OBRIGATÓRIO p
 | Responsável | Papel | Tarefa | Início | Prazo | Status |
 |-------------|--------|--------|--------|--------|--------|
 |  Arthur Jorge Soares| QA  | documentação técnica RF e RNF| 06/05 | 09/05 | ✔️ |
-| Maria Eduarda Botelho|Arquiteto de Dados  |Engenharia reversa de diagramas | 06/04 | 10/05 | ✔️ |
+| Maria Eduarda Botelho|Arquiteto de Dados  |Engenharia reversa de diagramas | 06/05 | 10/05 | ✔️ |
 |Carolina Eller Marinho|Facilitador Ágil   | Quadro de tarefas Kanban| 06/05 | 10/05 | ✔️ |
 |  Lucas Barbosa Marques|Tech Lead  | Back-end principais implementação | 16/04 | 23/04 | ❌ |
 
