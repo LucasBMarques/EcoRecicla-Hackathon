@@ -15,24 +15,10 @@ Apresente um **diagrama macro** demonstrando como os componentes do sistema se c
 A arquitetura deve refletir o modelo de **fatias verticais**, evidenciando o fluxo:
 
 **Front-end → API (Back-end) → Banco de Dados**
-
-Semelhante à imagem abaixo:
-
-![Exemplo de Arquitetura](https://uds.com.br/blog/wp-content/uploads/2024/09/Imagem-1-Comparativo-ilustrativo-das-diferencas-entre-front-end-e-back-end.jpg)
-
-
-
- **Fonte:** [Guia Completo de Desenvolvimento de Software - UDS](https://uds.com.br/blog/desenvolvimento-de-software-guia-completo/) <br><br>
  
  ### 📎 Inserir o Diagrama de Arquitetura do Projeto do Grupo
-🚨 O grupo deverá inserir aqui a imagem
+![Diagrama de Arquitetura](/docs/images/diagrama_arquitetura.png)
 
-
----
-🔧**Ferramentas recomendadas:**
-- Draw.io
-- Lucidchart
-- Figma
 
 ---
 
@@ -42,50 +28,25 @@ Descreva as tecnologias, linguagens, frameworks, bibliotecas e serviços escolhi
 
 | Dimensão | Tecnologia Escolhida |
 |----------|----------------------|
-| Banco de Dados (SGBD) | Ex: SQL Server, PostgreSQL ou MongoDB |
-| Back-end (API) | Ex: C# (.NET Core) |
-| Front-end / Mobile | Ex: HTML + CSS + JavaScript, React ou Flutter |
-| Hospedagem / Deploy | Ex: Azure, AWS, Render ou Railway |
+| Banco de Dados (SGBD) | MySQL Workbanch |
+| Back-end (API) | Node |
+| Front-end / Mobile |  HTML + CSS + JavaScript, React |
 | Gestão e Versionamento | GitHub e GitHub Projects (Kanban) |
-
- ⚠️ **Observação:**
- - GitHub Pages não executa back-end.
- - Utilize apenas tecnologias realmente implementadas.
 
 ---
 
-##  4.3 Wireframes ou Mockups (A partir da Sprint 2)
-
-Apresente os protótipos das telas (Wireframes/Mockups) apenas das funcionalidades que estão sendo implementadas na Sprint atual.
-
-Cada Wireframe ou Mockups devem estar associados a pelo menos:
-
-- Um Requisito Funcional (RF-XX)
-- Uma História de Usuário
+##  4.3 Wireframes ou Mockups
 
 
-## 📌 Exemplo Ilustrativo – Tela de Cadastro (RF-01)
+📌 Exemplo Ilustrativo – Tela de Cadastro (RF-01)
 
 **História associada:** Como usuário, quero criar uma conta para acessar o sistema.
 
 Representação simplificada do Wireframe:
 
-<img src="images/TelaCadastro.png" width="80%">
+<img src="images/Registro.png" width="80%">
 
 **Descrição:** A interface contempla todos os campos exigidos pelo RF-01 e permite persistência no banco após validação no backend.
-
----
-🔧 **Ferramentas sugeridas:**
-- Figma  
-- MarvelApp  
-- Balsamiq  
----
-
-### 📎 Inserir AQUI Wireframes/ Mockups do Projeto de Software
-
-🚨 O grupo deverá inserir aqui a imagem
-
-
 
 ---
 
@@ -101,70 +62,43 @@ A documentação do banco seguirá a abordagem de **entrega contínua**, sendo e
 
 Para a primeira fatia vertical (MVP), o Squad deverá entregar o **script de criação das tabelas ou coleções utilizadas**.
 
-#### 🔹 Para Banco Relacional (SQL)
+#### 🔹 Banco Relacional (SQL)
 
-Incluir:
-
-- Comandos `CREATE TABLE`
-- Definição de chave primária (PK)
-- Definição de chaves estrangeiras (FK)
-
-**Exemplo:**
+**Parte do codigo:**
 
 ```sql
-CREATE TABLE Usuario (
-    Id INT PRIMARY KEY,
-    Nome VARCHAR(100),
-    Email VARCHAR(150) UNIQUE,
-    Senha VARCHAR(200)
+CREATE DATABASE IF NOT EXISTS ecorecicla;
+
+USE ecorecicla;
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(150) UNIQUE,
+    password VARCHAR(200),
+    nickname VARCHAR(100),
+    country VARCHAR(100),
+    city VARCHAR(100),
+    photo LONGBLOB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    eco_points INT NOT NULL DEFAULT 0,
+    level ENUM('Semente','Broto','Árvore','Floresta','Guardião') NOT NULL DEFAULT 'Semente',
+    total_kg DECIMAL(10,3) NOT NULL DEFAULT 0.000,
+    co2_avoided DECIMAL(10,3) NOT NULL DEFAULT 0.000,
+    water_saved DECIMAL(10,3) NOT NULL DEFAULT 0.000
 );
 ```
-
----
-
-### Para Banco NoSQL
-
-Incluir a estrutura dos documentos JSON (Schema).
-
-**Exemplo:**
-
-```json
-{
-  "nome": "João Silva",
-  "email": "joao@email.com",
-  "senha": "hash_da_senha"
-}
-```
-
-### 📁 Obrigatório
-
-O arquivo .sql ou .js deve ser salvo na pasta: src/bd
-
- - É permitido colar um trecho do script no README apenas para visualização rápida.
+<a href="../src/db/database.sql"> Clique para ir para Banco de dados relacional completo </a>
  
 ---
 ### 4.4.2 Representação do Modelo Físico de Dados (Entrega na Sprint 3 - Core)
 
 
-> **Fundamentação:** Os modelos de dados físicos fornecem detalhes minuciosos que auxiliam administradores e desenvolvedores na implementação da lógica de negócios em um banco de dados real.
-> Eles incluem elementos não especificados no modelo lógico, como:
-> - Tipos de dados específicos da plataforma
-> - Restrições
-> - Índices
-> - Triggers (quando aplicável)
-> - Procedimentos armazenados (quando aplicável)
->
->Por representarem um banco real, devem respeitar:
-> - Convenções de nomenclatura
-> - Restrições da plataforma
-> - Uso adequado de palavras reservadas <br>
+<img src="./images/DER.engenharia-reversa.png" width="85%">
 
 
-**Exemplo:**
-
-<img src="https://d2908q01vomqb2.cloudfront.net/b6692ea5df920cad691c20319a6fffd7a4a766b8/2021/11/09/BDB-1321-image005.png" width="85%">
-
-**FONTE:** <https://aws.amazon.com/pt/compare/the-difference-between-logical-and-physical-data-model/>
+📎 Arquivo editável do MySQL Workbench:  
+[Baixar arquivo .mwb](docs/DER-Enhegaria_Reversa.mwb)
 
 <br>O grupo deverá gerar um diagrama físico do banco de dados (estrutura real das tabelas), evidenciando PKs, FKs e relacionamentos, conforme implementado no código.
 
@@ -192,7 +126,5 @@ Este modelo deve exibir:
 🚨 O grupo deverá inserir aqui a imagem do diagrama físico de dados.
 
 ---
-🔧**Ferramentas Sugeridas**
+🔧**Ferramenta Utilizada**
 - MySQL Workbench (engenharia reversa automática)
-- DbDesigner
-- Lucidchart

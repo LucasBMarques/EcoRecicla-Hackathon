@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 
 const API = "http://localhost:3001/api";
-// Tela para registro e acompanhamento de reciclagem, além de agendamento de coletas e visualização de estatísticas e conquistas.
+
 const UNIT_LABELS = {
   kg: "Quilogramas (kg)",
   g: "Gramas (g)",
@@ -151,7 +151,7 @@ function EducationWidget({ material }) {
         {material.icon} Como preparar: {material.name}
       </div>
       <p style={{ margin: 0, fontSize: 13, color: "#444", lineHeight: 1.6 }}>
-        {material.preparation_tip || "Mantenha o material limpo e seco antes de descartar."}
+        {material.preparation_tip || material.description || "Mantenha o material limpo e seco antes de descartar."}
       </p>
     </div>
   );
@@ -287,12 +287,22 @@ export default function RecyclingDashboard({ setPage }) {
       setCelebration(data);
 
       if (user?.id) {
+        // Buscar perfil atualizado do backend
+        try {
+          const updatedUserProfile = await fetch(`${API}/auth/profile/${user.id}`).then(r => r.json());
+          localStorage.setItem("user", JSON.stringify(updatedUserProfile));
+          setUser(updatedUserProfile);
+        } catch (err) {
+          console.error("Erro ao atualizar perfil:", err);
+          // Fallback: atualizar apenas eco_points
+          const fallbackUser = { ...user, eco_points: (user.eco_points || 0) + data.points_earned };
+          localStorage.setItem("user", JSON.stringify(fallbackUser));
+          setUser(fallbackUser);
+        }
+        
         loadStats(user.id);
         loadBadges(user.id);
         loadHistory(user.id);
-        const updatedUser = { ...user, eco_points: (user.eco_points || 0) + data.points_earned };
-        localStorage.setItem("user", JSON.stringify(updatedUser));
-        setUser(updatedUser);
       }
     } catch (e) {
       setError(e.message);
@@ -704,7 +714,6 @@ export default function RecyclingDashboard({ setPage }) {
             </div>
           )}
 
-          {/* Header da aba com toggle */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
             <div style={{ display: "flex", gap: 8 }}>
               <button
@@ -732,7 +741,6 @@ export default function RecyclingDashboard({ setPage }) {
             </div>
           </div>
 
-          {/* LISTA DE AGENDAMENTOS */}
           {schedView === "list" && (
             <div>
               {schedulesLoading ? (
@@ -760,7 +768,6 @@ export default function RecyclingDashboard({ setPage }) {
                     const statusColor = isConcluido ? "#1b9a3d" : isCancelado ? "#E24B4A" : isConfirmado ? "#1565c0" : "#e65100";
                     const statusLabel = isConcluido ? "✅ Concluído" : isCancelado ? "❌ Cancelado" : isConfirmado ? "✔️ Confirmado" : "📅 Agendado";
 
-                    // Corrigir parse de data vinda do MySQL (pode vir como "2025-05-10T00:00:00.000Z" ou "2025-05-10")
                     const rawDate = s.scheduled_date;
                     const dateStr = rawDate
                       ? new Date(rawDate.slice(0, 10) + "T12:00:00").toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })
@@ -799,7 +806,6 @@ export default function RecyclingDashboard({ setPage }) {
                             )}
                           </div>
 
-                          {/* Ações */}
                           <div style={{ display: "flex", gap: 8, flexShrink: 0, flexWrap: "wrap" }}>
                             {!isCancelado && !isConcluido && (
                               <button
@@ -845,7 +851,6 @@ export default function RecyclingDashboard({ setPage }) {
             </div>
           )}
 
-          {/* FORMULÁRIO NOVO AGENDAMENTO */}
           {schedView === "new" && (
             <div style={card}>
               <h2 style={{ margin: "0 0 20px", color: "#1b5e3f", fontSize: 17 }}>📅 Agendar Coleta de Materiais</h2>

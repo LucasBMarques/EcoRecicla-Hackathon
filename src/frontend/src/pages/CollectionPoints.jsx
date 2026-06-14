@@ -5,14 +5,24 @@ import PointModal from "../components/PointModal";
 import { useToast } from "../hooks/useToast";
 import "../styles/auth.css";
 import "../styles/collectionPointsForm.css";
-// Página para cadastro e visualização de pontos de coleta, com integração de CEP e geolocalização, além de filtros por material e modais de detalhes.
+
+const defaultMaterials = [
+  { id: 1, name: "Papel", icon: "📄" },
+  { id: 2, name: "Metal", icon: "🔩" },
+  { id: 3, name: "Lâmpadas", icon: "💡" },
+  { id: 4, name: "Entulho", icon: "🏗️" },
+  { id: 5, name: "Plástico", icon: "♻️" },
+  { id: 6, name: "Vidro", icon: "🥃" },
+  { id: 7, name: "Eletrônicos", icon: "📱" },
+  { id: 8, name: "Madeira", icon: "🪵" },
+];
+
 function CollectionPoints({ setPage }) {
-  // Verificar se deve começar em modo "list"
   const initialView = localStorage.getItem("_collectionPointsInitialView") || "form";
   if (localStorage.getItem("_collectionPointsInitialView")) {
     localStorage.removeItem("_collectionPointsInitialView");
   }
-  const [view, setView] = useState(initialView); // "form" ou "list"
+  const [view, setView] = useState(initialView); 
   const [form, setForm] = useState({
     name: "",
     cep: "",
@@ -38,19 +48,8 @@ function CollectionPoints({ setPage }) {
   const [userID, setUserID] = useState(null);
   const { toasts, addToast, removeToast } = useToast();
 
-  const defaultMaterials = [
-    { id: 1, name: "Papel", icon: "📄" },
-    { id: 2, name: "Metal", icon: "🔩" },
-    { id: 3, name: "Lâmpadas", icon: "💡" },
-    { id: 4, name: "Entulho", icon: "🏗️" },
-    { id: 5, name: "Plástico", icon: "♻️" },
-    { id: 6, name: "Vidro", icon: "🥃" },
-    { id: 7, name: "Eletrônicos", icon: "📱" },
-    { id: 8, name: "Madeira", icon: "🪵" },
-  ];
-
   useEffect(() => {
-    // Carregar materiais disponíveis
+    
     getMaterials()
       .then((data) => {
         if (!Array.isArray(data) || data.length === 0) {
@@ -60,24 +59,23 @@ function CollectionPoints({ setPage }) {
           setAllMaterials(data);
         }
       })
-      .catch((err) => {
-        console.error("Erro ao carregar materiais:", err);
+        .catch(() => {
         addToast("Erro ao carregar materiais. Lista padrão carregada.", "warning");
         setAllMaterials(defaultMaterials);
       });
 
-    // Carregar pontos
+    
     fetch("http://localhost:3001/api/collection-points")
       .then((res) => res.json())
       .then((data) => {
         setPoints(Array.isArray(data) ? data : []);
       })
-      .catch((err) => console.error("Erro ao carregar pontos:", err));
+      .catch(() => {});
 
-    // Pegar ID do usuário
+    
     const user = JSON.parse(localStorage.getItem("user"));
     setUserID(user?.id);
-  }, []);
+  }, [addToast]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -110,7 +108,7 @@ function CollectionPoints({ setPage }) {
       setCepData(data);
       setForm((prev) => ({ ...prev, address: "" }));
       addToast("CEP encontrado com sucesso!", "success");
-    } catch (err) {
+    } catch {
       addToast("Erro ao buscar CEP", "error");
     }
 
@@ -137,7 +135,7 @@ function CollectionPoints({ setPage }) {
       } else {
         addToast("Localização não encontrada", "warning");
       }
-    } catch (err) {
+    } catch {
       addToast("Erro ao buscar localização", "error");
     } finally {
       setGeoLoading(false);
@@ -196,7 +194,7 @@ function CollectionPoints({ setPage }) {
         setLongitude("");
         setCepData(null);
         
-        // Recarregar pontos
+        
         fetch("http://localhost:3001/api/collection-points")
           .then((res) => res.json())
           .then((data) => {
@@ -207,7 +205,7 @@ function CollectionPoints({ setPage }) {
       } else {
         addToast(res.error || "Erro ao cadastrar ponto de coleta", "error");
       }
-    } catch (error) {
+    } catch {
       addToast("Erro ao cadastrar ponto de coleta", "error");
     } finally {
       setLoading(false);
@@ -229,8 +227,8 @@ function CollectionPoints({ setPage }) {
         setPoints(points.filter((p) => p.id !== id));
         setShowModal(false);
       }
-    } catch (error) {
-      addToast("Erro ao deletar ponto", "error");
+    } catch {
+        addToast("Erro ao deletar ponto", "error");
     }
   };
 
@@ -265,7 +263,7 @@ function CollectionPoints({ setPage }) {
 
       {view === "form" ? (
         <div className="container">
-          <div className="auth-card">
+          <div className="auth-card collection-points-layout">
             <div className="left">
               <div className="logo-section">
                 <div className="logo-icon">♻️</div>
@@ -273,8 +271,18 @@ function CollectionPoints({ setPage }) {
               </div>
 
               <h2>Cadastrar ponto de coleta</h2>
+              <p className="collection-subtitle">
+                Preencha os dados abaixo para adicionar um novo ponto e ajudar mais pessoas a reciclar.
+              </p>
 
               <form onSubmit={handleSubmit} className="collection-form">
+                <div className="collection-form-status">
+                  <span className="status-pill">{selectedMaterials.length} materiais selecionados</span>
+                  <span className={`status-pill ${latitude && longitude ? "ready" : "pending"}`}>
+                    {latitude && longitude ? "Localização confirmada" : "Aguardando localização"}
+                  </span>
+                </div>
+
                 <div className="form-section">
                   <h3>Informações Básicas</h3>
                   <input
@@ -342,8 +350,10 @@ function CollectionPoints({ setPage }) {
                           checked={selectedMaterials.includes(material.id)}
                           onChange={() => handleMaterialChange(material.id)}
                         />
-                        <span className="material-icon">{material.icon}</span>
-                        <span className="material-name">{material.name}</span>
+                        <div className="material-option-content">
+                          <span className="material-icon">{material.icon}</span>
+                          <span className="material-name">{material.name}</span>
+                        </div>
                       </label>
                     ))}
                   </div>
@@ -379,27 +389,32 @@ function CollectionPoints({ setPage }) {
               </form>
             </div>
 
-            <div className="right">
-              <div className="right-content">
+            <div className="right collection-right">
+              <div className="right-content collection-right-content">
+                <span className="collection-right-badge">Guia rapido</span>
                 <h2>Pontos de coleta</h2>
                 <p>Cadastre um novo ponto de coleta e ajude sua comunidade a reciclar mais!</p>
-                <div className="features">
-                  <div className="feature-item">
+                <div className="features collection-features">
+                  <div className="feature-item collection-feature-item">
                     <span>📍</span>
                     <span>Digite o CEP e o endereço é preenchido automaticamente</span>
                   </div>
-                  <div className="feature-item">
+                  <div className="feature-item collection-feature-item">
                     <span>♻️</span>
                     <span>Selecione os materiais que você aceita</span>
                   </div>
-                  <div className="feature-item">
+                  <div className="feature-item collection-feature-item">
                     <span>📞</span>
                     <span>Adicione telefone e horário de funcionamento</span>
                   </div>
-                  <div className="feature-item">
+                  <div className="feature-item collection-feature-item">
                     <span>🌱</span>
                     <span>Contribua com o meio ambiente</span>
                   </div>
+                </div>
+
+                <div className="collection-highlight">
+                  <strong>Dica:</strong> informe o horário de funcionamento para facilitar o uso do ponto pela comunidade.
                 </div>
               </div>
             </div>

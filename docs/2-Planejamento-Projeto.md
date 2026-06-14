@@ -1,8 +1,5 @@
 # 2. Planejamento do Projeto
 
-Esta seção apresenta como o grupo organizará o trabalho ao longo do semestre.  
-O projeto adota uma metodologia ágil, simulando o ambiente de uma Software House.
-
 ---
 
 ### 🚨 Regra de Ouro: 
@@ -149,10 +146,19 @@ O projeto pode utilizar a aba **Projects** do GitHub, porém é **OBRIGATÓRIO p
 
 | Responsável | Papel | Tarefa | Início | Prazo | Status |
 |-------------|--------|--------|--------|--------|--------|
-|Lucas Barbosa Marques|Tech Lead|Tela de configurações do usuário, tela de login e cadastro| 27/03 | 01/04 | ✔️ |
-|Maria Eduarda Botelho|Arquiteto de Dados|Tela principal : Home| 31/03 |  |📝|
-|Carolina Eller Marinho|Facilitador Ágil| Tela de registro de reciclagem e dashboard | 31\03 | 04\04 | ✔️ |
-|Arthur Jorge Soares| QA | Tela de cadastro de ponto de coleta|27/03| 02/04 | ✔️ |
+|Lucas Barbosa Marques|Tech Lead|Tela de configurações do usuário, tela de login e cadastro| 25/03 | 01/04 | ✔️ |
+|Maria Eduarda Botelho|Arquiteto de Dados|Tela principal : Home| 31/03 | 15/05 |📝|
+|Carolina Eller Marinho|Facilitador Ágil| Tela de registro de reciclagem e dashboard | 31\03 | 05\04 | ✔️ |
+|Arthur Jorge Soares| QA | Tela de cadastro de ponto de coleta|27/03| 03/04 | ✔️ |
+
+# 🟡 Sprint 2 – MVP - ⚙️ Organização e Documentação do Projeto
+
+| Responsável | Papel | Tarefa | Início | Prazo | Status |
+|-------------|--------|--------|--------|--------|--------|
+|Lucas Barbosa Marques|Tech Lead|Wireframes/Mockups| 20/03 | 24/03 | ✔️ |
+|Maria Eduarda Botelho|Arquiteto de Dados|Diagrama de Fluxo| 03/04 | 04/04 |✔️|
+|Carolina Eller Marinho|Facilitador Ágil|Quadro de tarefas Kanban| 22/03 | 06/04 | ✔️ |
+|Arthur Jorge Soares| QA | Documentação Técnica|27/03| 05/04 | ✔️ |
 
 ---
 
@@ -160,10 +166,10 @@ O projeto pode utilizar a aba **Projects** do GitHub, porém é **OBRIGATÓRIO p
 
 | Responsável | Papel | Tarefa | Início | Prazo | Status |
 |-------------|--------|--------|--------|--------|--------|
-|             |        | Implementar Regra de Negócio Y | 06/04 | 15/04 | ❌ |
-|             |        | Implementar Cálculo/Processo Z | 06/04 | 15/04 | ❌ |
-|             |        | Atualizar DER via Engenharia Reversa | 16/04 | 20/04 | ❌ |
-|             |        | Atualizar Diagrama de Classes | 16/04 | 23/04 | ❌ |
+|  Arthur Jorge Soares| QA  | documentação técnica RF e RNF| 06/05 | 09/05 | ✔️ |
+| Maria Eduarda Botelho|Arquiteto de Dados  |Engenharia reversa de diagramas | 06/05 | 10/05 | ✔️ |
+|Carolina Eller Marinho|Facilitador Ágil   | Quadro de tarefas Kanban| 06/05 | 10/05 | ✔️ |
+|  Lucas Barbosa Marques|Tech Lead  | Back-end principais implementação | 16/04 | 23/04 | ❌ |
 
 ---
 

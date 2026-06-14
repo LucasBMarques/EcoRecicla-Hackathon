@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
-import { updateProfile } from "../services/api";
+import { deleteAccount, getRanking, getRecyclingStats, getRecyclingHistory } from "../services/api";
 import "../styles/userSettings.css";
 
-// Página de configurações do usuário
 export default function UserSettings({ setPage }) {
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTab] = useState(() => {
+    const savedTab = localStorage.getItem("settingsTab");
+    localStorage.removeItem("settingsTab");
+    return savedTab || "profile";
+  });
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     name: "",
@@ -34,6 +37,12 @@ export default function UserSettings({ setPage }) {
     level: "🌱 Iniciante",
     ranking: 0,
   });
+  const [rankingData, setRankingData] = useState([]);
+  const [rankingLoading, setRankingLoading] = useState(false);
+  const [historyData, setHistoryData] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [statsData, setStatsData] = useState(null);
+  const [statsLoading, setStatsLoading] = useState(false);
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("user"));
@@ -51,12 +60,21 @@ export default function UserSettings({ setPage }) {
       }
     }
 
-    // Calcular estatísticas (mock data - futuramente virá do backend)
     calculateStats();
   }, []);
 
+  useEffect(() => {
+    if (activeTab === "ranking") {
+      loadRanking();
+    } else if (activeTab === "stats") {
+      loadStats();
+    } else if (activeTab === "history") {
+      loadHistory();
+    }
+  }, [activeTab]);
+
   const calculateStats = () => {
-    // TODO: Fazer fetch do backend para obter dados reais
+  
     setStats({
       totalRecycled: "45kg",
       totalRecords: 12,
@@ -65,6 +83,88 @@ export default function UserSettings({ setPage }) {
       level: "🌿 Sustentável",
       ranking: 5,
     });
+  };
+
+  const loadRanking = async () => {
+    setRankingLoading(true);
+    try {
+      const data = await getRanking();
+      setRankingData(data);
+      
+      // Encontrar a posição do usuário logado
+      const currentUser = JSON.parse(localStorage.getItem("user"));
+      const userPosition = data.find(u => u.id === currentUser?.id);
+      if (userPosition) {
+        setStats(prev => ({
+          ...prev,
+          ranking: userPosition.position,
+          score: userPosition.eco_points,
+          level: getLevelEmoji(userPosition.level) + " " + userPosition.level,
+        }));
+      }
+    } catch (err) {
+      console.error("Erro ao carregar ranking:", err);
+    } finally {
+      setRankingLoading(false);
+    }
+  };
+
+  const getLevelEmoji = (level) => {
+    const emojis = {
+      Semente: "🌱",
+      Broto: "🌿",
+      Árvore: "🌳",
+      Floresta: "🌲",
+      Guardião: "🛡️"
+    };
+    return emojis[level] || "🌱";
+  };
+
+  const loadStats = async () => {
+    setStatsLoading(true);
+    try {
+      const data = await getRecyclingStats(user.id);
+      
+      // Converter para números com segurança
+      const totalKg = Number(data.total_kg) || 0;
+      const totalCo2 = Number(data.total_co2) || 0;
+      const totalWater = Number(data.total_water) || 0;
+      const totalPoints = Number(data.total_points) || 0;
+      const totalLogs = Number(data.total_logs) || 0;
+      
+      setStatsData({
+        ...data,
+        total_kg: totalKg,
+        total_co2: totalCo2,
+        total_water: totalWater,
+        total_points: totalPoints,
+        total_logs: totalLogs,
+      });
+      
+      // Atualizar stats card também
+      setStats(prev => ({
+        ...prev,
+        totalRecycled: `${totalKg.toFixed(2)}kg`,
+        totalRecords: totalLogs,
+        score: user.eco_points || 0,
+      }));
+    } catch (err) {
+      console.error("Erro ao carregar estatísticas:", err);
+    } finally {
+      setStatsLoading(false);
+    }
+  };
+
+  const loadHistory = async () => {
+    setHistoryLoading(true);
+    try {
+      const data = await getRecyclingHistory(user.id, 50);
+      setHistoryData(data);
+    } catch (err) {
+      console.error("Erro ao carregar histórico:", err);
+    } finally {
+      setHistoryLoading(false);
+    }
   };
 
   const handleInputChange = (e) => {
@@ -137,10 +237,8 @@ export default function UserSettings({ setPage }) {
           country: formData.country,
           city: formData.city,
           email: user.email,
+          photo: photo,
         };
-        if (photo) {
-          updatedUser.photo = photo;
-        }
         localStorage.setItem("user", JSON.stringify(updatedUser));
         setUser(updatedUser);
         setPhoto(null);
@@ -196,14 +294,42 @@ export default function UserSettings({ setPage }) {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    if (!user?.id) {
+      alert("Usuário inválido para exclusão");
+      return;
+    }
+
+    const confirmed = window.confirm("Tem certeza que deseja excluir sua conta? Esta ação não pode ser desfeita.");
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const result = await deleteAccount(user.id);
+      if (!result.ok) {
+        alert(result.data?.error || "Erro ao excluir conta");
+        return;
+      }
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("lastPage");
+      alert("Conta excluída com sucesso");
+      setPage("login");
+    } catch (error) {
+      console.error("Erro ao excluir conta:", error);
+      alert("Erro ao excluir conta");
+    }
+  };
+
   const levelProgress = (stats.score % 500) / 500 * 100;
 
   return (
     <div className="settings-wrapper">
-      {/* HEADER */}
       <header className="settings-header">
         <div className="header-content">
-          <h1>Welcome, <strong>{user?.name || "Usuário"}</strong></h1>
+          <h1>Bem Vindo, <strong>{user?.name || "Usuário"}</strong></h1>
           <button 
             className="back-home-btn"
             onClick={() => setPage("home")}
@@ -215,7 +341,6 @@ export default function UserSettings({ setPage }) {
       </header>
 
       <main className="settings-main">
-        {/* PROFILE CARD */}
         <div className="profile-card">
           <div className="profile-avatar-section">
             {photoPreview ? (
@@ -237,11 +362,10 @@ export default function UserSettings({ setPage }) {
             className="edit-profile-btn"
             onClick={() => setActiveTab("profile")}
           >
-            Edit
+            Editar
           </button>
         </div>
 
-        {/* TABS NAVIGATION */}
         <div className="tabs-nav">
           <button 
             className={`tab-btn ${activeTab === "profile" ? "active" : ""}`}
@@ -275,15 +399,12 @@ export default function UserSettings({ setPage }) {
           </button>
         </div>
 
-        {/* TAB CONTENT */}
         <div className="tabs-content">
-          {/* PROFILE TAB */}
           {activeTab === "profile" && (
             <div className="tab-panel">
               <h2>Informações Pessoais</h2>
               
               <form onSubmit={handleSavePersonal} className="settings-form">
-                {/* PHOTO SECTION */}
                 <div className="form-section">
                   <h3>Foto de Perfil</h3>
                   <div className="photo-upload">
@@ -326,7 +447,6 @@ export default function UserSettings({ setPage }) {
                   </div>
                 </div>
 
-                {/* PERSONAL INFO */}
                 <div className="form-section">
                   <h3>Dados Básicos</h3>
                   <div className="form-grid">
@@ -395,192 +515,210 @@ export default function UserSettings({ setPage }) {
             </div>
           )}
 
-          {/* STATISTICS TAB */}
           {activeTab === "stats" && (
             <div className="tab-panel">
               <h2>Estatísticas de Reciclagem</h2>
               
-              <div className="stats-grid">
-                <div className="stat-card">
-                  <div className="stat-icon">♻️</div>
-                  <div className="stat-content">
-                    <h3>Total Reciclado</h3>
-                    <p className="stat-value">{stats.totalRecycled}</p>
-                  </div>
-                </div>
+              {statsLoading ? (
+                <p style={{ textAlign: "center", color: "#888" }}>Carregando estatísticas...</p>
+              ) : statsData ? (
+                <>
+                  <div className="stats-grid">
+                    <div className="stat-card">
+                      <div className="stat-icon">♻️</div>
+                      <div className="stat-content">
+                        <h3>Total Reciclado</h3>
+                        <p className="stat-value">{typeof statsData.total_kg === 'number' ? statsData.total_kg.toFixed(2) : (Number(statsData.total_kg) || 0).toFixed(2)} kg</p>
+                      </div>
+                    </div>
 
-                <div className="stat-card">
-                  <div className="stat-icon">📝</div>
-                  <div className="stat-content">
-                    <h3>Total de Registros</h3>
-                    <p className="stat-value">{stats.totalRecords}</p>
-                  </div>
-                </div>
+                    <div className="stat-card">
+                      <div className="stat-icon">📝</div>
+                      <div className="stat-content">
+                        <h3>Total de Registros</h3>
+                        <p className="stat-value">{Number(statsData.total_logs) || 0}</p>
+                      </div>
+                    </div>
 
-                <div className="stat-card">
-                  <div className="stat-icon">🗂️</div>
-                  <div className="stat-content">
-                    <h3>Material Mais Reciclado</h3>
-                    <p className="stat-value">{stats.mostRecycledMaterial}</p>
-                  </div>
-                </div>
+                    <div className="stat-card">
+                      <div className="stat-icon">🌍</div>
+                      <div className="stat-content">
+                        <h3>CO₂ Evitado</h3>
+                        <p className="stat-value">{typeof statsData.total_co2 === 'number' ? statsData.total_co2.toFixed(2) : (Number(statsData.total_co2) || 0).toFixed(2)} kg</p>
+                      </div>
+                    </div>
 
-                <div className="stat-card">
-                  <div className="stat-icon">⭐</div>
-                  <div className="stat-content">
-                    <h3>Pontuação Total</h3>
-                    <p className="stat-value">{stats.score}</p>
-                  </div>
-                </div>
-              </div>
+                    <div className="stat-card">
+                      <div className="stat-icon">💧</div>
+                      <div className="stat-content">
+                        <h3>Água Economizada</h3>
+                        <p className="stat-value">{typeof statsData.total_water === 'number' ? statsData.total_water.toFixed(0) : (Number(statsData.total_water) || 0).toFixed(0)} L</p>
+                      </div>
+                    </div>
 
-              {/* LEVEL PROGRESS */}
-              <div className="level-section">
-                <h3>Nível Sustentável</h3>
-                <div className="level-info">
-                  <span className="current-level">{stats.level}</span>
-                  <p>Continue reciclando para alcançar o próximo nível!</p>
-                </div>
-                <div className="progress-bar">
-                  <div className="progress-fill" style={{ width: `${levelProgress}%` }}></div>
-                </div>
-                <div className="progress-text">
-                  <small>{Math.round(levelProgress)}% para o próximo nível</small>
-                </div>
-              </div>
+                    <div className="stat-card">
+                      <div className="stat-icon">⭐</div>
+                      <div className="stat-content">
+                        <h3>Pontos Ganhos</h3>
+                        <p className="stat-value">{Number(statsData.total_points) || 0}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {statsData.by_material && statsData.by_material.length > 0 && (
+                    <div className="material-breakdown">
+                      <h3>Materiais Reciclados</h3>
+                      <div className="material-list">
+                        {statsData.by_material.map((mat) => (
+                          <div key={mat.name} className="material-item">
+                            <span className="material-icon">{mat.icon || "♻️"}</span>
+                            <div className="material-info">
+                              <span className="material-name">{mat.name}</span>
+                              <small>{(Number(mat.kg) || 0).toFixed(2)} kg • {Number(mat.points) || 0} pts</small>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="level-section">
+                    <h3>Nível Sustentável</h3>
+                    <div className="level-info">
+                      <span className="current-level">{stats.level}</span>
+                      <p>Continue reciclando para alcançar o próximo nível!</p>
+                    </div>
+                    <div className="progress-bar">
+                      <div className="progress-fill" style={{ width: `${levelProgress}%` }}></div>
+                    </div>
+                    <div className="progress-text">
+                      <small>{Math.round(levelProgress)}% para o próximo nível</small>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <p style={{ textAlign: "center", color: "#888" }}>Nenhum dado disponível</p>
+              )}
             </div>
           )}
 
-          {/* HISTORY TAB */}
           {activeTab === "history" && (
             <div className="tab-panel">
               <h2>Histórico de Reciclagem</h2>
               
-              <div className="table-container">
-                <table className="history-table">
-                  <thead>
-                    <tr>
-                      <th>Data</th>
-                      <th>Material</th>
-                      <th>Quantidade</th>
-                      <th>Local</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>27/03/2026</td>
-                      <td>🔵 Plástico</td>
-                      <td>5 itens</td>
-                      <td>Eco Ponto Centro</td>
-                    </tr>
-                    <tr>
-                      <td>26/03/2026</td>
-                      <td>🟢 Vidro</td>
-                      <td>3 itens</td>
-                      <td>Coleta Rua A</td>
-                    </tr>
-                    <tr>
-                      <td>25/03/2026</td>
-                      <td>⚫ Metal</td>
-                      <td>2 itens</td>
-                      <td>Eco Ponto Centro</td>
-                    </tr>
-                    <tr>
-                      <td>24/03/2026</td>
-                      <td>🟤 Papel</td>
-                      <td>10 itens</td>
-                      <td>Coleta Rua B</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="filter-section">
-                <label>Filtrar por material:</label>
-                <select className="filter-select">
-                  <option value="">Todos</option>
-                  <option value="plastic">Plástico</option>
-                  <option value="glass">Vidro</option>
-                  <option value="metal">Metal</option>
-                  <option value="paper">Papel</option>
-                </select>
-              </div>
+              {historyLoading ? (
+                <p style={{ textAlign: "center", color: "#888" }}>Carregando histórico...</p>
+              ) : historyData && historyData.length > 0 ? (
+                <div className="table-container">
+                  <table className="history-table">
+                    <thead>
+                      <tr>
+                        <th>Data</th>
+                        <th>Material</th>
+                        <th>Quantidade</th>
+                        <th>CO₂ Evitado</th>
+                        <th>Pontos</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {historyData.map((item) => (
+                        <tr key={item.id}>
+                          <td>{new Date(item.logged_at).toLocaleDateString("pt-BR")}</td>
+                          <td>{item.material_icon || "♻️"} {item.material_name}</td>
+                          <td>{(Number(item.quantity_kg) || 0).toFixed(2)} kg</td>
+                          <td>{(Number(item.co2_avoided) || 0).toFixed(2)} kg</td>
+                          <td><strong>{Number(item.points_earned) || 0} pts</strong></td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <p style={{ textAlign: "center", color: "#888", padding: "40px" }}>
+                  Nenhum registro de reciclagem ainda. Comece a reciclar! 🌱
+                </p>
+              )}
             </div>
           )}
 
-          {/* RANKING TAB */}
           {activeTab === "ranking" && (
             <div className="tab-panel">
               <h2>Ranking e Progresso</h2>
               
-              <div className="ranking-card">
-                <div className="ranking-position">
-                  <div className="position-badge">#{stats.ranking}</div>
-                  <h3>Sua Posição</h3>
-                  <p>Você está entre os top recicladores!</p>
-                </div>
-              </div>
+              {rankingLoading ? (
+                <p style={{ textAlign: "center", color: "#888" }}>Carregando ranking...</p>
+              ) : (
+                <>
+                  <div className="ranking-card">
+                    <div className="ranking-position">
+                      <div className="position-badge">#{stats.ranking}</div>
+                      <h3>Sua Posição</h3>
+                      <p>Você está entre os melhores recicladores!</p>
+                      <p className="ranking-score">{stats.score} pontos eco</p>
+                    </div>
+                  </div>
 
-              <div className="level-progression">
-                <h3>Progressão de Níveis</h3>
-                <div className="levels-timeline">
-                  <div className="level-milestone completed">
-                    <div className="level-circle">✓</div>
-                    <p>🌱 Iniciante</p>
-                    <small>0 pts</small>
+                  <div className="level-progression">
+                    <h3>Seu Nível</h3>
+                    <div className="current-level-display">
+                      <span className="level-badge">{stats.level}</span>
+                    </div>
                   </div>
-                  <div className="level-milestone completed">
-                    <div className="level-circle">✓</div>
-                    <p>🌿 Sustentável</p>
-                    <small>250 pts</small>
-                  </div>
-                  <div className="level-milestone">
-                    <div className="level-circle">🔒</div>
-                    <p>🌳 Eco Master</p>
-                    <small>500 pts</small>
-                  </div>
-                </div>
-              </div>
 
-              <div className="top-recyclers">
-                <h3>Top 5 Recicladores</h3>
-                <div className="leaderboard">
-                  <div className="leaderboard-item">
-                    <span className="rank">🥇 1º</span>
-                    <span className="name">João Silva</span>
-                    <span className="score">850 pts</span>
+                  <div className="top-recyclers">
+                    <h3>🏆 Top 10 Recicladores</h3>
+                    <div className="leaderboard">
+                      {rankingData.slice(0, 10).map((user, index) => {
+                        const isCurrentUser = JSON.parse(localStorage.getItem("user"))?.id === user.id;
+                        const medals = ["🥇", "🥈", "🥉"];
+                        const medal = medals[index] || `${index + 1}º`;
+                        
+                        return (
+                          <div 
+                            key={user.id} 
+                            className={`leaderboard-item ${isCurrentUser ? "current-user" : ""}`}
+                          >
+                            <span className="rank">{medal}</span>
+                            <div className="user-info">
+                              <span className="name">{user.name}</span>
+                              <small className="level-text">{getLevelEmoji(user.level)} {user.level}</small>
+                            </div>
+                            <span className="score">{user.eco_points} pts</span>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
-                  <div className="leaderboard-item">
-                    <span className="rank">🥈 2º</span>
-                    <span className="name">Maria Santos</span>
-                    <span className="score">720 pts</span>
-                  </div>
-                  <div className="leaderboard-item">
-                    <span className="rank">🥉 3º</span>
-                    <span className="name">Carlos Oliveira</span>
-                    <span className="score">680 pts</span>
-                  </div>
-                  <div className="leaderboard-item">
-                    <span className="rank">4º</span>
-                    <span className="name">Ana Costa</span>
-                    <span className="score">550 pts</span>
-                  </div>
-                  <div className="leaderboard-item">
-                    <span className="rank">5º</span>
-                    <span className="name">Você</span>
-                    <span className="score">450 pts</span>
-                  </div>
-                </div>
-              </div>
+
+                  {rankingData.length > 10 && (
+                    <div className="more-ranking">
+                      <h3>Mais Recicladores ({rankingData.length})</h3>
+                      <div className="leaderboard leaderboard-compact">
+                        {rankingData.slice(10).map((user) => {
+                          const isCurrentUser = JSON.parse(localStorage.getItem("user"))?.id === user.id;
+                          return (
+                            <div 
+                              key={user.id}
+                              className={`leaderboard-item compact ${isCurrentUser ? "current-user" : ""}`}
+                            >
+                              <span className="rank">#{user.position}</span>
+                              <span className="name">{user.name}</span>
+                              <span className="score">{user.eco_points} pts</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           )}
 
-          {/* SETTINGS TAB */}
           {activeTab === "settings" && (
             <div className="tab-panel">
               <h2>Configurações da Conta</h2>
 
-              {/* CHANGE PASSWORD */}
               <div className="form-section password-section">
                 <h3>🔐 Alterar Senha</h3>
                 <form onSubmit={handleChangePassword} className="settings-form">
@@ -680,7 +818,6 @@ export default function UserSettings({ setPage }) {
                 </form>
               </div>
 
-              {/* PREFERENCES */}
               <div className="form-section">
                 <h3>📍 Preferências</h3>
                 <div className="preferences-group">
@@ -699,11 +836,10 @@ export default function UserSettings({ setPage }) {
                 </div>
               </div>
 
-              {/* DANGER ZONE */}
               <div className="form-section danger-zone">
                 <h3>⚠️ Zona de Perigo</h3>
                 <div className="danger-actions">
-                  <button className="danger-btn">
+                  <button className="danger-btn" onClick={handleDeleteAccount}>
                     🗑️ Excluir Conta
                   </button>
                   <button 

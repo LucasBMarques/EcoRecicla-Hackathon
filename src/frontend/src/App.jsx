@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { validateSession } from "./services/api";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Mapa from "./pages/Mapa";
@@ -12,22 +13,41 @@ function App() {
   const [page, setPage] = useState("login");
   const [isLoading, setIsLoading] = useState(true);
 
-  // Verificar sessão ao carregar
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    const lastPage = localStorage.getItem("lastPage");
+    const checkSession = async () => {
+      const token = localStorage.getItem("token");
+      const lastPage = localStorage.getItem("lastPage");
 
-    if (token) {
-      // Se tiver última página salva, usa ela
-      setPage(lastPage || "home");
-    } else {
-      setPage("login");
-    }
+      if (!token) {
+        setPage("login");
+        setIsLoading(false);
+        return;
+      }
 
-    setIsLoading(false);
+      try {
+        const result = await validateSession(token);
+        if (result.ok && result.data?.valid) {
+          localStorage.setItem("user", JSON.stringify(result.data.user));
+          setPage(lastPage || "home");
+        } else {
+          localStorage.removeItem("token");
+          localStorage.removeItem("user");
+          localStorage.removeItem("lastPage");
+          setPage("login");
+        }
+      } catch {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        localStorage.removeItem("lastPage");
+        setPage("login");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkSession();
   }, []);
 
-  // Salvar última página visitada
   const handleSetPage = (newPage) => {
     setPage(newPage);
 
