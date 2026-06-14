@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import { getStats } from "../services/api";
+import { getStats, getRecyclingStats } from "../services/api";
 import "../styles/home.css";
 import imgCapa from "../assets/public/img/imagem-home.png";
 import imgOds12 from "../assets/public/img/ODS-12.jpg";
@@ -10,16 +10,26 @@ export default function Home({setPage}) {
   const [stats, setStats] = useState({ users: 0, points: 0, recycled: 0 });
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const data = await getStats();
-        setStats(data);
-      } catch (err) {
-        console.error("erro ao buscar stats:", err);
+  const fetchStats = async () => {
+    try {
+      const data = await getStats();
+
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      if (user) {
+        const recyclingData = await getRecyclingStats(user.id);
+
+        data.recycled = recyclingData.total_kg;
       }
-    };
-    fetchStats();
-  }, []);
+
+      setStats(data);
+    } catch (err) {
+      console.error("erro ao buscar stats:", err);
+    }
+  };
+
+  fetchStats();
+}, []);
 
   return (
     <>
