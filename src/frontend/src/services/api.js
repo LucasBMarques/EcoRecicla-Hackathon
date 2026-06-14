@@ -146,10 +146,25 @@ export const uploadPhoto = async (file) => {
 };
 
 export const getStats = async () => {
+<<<<<<< Updated upstream
   // home
   return {
     users: 10,
     points: 5,
     recycled: 120
   };
+=======
+  const response = await fetch(`${API}/stats`);
+  return response.json();
+};
+
+export const getRanking = async () => {
+  const response = await fetch(`${API}/ranking`);
+  return response.json();
+};
+
+export const getUserProfile = async (userId) => {
+  const response = await fetch(`${API}/auth/profile/${userId}`);
+  return response.json();
+>>>>>>> Stashed changes
 };
