@@ -10,7 +10,7 @@ exports.getStats = (req, res) => {
     db.query(pointsQuery, (err, pointsResult) => {
       if (err) return res.status(500).json(err);
 
-      res.json({
+     res.json({
         users: usersResult[0].total,
         points: pointsResult[0].total,
         recycled: 2300000 // valor estatico
