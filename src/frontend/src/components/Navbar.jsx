@@ -14,7 +14,17 @@ export default function Navbar({ currentPage, setPage }) {
     { id: "home", label: "Início" },
     { id: "mapa", label: "Pontos de Coleta" },
     { id: "recycling-dashboard", label: "Registrar Reciclagem" },
+    { id: "ranking", label: "Ranking" },
   ];
+
+  const handleMenuClick = (item) => {
+    if (item.id === "ranking") {
+      localStorage.setItem("settingsTab", "ranking");
+      setPage("settings");
+    } else {
+      setPage(item.id);
+    }
+  };
 
   return (
     <nav className="navbar">
@@ -27,8 +37,16 @@ export default function Navbar({ currentPage, setPage }) {
         {menuItems.map((item) => (
           <li 
             key={item.id}
-            className={currentPage === item.id ? "active" : ""}
-            onClick={() => setPage(item.id)}
+            className={
+              item.id === "ranking"
+                ? currentPage === "settings" && localStorage.getItem("settingsTab") === "ranking"
+                  ? "active"
+                  : ""
+                : currentPage === item.id
+                ? "active"
+                : ""
+            }
+            onClick={() => handleMenuClick(item)}
           >
             {item.label}
           </li>
@@ -36,30 +54,6 @@ export default function Navbar({ currentPage, setPage }) {
       </ul>
 
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-        <button
-          onClick={() => {
-            localStorage.setItem("settingsTab", "ranking");
-            setPage("settings");
-          }}
-          title="Ver Ranking"
-          style={{
-            background: "transparent",
-            border: "none",
-            fontSize: "20px",
-            cursor: "pointer",
-            padding: "8px",
-            borderRadius: "8px",
-            transition: "all 0.3s ease",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onMouseEnter={(e) => e.target.style.background = "#f0f6f0"}
-          onMouseLeave={(e) => e.target.style.background = "transparent"}
-        >
-          🏆
-        </button>
-
         <div 
           onClick={() => setPage("settings")} 
           style={{ 
