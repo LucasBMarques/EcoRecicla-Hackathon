@@ -1,11 +1,15 @@
 const db = require("../config/db");
 
 exports.create = (req, res) => {
-  const { name, address, latitude, longitude, materials, user_id } = req.body;
+  const { name, address, latitude, longitude, materials, user_id, phone, opening_hours } = req.body;
 
-  const sql = "INSERT INTO collection_points (name, address, latitude, longitude, materials, user_id) VALUES (?, ?, ?, ?, ?, ?)";
+  if (!name || !address || !latitude || !longitude || !user_id) {
+    return res.status(400).json({ error: "Campos obrigatórios ausentes." });
+  }
 
-  db.query(sql, [name, address, latitude, longitude, materials, user_id], (err, result) => {
+  const sql = "INSERT INTO collection_points (name, address, latitude, longitude, materials, user_id, phone, opening_hours) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+  db.query(sql, [name, address, latitude, longitude, materials, user_id, phone ?? null, opening_hours ?? null], (err, result) => {
     if (err) {
       return res.status(500).json({ error: "Erro ao cadastrar ponto de coleta" });
     }
@@ -23,15 +27,33 @@ exports.getAll = (req, res) => {
     res.json(result);
   });
 };
+
 exports.remove = (req, res) => {
   const { id } = req.params;
+  const { user_id } = req.body;
 
-  const sql = "DELETE FROM collection_points WHERE id = ?";
+  if (!user_id) {
+    return res.status(400).json({ error: "ID do usuário não fornecido." });
+  }
 
-  db.query(sql, [id], (err, result) => {
+  db.query("SELECT user_id FROM collection_points WHERE id = ?", [id], (err, rows) => {
     if (err) {
-      return res.status(500).json({ error: "Erro ao excluir ponto de coleta" });
+      return res.status(500).json({ error: "Erro ao verificar ponto de coleta." });
     }
-    res.json({ message: "Ponto de coleta excluído com sucesso" });
+
+    if (rows.length === 0) {
+      return res.status(404).json({ error: "Ponto de coleta não encontrado." });
+    }
+
+    if (rows[0].user_id !== user_id) {
+      return res.status(403).json({ error: "Você não tem permissão para excluir este ponto." });
+    }
+
+    db.query("DELETE FROM collection_points WHERE id = ?", [id], (err2) => {
+      if (err2) {
+        return res.status(500).json({ error: "Erro ao excluir ponto de coleta." });
+      }
+      res.json({ message: "Ponto de coleta excluído com sucesso" });
+    });
   });
 };

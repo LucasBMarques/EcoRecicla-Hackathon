@@ -35,7 +35,7 @@ export default function UserSettings({ setPage }) {
     mostRecycledMaterial: "—",
     score: 0,
     level: "🌱 Iniciante",
-    ranking: 0,
+    ranking: null, // null = ainda não carregou
   });
   const [rankingData, setRankingData] = useState([]);
   const [rankingLoading, setRankingLoading] = useState(false);
@@ -74,14 +74,13 @@ export default function UserSettings({ setPage }) {
   }, [activeTab]);
 
   const calculateStats = () => {
-  
     setStats({
       totalRecycled: "45kg",
       totalRecords: 12,
       mostRecycledMaterial: "Plástico",
       score: 450,
       level: "🌿 Sustentável",
-      ranking: 5,
+      ranking: null,
     });
   };
 
@@ -90,8 +89,7 @@ export default function UserSettings({ setPage }) {
     try {
       const data = await getRanking();
       setRankingData(data);
-      
-      // Encontrar a posição do usuário logado
+
       const currentUser = JSON.parse(localStorage.getItem("user"));
       const userPosition = data.find(u => u.id === currentUser?.id);
       if (userPosition) {
@@ -100,6 +98,13 @@ export default function UserSettings({ setPage }) {
           ranking: userPosition.position,
           score: userPosition.eco_points,
           level: getLevelEmoji(userPosition.level) + " " + userPosition.level,
+        }));
+      } else {
+        // Usuário não está no ranking (sem pontos)
+        setStats(prev => ({
+          ...prev,
+          ranking: data.length + 1,
+          score: 0,
         }));
       }
     } catch (err) {
@@ -120,18 +125,27 @@ export default function UserSettings({ setPage }) {
     return emojis[level] || "🌱";
   };
 
+  // Retorna mensagem e cor de fundo baseadas na posição real do usuário
+  const getRankingMessage = (position, total) => {
+    if (position === null) return { text: "Carregando...", color: "#e8f5e9" };
+    if (position === 1) return { text: "🏆 Você é o campeão dos recicladores!", color: "#fff8e1" };
+    if (position <= 3) return { text: "🥈 Você está no pódio! Incrível!", color: "#e8f5e9" };
+    if (position <= 10) return { text: "⭐ Você está no Top 10! Continue assim!", color: "#e3f2fd" };
+    if (position <= Math.ceil(total * 0.25)) return { text: "📈 Você está entre os 25% melhores!", color: "#f3e5f5" };
+    return { text: "♻️ Continue reciclando para subir no ranking!", color: "#fafafa" };
+  };
+
   const loadStats = async () => {
     setStatsLoading(true);
     try {
       const data = await getRecyclingStats(user.id);
-      
-      // Converter para números com segurança
+
       const totalKg = Number(data.total_kg) || 0;
       const totalCo2 = Number(data.total_co2) || 0;
       const totalWater = Number(data.total_water) || 0;
       const totalPoints = Number(data.total_points) || 0;
       const totalLogs = Number(data.total_logs) || 0;
-      
+
       setStatsData({
         ...data,
         total_kg: totalKg,
@@ -140,8 +154,7 @@ export default function UserSettings({ setPage }) {
         total_points: totalPoints,
         total_logs: totalLogs,
       });
-      
-      // Atualizar stats card também
+
       setStats(prev => ({
         ...prev,
         totalRecycled: `${totalKg.toFixed(2)}kg`,
@@ -329,8 +342,8 @@ export default function UserSettings({ setPage }) {
     <div className="settings-wrapper">
       <header className="settings-header">
         <div className="header-content">
-          <h1>Bem Vindo, <strong>{user?.name || "Usuário"}</strong></h1>
-          <button 
+          <h1>Bem Vindo(a), <strong>{user?.name || "Usuário"}</strong></h1>
+          <button
             className="back-home-btn"
             onClick={() => setPage("home")}
             title="Voltar para Home"
@@ -358,7 +371,7 @@ export default function UserSettings({ setPage }) {
             </div>
           </div>
 
-          <button 
+          <button
             className="edit-profile-btn"
             onClick={() => setActiveTab("profile")}
           >
@@ -367,31 +380,31 @@ export default function UserSettings({ setPage }) {
         </div>
 
         <div className="tabs-nav">
-          <button 
+          <button
             className={`tab-btn ${activeTab === "profile" ? "active" : ""}`}
             onClick={() => setActiveTab("profile")}
           >
             👤 Perfil
           </button>
-          <button 
+          <button
             className={`tab-btn ${activeTab === "stats" ? "active" : ""}`}
             onClick={() => setActiveTab("stats")}
           >
             ♻️ Estatísticas
           </button>
-          <button 
+          <button
             className={`tab-btn ${activeTab === "history" ? "active" : ""}`}
             onClick={() => setActiveTab("history")}
           >
             📊 Histórico
           </button>
-          <button 
+          <button
             className={`tab-btn ${activeTab === "ranking" ? "active" : ""}`}
             onClick={() => setActiveTab("ranking")}
           >
             🏆 Ranking
           </button>
-          <button 
+          <button
             className={`tab-btn ${activeTab === "settings" ? "active" : ""}`}
             onClick={() => setActiveTab("settings")}
           >
@@ -403,7 +416,7 @@ export default function UserSettings({ setPage }) {
           {activeTab === "profile" && (
             <div className="tab-panel">
               <h2>Informações Pessoais</h2>
-              
+
               <form onSubmit={handleSavePersonal} className="settings-form">
                 <div className="form-section">
                   <h3>Foto de Perfil</h3>
@@ -423,7 +436,7 @@ export default function UserSettings({ setPage }) {
                         id="photo-input"
                         style={{ display: "none" }}
                       />
-                      <button 
+                      <button
                         type="button"
                         className="upload-btn"
                         onClick={() => document.getElementById("photo-input").click()}
@@ -518,7 +531,7 @@ export default function UserSettings({ setPage }) {
           {activeTab === "stats" && (
             <div className="tab-panel">
               <h2>Estatísticas de Reciclagem</h2>
-              
+
               {statsLoading ? (
                 <p style={{ textAlign: "center", color: "#888" }}>Carregando estatísticas...</p>
               ) : statsData ? (
@@ -605,7 +618,7 @@ export default function UserSettings({ setPage }) {
           {activeTab === "history" && (
             <div className="tab-panel">
               <h2>Histórico de Reciclagem</h2>
-              
+
               {historyLoading ? (
                 <p style={{ textAlign: "center", color: "#888" }}>Carregando histórico...</p>
               ) : historyData && historyData.length > 0 ? (
@@ -644,20 +657,29 @@ export default function UserSettings({ setPage }) {
           {activeTab === "ranking" && (
             <div className="tab-panel">
               <h2>Ranking e Progresso</h2>
-              
+
               {rankingLoading ? (
                 <p style={{ textAlign: "center", color: "#888" }}>Carregando ranking...</p>
               ) : (
                 <>
-                  <div className="ranking-card">
-                    <div className="ranking-position">
-                      <div className="position-badge">#{stats.ranking}</div>
-                      <h3>Sua Posição</h3>
-                      <p>Você está entre os melhores recicladores!</p>
-                      <p className="ranking-score">{stats.score} pontos eco</p>
-                    </div>
-                  </div>
+                  {/* Card da posição do usuário */}
+                  {(() => {
+                    const { text, color } = getRankingMessage(stats.ranking, rankingData.length);
+                    return (
+                      <div className="ranking-card" style={{ backgroundColor: color }}>
+                        <div className="ranking-position">
+                          <div className="position-badge">
+                            {stats.ranking === null ? "—" : `#${stats.ranking}`}
+                          </div>
+                          <h3>Sua Posição</h3>
+                          <p>{text}</p>
+                          <p className="ranking-score">{stats.score} pontos eco</p>
+                        </div>
+                      </div>
+                    );
+                  })()}
 
+                  {/* Nível atual */}
                   <div className="level-progression">
                     <h3>Seu Nível</h3>
                     <div className="current-level-display">
@@ -665,49 +687,115 @@ export default function UserSettings({ setPage }) {
                     </div>
                   </div>
 
+                  {/* Top 10 com todos os usuários do banco */}
                   <div className="top-recyclers">
                     <h3>🏆 Top 10 Recicladores</h3>
-                    <div className="leaderboard">
-                      {rankingData.slice(0, 10).map((user, index) => {
-                        const isCurrentUser = JSON.parse(localStorage.getItem("user"))?.id === user.id;
-                        const medals = ["🥇", "🥈", "🥉"];
-                        const medal = medals[index] || `${index + 1}º`;
-                        
-                        return (
-                          <div 
-                            key={user.id} 
-                            className={`leaderboard-item ${isCurrentUser ? "current-user" : ""}`}
-                          >
-                            <span className="rank">{medal}</span>
-                            <div className="user-info">
-                              <span className="name">{user.name}</span>
-                              <small className="level-text">{getLevelEmoji(user.level)} {user.level}</small>
-                            </div>
-                            <span className="score">{user.eco_points} pts</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+                    {rankingData.length === 0 ? (
+                      <p style={{ textAlign: "center", color: "#888", padding: "20px" }}>
+                        Nenhum usuário no ranking ainda.
+                      </p>
+                    ) : (
+                      <div className="leaderboard">
+                        {rankingData.slice(0, 10).map((rankUser, index) => {
+                          const currentUserId = JSON.parse(localStorage.getItem("user"))?.id;
+                          const isCurrentUser = currentUserId === rankUser.id;
+                          const medals = ["🥇", "🥈", "🥉"];
+                          const medal = medals[index] || `${index + 1}º`;
 
-                  {rankingData.length > 10 && (
-                    <div className="more-ranking">
-                      <h3>Mais Recicladores ({rankingData.length})</h3>
-                      <div className="leaderboard leaderboard-compact">
-                        {rankingData.slice(10).map((user) => {
-                          const isCurrentUser = JSON.parse(localStorage.getItem("user"))?.id === user.id;
                           return (
-                            <div 
-                              key={user.id}
-                              className={`leaderboard-item compact ${isCurrentUser ? "current-user" : ""}`}
+                            <div
+                              key={rankUser.id}
+                              className={`leaderboard-item ${isCurrentUser ? "current-user" : ""}`}
+                              style={isCurrentUser ? {
+                                border: "2px solid #2e7d32",
+                                backgroundColor: "#e8f5e9",
+                                borderRadius: "8px",
+                              } : {}}
                             >
-                              <span className="rank">#{user.position}</span>
-                              <span className="name">{user.name}</span>
-                              <span className="score">{user.eco_points} pts</span>
+                              <span className="rank">{medal}</span>
+                              <div className="user-info">
+                                <span className="name">
+                                  {rankUser.name}
+                                  {isCurrentUser && (
+                                    <span style={{
+                                      marginLeft: "8px",
+                                      fontSize: "11px",
+                                      backgroundColor: "#2e7d32",
+                                      color: "#fff",
+                                      padding: "2px 6px",
+                                      borderRadius: "10px",
+                                    }}>
+                                      Você
+                                    </span>
+                                  )}
+                                </span>
+                                <small className="level-text">
+                                  {getLevelEmoji(rankUser.level)} {rankUser.level}
+                                </small>
+                              </div>
+                              <span className="score">{rankUser.eco_points} pts</span>
                             </div>
                           );
                         })}
                       </div>
+                    )}
+                  </div>
+
+                  {/* Posições 11 em diante */}
+                  {rankingData.length > 10 && (
+                    <div className="more-ranking">
+                      <h3>Mais Recicladores ({rankingData.length - 10} restantes)</h3>
+                      <div className="leaderboard leaderboard-compact">
+                        {rankingData.slice(10).map((rankUser) => {
+                          const currentUserId = JSON.parse(localStorage.getItem("user"))?.id;
+                          const isCurrentUser = currentUserId === rankUser.id;
+                          return (
+                            <div
+                              key={rankUser.id}
+                              className={`leaderboard-item compact ${isCurrentUser ? "current-user" : ""}`}
+                              style={isCurrentUser ? {
+                                border: "2px solid #2e7d32",
+                                backgroundColor: "#e8f5e9",
+                                borderRadius: "8px",
+                              } : {}}
+                            >
+                              <span className="rank">#{rankUser.position}</span>
+                              <span className="name">
+                                {rankUser.name}
+                                {isCurrentUser && (
+                                  <span style={{
+                                    marginLeft: "6px",
+                                    fontSize: "10px",
+                                    backgroundColor: "#2e7d32",
+                                    color: "#fff",
+                                    padding: "1px 5px",
+                                    borderRadius: "10px",
+                                  }}>
+                                    Você
+                                  </span>
+                                )}
+                              </span>
+                              <span className="score">{rankUser.eco_points} pts</span>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Aviso caso o usuário não apareça no top 10 */}
+                  {stats.ranking !== null && stats.ranking > 10 && (
+                    <div style={{
+                      marginTop: "16px",
+                      padding: "12px 16px",
+                      backgroundColor: "#fff3e0",
+                      borderRadius: "8px",
+                      border: "1px solid #ffe0b2",
+                      textAlign: "center",
+                      fontSize: "14px",
+                      color: "#e65100",
+                    }}>
+                      Você está na posição <strong>#{stats.ranking}</strong> — continue reciclando para entrar no Top 10! 💪
                     </div>
                   )}
                 </>
@@ -842,7 +930,7 @@ export default function UserSettings({ setPage }) {
                   <button className="danger-btn" onClick={handleDeleteAccount}>
                     🗑️ Excluir Conta
                   </button>
-                  <button 
+                  <button
                     className="logout-btn"
                     onClick={handleLogout}
                   >
