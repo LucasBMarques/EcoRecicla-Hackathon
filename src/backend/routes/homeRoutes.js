@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const homeController = require("../controllers/homeController");
+const db = require("../config/db");
 
 router.get("/stats", homeController.getStats);
 

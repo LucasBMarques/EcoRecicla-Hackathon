@@ -43,13 +43,7 @@ export const updatePassword = async (data) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
   });
-
-  const text = await response.text();
-
-  console.log("STATUS:", response.status);
-  console.log("RESPONSE:", text);
-
-  return text;
+  return response.json();
 };
 
 export const deleteAccount = async (userId) => {
@@ -95,6 +89,24 @@ export const updateCollectionPoint = async (id, data) => {
     method: "PUT",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
+  });
+  return response.json();
+};
+
+export const updateRecyclingLog = async (id, data) => {
+  const response = await fetch(`${API}/recycling/log/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return response.json();
+};
+
+export const deleteRecyclingLog = async (id, user_id) => {
+  const response = await fetch(`${API}/recycling/log/${id}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id }),
   });
   return response.json();
 };

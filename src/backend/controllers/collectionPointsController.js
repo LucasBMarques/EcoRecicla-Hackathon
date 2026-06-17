@@ -28,6 +28,27 @@ exports.getAll = (req, res) => {
   });
 };
 
+exports.update = (req, res) => {
+  const { id } = req.params;
+  const { user_id, name, phone, opening_hours, materials } = req.body;
+
+  if (!user_id) {
+    return res.status(400).json({ error: "ID do usuário não fornecido." });
+  }
+
+  db.query("SELECT user_id FROM collection_points WHERE id = ?", [id], (err, rows) => {
+    if (err) return res.status(500).json({ error: "Erro ao verificar ponto." });
+    if (rows.length === 0) return res.status(404).json({ error: "Ponto não encontrado." });
+    if (rows[0].user_id !== user_id) return res.status(403).json({ error: "Sem permissão para editar este ponto." });
+
+    const sql = `UPDATE collection_points SET name = ?, phone = ?, opening_hours = ?, materials = ? WHERE id = ?`;
+    db.query(sql, [name, phone ?? null, opening_hours ?? null, materials, id], (err2) => {
+      if (err2) return res.status(500).json({ error: "Erro ao atualizar ponto." });
+      res.json({ message: "Ponto atualizado com sucesso" });
+    });
+  });
+};
+
 exports.remove = (req, res) => {
   const { id } = req.params;
   const { user_id } = req.body;

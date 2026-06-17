@@ -11,6 +11,7 @@ export default function Mapa({ setPage }) {
   const [geoError, setGeoError] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const currentUserId = JSON.parse(localStorage.getItem("user"))?.id ?? null;
 
   useEffect(() => {
     let active = true;
@@ -38,11 +39,11 @@ export default function Mapa({ setPage }) {
   const handleDelete = async (id) => {
     if (!window.confirm("Tem certeza que deseja excluir este ponto de coleta?"))
       return;
-    const res = await deleteCollectionPoint(id);
+    const res = await deleteCollectionPoint(id, currentUserId);
     if (res.message) {
       setPoints(points.filter((p) => p.id !== id));
     } else {
-      alert("Erro ao excluir ponto de coleta.");
+      alert(res.error || "Erro ao excluir ponto de coleta.");
     }
   };
 
@@ -371,12 +372,14 @@ export default function Mapa({ setPage }) {
                     {point.name}
                   </h3>
                   <p style={{ fontSize: "13px", color: "#666" }}>📍 {point.address}</p>
-                  <button 
-                    onClick={() => handleDelete(point.id)}
-                    style={{ marginTop: "10px", color: "red", background: "none", border: "none", cursor: "pointer" }}
-                  >
-                    Excluir
-                  </button>
+                  {point.user_id === currentUserId && (
+                    <button
+                      onClick={() => handleDelete(point.id)}
+                      style={{ marginTop: "10px", color: "#c62828", background: "none", border: "1px solid #c62828", borderRadius: "6px", padding: "4px 10px", cursor: "pointer", fontSize: "12px", fontWeight: 600 }}
+                    >
+                      🗑️ Excluir
+                    </button>
+                  )}
                 </div>
               </div>
             ))}

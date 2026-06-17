@@ -30,7 +30,7 @@ export default function Ranking({ setPage }) {
     const fetchRanking = async () => {
       try {
         const data = await getRanking();
-        setRanking(data);
+        setRanking(Array.isArray(data) ? data : []);
       } catch (err) {
         setError("Erro ao carregar ranking");
         console.error(err);
