@@ -154,6 +154,57 @@ exports.getUserProfile = (req, res) => {
   });
 };
 
+exports.updatePassword = (req, res) => {
+  const { userId, currentPassword, newPassword } = req.body;
+
+  if (!userId || !currentPassword || !newPassword) {
+    return res.status(400).json({
+      error: "Todos os campos são obrigatórios"
+    });
+  }
+
+  // NOVA VALIDAÇÃO
+  if (currentPassword === newPassword) {
+    return res.status(400).json({
+      error: "A nova senha deve ser diferente da senha atual"
+    });
+  }
+
+  // Verifica senha atual
+  const checkSql = "SELECT * FROM users WHERE id = ? AND password = ?";
+
+  db.query(checkSql, [userId, currentPassword], (checkErr, result) => {
+    if (checkErr) {
+      console.error("Erro ao verificar senha:", checkErr);
+      return res.status(500).json({
+        error: "Erro interno do servidor"
+      });
+    }
+
+    if (result.length === 0) {
+      return res.status(401).json({
+        error: "Senha atual incorreta"
+      });
+    }
+
+    // Atualiza senha
+    const updateSql = "UPDATE users SET password = ? WHERE id = ?";
+
+    db.query(updateSql, [newPassword, userId], (updateErr) => {
+      if (updateErr) {
+        console.error("Erro ao atualizar senha:", updateErr);
+        return res.status(500).json({
+          error: "Erro ao atualizar senha"
+        });
+      }
+
+      return res.json({
+        message: "Senha atualizada com sucesso"
+      });
+    });
+  });
+};
+
 exports.deleteAccount = (req, res) => {
   const { userId } = req.body;
 

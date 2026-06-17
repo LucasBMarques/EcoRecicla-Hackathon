@@ -37,6 +37,21 @@ export const updateProfile = async (data) => {
   return response.json();
 };
 
+export const updatePassword = async (data) => {
+  const response = await fetch(`${API}/auth/update-password`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data)
+  });
+
+  const text = await response.text();
+
+  console.log("STATUS:", response.status);
+  console.log("RESPONSE:", text);
+
+  return text;
+};
+
 export const deleteAccount = async (userId) => {
   const response = await fetch(`${API}/auth/delete-account`, {
     method: "DELETE",

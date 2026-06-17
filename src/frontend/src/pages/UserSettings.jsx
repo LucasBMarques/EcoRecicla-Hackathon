@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { deleteAccount, getRanking, getRecyclingStats, getRecyclingHistory } from "../services/api";
+import { updatePassword, deleteAccount, getRanking, getRecyclingStats, getRecyclingHistory } from "../services/api";
 import "../styles/userSettings.css";
 
 export default function UserSettings({ setPage }) {
@@ -267,17 +267,45 @@ export default function UserSettings({ setPage }) {
     }
   };
 
-  const handleChangePassword = (e) => {
-    e.preventDefault();
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert("As novas senhas não combinam!");
+  const handleChangePassword = async (e) => {
+  e.preventDefault();
+
+  if (passwordData.newPassword !== passwordData.confirmPassword) {
+    alert("As novas senhas não combinam!");
+    return;
+  }
+
+  try {
+    const response = await updatePassword({
+      userId: user.id,
+      currentPassword: passwordData.currentPassword,
+      newPassword: passwordData.newPassword,
+    });
+
+    if (response.error) {
+      alert(response.error);
       return;
     }
-    console.log("Alterando senha:", passwordData);
+
     alert("Senha alterada com sucesso!");
-    setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
-    setShowPasswords({ current: false, new: false, confirm: false });
-  };
+
+    setPasswordData({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+
+    setShowPasswords({
+      current: false,
+      new: false,
+      confirm: false,
+    });
+
+  } catch (error) {
+    console.error("Erro ao alterar senha:", error);
+    alert("Erro ao alterar senha");
+  }
+};
 
   const getPasswordStrength = (password) => {
     if (!password) return { level: 0, text: "", color: "#ddd" };
