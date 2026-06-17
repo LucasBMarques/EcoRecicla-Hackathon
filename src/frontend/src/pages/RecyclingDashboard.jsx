@@ -1,5 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 
+import { updateRecyclingLog, deleteRecyclingLog } from "../services/api";
+import Toast from "../components/Toast";
+import { useToast } from "../hooks/useToast";
+
 const API = "http://localhost:3001/api";
 
 const UNIT_LABELS = {
@@ -183,6 +187,14 @@ export default function RecyclingDashboard({ setPage }) {
   const [schedulesLoading, setSchedulesLoading] = useState(false);
   const [schedView, setSchedView] = useState("list");
   const [editingSchedule, setEditingSchedule] = useState(null);
+  const { toasts, addToast, removeToast } = useToast();
+  const [editingLog, setEditingLog] = useState(null);
+  const [editLogMaterial, setEditLogMaterial] = useState(null);
+  const [editLogQuantity, setEditLogQuantity] = useState("");
+  const [editLogUnit, setEditLogUnit] = useState("kg");
+  const [editLogNotes, setEditLogNotes] = useState("");
+  const [editLogLoading, setEditLogLoading] = useState(false);
+  const [editLogError, setEditLogError] = useState("");
 
   const loadStats = useCallback((uid) =>
     fetch(`${API}/recycling/stats/${uid}`).then(r => r.json()).then(setStats).catch(e => void e), []);
@@ -191,7 +203,7 @@ export default function RecyclingDashboard({ setPage }) {
     fetch(`${API}/recycling/badges/${uid}`).then(r => r.json()).then(setBadges).catch(e => void e), []);
 
   const loadHistory = useCallback((uid) =>
-    fetch(`${API}/recycling/history/${uid}?limit=10`).then(r => r.json()).then(setHistory).catch(e => void e), []);
+    fetch(`${API}/recycling/history/${uid}?limit=50`).then(r => r.json()).then(setHistory).catch(e => void e), []);
 
   const loadSchedules = useCallback((uid) => {
     setSchedulesLoading(true);
@@ -308,6 +320,62 @@ export default function RecyclingDashboard({ setPage }) {
       setError(e.message);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const handleEditLog = (log) => {
+    setEditingLog(log);
+    const mat = materials.find((m) => m.id === log.material_id) || null;
+    setEditLogMaterial(mat);
+    setEditLogQuantity(String(log.quantity));
+    setEditLogUnit(log.unit || "kg");
+    setEditLogNotes(log.notes || "");
+  };
+
+  const handleSaveLogEdit = async () => {
+    if (!editingLog || !editLogMaterial || !editLogQuantity) return;
+    setEditLogLoading(true);
+    setEditLogError("");
+    try {
+      const data = await updateRecyclingLog(editingLog.id, {
+        user_id: user?.id,
+        material_id: editLogMaterial.id,
+        quantity: editLogQuantity,
+        unit: editLogUnit,
+        notes: editLogNotes || null,
+      });
+      if (data.error) throw new Error(data.error);
+      setEditingLog(null);
+      addToast("Registro de reciclagem alterado com sucesso!", "success");
+      if (user?.id) {
+        loadHistory(user.id);
+        loadStats(user.id);
+        const updatedUser = await fetch(`${API}/auth/profile/${user.id}`).then(r => r.json());
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        setUser(updatedUser);
+      }
+    } catch (e) {
+      setEditLogError(e.message);
+    } finally {
+      setEditLogLoading(false);
+    }
+  };
+
+  const handleDeleteLog = async (log) => {
+    if (!window.confirm("Deseja excluir este registro de reciclagem?\nOs pontos e estatísticas serão revertidos.")) return;
+    try {
+      const data = await deleteRecyclingLog(log.id, user?.id);
+      if (data.error) throw new Error(data.error);
+      addToast("Registro excluído com sucesso!", "success");
+      if (user?.id) {
+        loadHistory(user.id);
+        loadStats(user.id);
+        const updatedUser = await fetch(`${API}/auth/profile/${user.id}`).then(r => r.json());
+        localStorage.setItem("user", JSON.stringify(updatedUser));
+        setUser(updatedUser);
+      }
+    } catch (e) {
+      addToast("Erro ao excluir: " + e.message, "error");
     }
   };
 
@@ -435,7 +503,91 @@ export default function RecyclingDashboard({ setPage }) {
         @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.03)} }
       `}</style>
 
+      <div className="toast-container">
+        {toasts.map((toast) => (
+          <Toast key={toast.id} message={toast.message} type={toast.type} onClose={() => removeToast(toast.id)} />
+        ))}
+      </div>
+
       {celebration && <CelebrationToast result={celebration} onClose={() => setCelebration(null)} />}
+
+      {editingLog && (
+        <div style={{
+          position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 1000,
+          display: "flex", alignItems: "center", justifyContent: "center", padding: 20,
+        }}>
+          <div style={{ background: "white", borderRadius: 20, padding: 32, width: "100%", maxWidth: 480, boxShadow: "0 8px 40px rgba(0,0,0,0.2)", maxHeight: "90vh", overflowY: "auto" }}>
+            <h2 style={{ margin: "0 0 20px", color: "#1b5e3f", fontSize: 18 }}>✏️ Editar Registro de Reciclagem</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 8 }}>Material *</label>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(100px, 1fr))", gap: 6 }}>
+                  {materials.map(m => (
+                    <button key={m.id} onClick={() => { setEditLogMaterial(m); setEditLogUnit("kg"); }} style={{
+                      padding: "8px 6px",
+                      background: editLogMaterial?.id === m.id ? "linear-gradient(135deg, #1b9a3d, #0f6e56)" : "#f0f6f0",
+                      color: editLogMaterial?.id === m.id ? "white" : "#333",
+                      border: editLogMaterial?.id === m.id ? "2px solid #1b9a3d" : "2px solid transparent",
+                      borderRadius: 8, cursor: "pointer", fontWeight: 600, fontSize: 11,
+                      display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
+                    }}>
+                      <span style={{ fontSize: 18 }}>{m.icon}</span>
+                      <span>{m.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Quantidade *</label>
+                  <input type="number" min="0.001" step="0.01" value={editLogQuantity} onChange={e => setEditLogQuantity(e.target.value)}
+                    style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, fontWeight: 600, boxSizing: "border-box" }} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Unidade *</label>
+                  <select value={editLogUnit} onChange={e => setEditLogUnit(e.target.value)}
+                    style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, background: "white", boxSizing: "border-box" }}>
+                    {getUnits(editLogMaterial).map(u => (
+                      <option key={u} value={u}>{UNIT_LABELS[u] ?? u}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Observações</label>
+                <textarea value={editLogNotes} onChange={e => setEditLogNotes(e.target.value)} rows={2}
+                  style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 13, resize: "vertical", boxSizing: "border-box", fontFamily: "inherit" }} />
+              </div>
+
+              {editLogError && (
+                <div style={{ padding: "12px 16px", background: "#fff3f3", border: "1px solid #ffcdd2", borderRadius: 10, color: "#c62828", fontSize: 13 }}>
+                  ⚠️ {editLogError}
+                </div>
+              )}
+
+              <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
+                <button onClick={() => { setEditingLog(null); setEditLogError(""); }} style={{
+                  flex: 1, padding: "13px", background: "white", color: "#555",
+                  border: "1.5px solid #ddd", borderRadius: 12, fontSize: 14, fontWeight: 700, cursor: "pointer",
+                }}>
+                  Cancelar
+                </button>
+                <button onClick={handleSaveLogEdit} disabled={editLogLoading || !editLogMaterial || !editLogQuantity} style={{
+                  flex: 2, padding: "13px",
+                  background: editLogLoading || !editLogMaterial || !editLogQuantity ? "#ccc" : "linear-gradient(135deg, #1b9a3d, #0f6e56)",
+                  color: "white", border: "none", borderRadius: 12, fontSize: 14, fontWeight: 700,
+                  cursor: editLogLoading || !editLogMaterial || !editLogQuantity ? "not-allowed" : "pointer",
+                }}>
+                  {editLogLoading ? "⏳ Salvando..." : "💾 Salvar alterações"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24, flexWrap: "wrap", gap: 12 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -463,12 +615,13 @@ export default function RecyclingDashboard({ setPage }) {
 
       <div style={{ display: "flex", gap: 8, marginBottom: 24, flexWrap: "wrap" }}>
         <button style={tabBtn("register")} onClick={() => setTab("register")}>✍️ Registrar</button>
+        <button style={tabBtn("history")} onClick={() => setTab("history")}>📋 Histórico</button>
         <button style={tabBtn("dashboard")} onClick={() => setTab("dashboard")}>📊 Dashboard</button>
         <button style={tabBtn("schedule")} onClick={() => setTab("schedule")}>📅 Agendar Coleta</button>
       </div>
 
       {tab === "register" && (
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: 20, alignItems: "start" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 380px", gap: 20, alignItems: "start", maxWidth: 1100 }}>
           <div style={card}>
             <h2 style={{ margin: "0 0 20px", color: "#1b5e3f", fontSize: 17 }}>Novo Registro de Reciclagem</h2>
 
@@ -575,26 +728,98 @@ export default function RecyclingDashboard({ setPage }) {
               )}
             </div>
 
-            {history.length > 0 && (
-              <div style={card}>
-                <h3 style={{ margin: "0 0 14px", fontSize: 14, color: "#1b5e3f" }}>🕐 Últimos Registros</h3>
-                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                  {history.slice(0, 5).map(h => (
-                    <div key={h.id} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "8px 12px", background: "#f8faf8", borderRadius: 8 }}>
-                      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                        <span style={{ fontSize: 18 }}>{h.material_icon}</span>
-                        <div>
-                          <div style={{ fontSize: 13, fontWeight: 600 }}>{h.material_name}</div>
-                          <div style={{ fontSize: 11, color: "#888" }}>{Number(h.quantity_kg).toFixed(2)} kg</div>
-                        </div>
-                      </div>
-                      <span style={{ fontSize: 12, color: "#1b9a3d", fontWeight: 700 }}>+{h.points_earned} pts</span>
-                    </div>
-                  ))}
-                </div>
+            <div style={{ ...card, textAlign: "center", padding: "16px 20px" }}>
+                <p style={{ margin: 0, fontSize: 13, color: "#888" }}>
+                  Seus registros ficam na aba{" "}
+                  <button onClick={() => setTab("history")} style={{ background: "none", border: "none", color: "#1b9a3d", fontWeight: 700, cursor: "pointer", fontSize: 13, padding: 0 }}>
+                    📋 Histórico
+                  </button>
+                </p>
               </div>
-            )}
           </div>
+        </div>
+      )}
+
+      {tab === "history" && (
+        <div style={{ maxWidth: 900 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16, flexWrap: "wrap", gap: 8 }}>
+            <h2 style={{ margin: 0, color: "#1b5e3f", fontSize: 18 }}>
+              Meus Registros de Reciclagem{history.length > 0 && <span style={{ fontSize: 14, fontWeight: 400, color: "#888", marginLeft: 8 }}>({history.length})</span>}
+            </h2>
+            <button onClick={() => setTab("register")} style={{
+              padding: "8px 18px", background: "#1b9a3d", color: "white",
+              border: "none", borderRadius: 10, fontWeight: 700, fontSize: 13, cursor: "pointer",
+            }}>
+              + Novo Registro
+            </button>
+          </div>
+
+          {history.length === 0 ? (
+            <div style={{ ...card, textAlign: "center", padding: 48 }}>
+              <div style={{ fontSize: 48, marginBottom: 12 }}>♻️</div>
+              <p style={{ color: "#888", fontSize: 15, margin: "0 0 16px" }}>Nenhum registro ainda.</p>
+              <button onClick={() => setTab("register")} style={{
+                padding: "10px 24px", background: "#1b9a3d", color: "white",
+                border: "none", borderRadius: 10, fontWeight: 700, fontSize: 14, cursor: "pointer",
+              }}>
+                Fazer primeiro registro
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+              {history.map(h => {
+                const dateStr = h.logged_at
+                  ? new Date(h.logged_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" })
+                  : "—";
+
+                return (
+                  <div key={h.id} style={{
+                    ...card, marginBottom: 0,
+                    display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap",
+                    borderLeft: "4px solid #1b9a3d",
+                  }}>
+                    <span style={{ fontSize: 32, flexShrink: 0 }}>{h.material_icon}</span>
+
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 700, fontSize: 15, color: "#1b5e3f" }}>{h.material_name}</div>
+                      <div style={{ fontSize: 12, color: "#888", marginTop: 2 }}>📅 {dateStr}</div>
+                      {h.notes && <div style={{ fontSize: 12, color: "#777", fontStyle: "italic", marginTop: 2 }}>📝 {h.notes}</div>}
+                    </div>
+
+                    <div style={{ display: "flex", gap: 16, flexWrap: "wrap", flexShrink: 0 }}>
+                      <div style={{ textAlign: "center" }}>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: "#1b5e3f" }}>{Number(h.quantity_kg).toFixed(2)} kg</div>
+                        <div style={{ fontSize: 10, color: "#aaa", textTransform: "uppercase" }}>Reciclado</div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: "#0f6e56" }}>{Number(h.co2_avoided).toFixed(2)}</div>
+                        <div style={{ fontSize: 10, color: "#aaa", textTransform: "uppercase" }}>kg CO₂</div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: "#1565c0" }}>{Number(h.water_saved).toFixed(0)} L</div>
+                        <div style={{ fontSize: 10, color: "#aaa", textTransform: "uppercase" }}>Água</div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        <div style={{ fontSize: 15, fontWeight: 700, color: "#e65100" }}>+{h.points_earned}</div>
+                        <div style={{ fontSize: 10, color: "#aaa", textTransform: "uppercase" }}>Pontos</div>
+                      </div>
+                    </div>
+
+                    <div style={{ display: "flex", gap: 6, flexShrink: 0 }}>
+                      <button onClick={() => handleEditLog(h)} style={{
+                        padding: "8px 14px", background: "#e3f2fd", color: "#1565c0",
+                        border: "1px solid #1565c0", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer",
+                      }}>✏️ Editar</button>
+                      <button onClick={() => handleDeleteLog(h)} style={{
+                        padding: "8px 14px", background: "#ffebee", color: "#c62828",
+                        border: "1px solid #c62828", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: "pointer",
+                      }}>🗑️ Excluir</button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
 

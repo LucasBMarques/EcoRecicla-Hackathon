@@ -148,6 +148,103 @@ function checkAndGrantBadges(user_id, callback) {
   });
 }
 
+router.put("/recycling/log/:id", (req, res) => {
+  const { id } = req.params;
+  const { user_id, material_id, quantity, unit = "kg", notes } = req.body;
+
+  if (!user_id || !material_id || !quantity)
+    return res.status(400).json({ error: "Campos obrigatórios ausentes." });
+
+  db.query("SELECT * FROM recycling_logs WHERE id = ? AND user_id = ?", [id, user_id], (err, rows) => {
+    if (err || rows.length === 0)
+      return res.status(404).json({ error: "Registro não encontrado." });
+
+    const oldLog = rows[0];
+
+    db.query("SELECT * FROM materials WHERE id = ?", [material_id], (err2, mrows) => {
+      if (err2 || mrows.length === 0)
+        return res.status(404).json({ error: "Material não encontrado." });
+
+      const material      = mrows[0];
+      const qty_kg        = toKg(quantity, unit);
+      const co2_avoided   = +(qty_kg * material.co2_factor).toFixed(4);
+      const water_saved   = +(qty_kg * material.water_factor).toFixed(4);
+      const points_earned = Math.round(qty_kg * material.points_per_kg);
+
+      db.query(
+        `UPDATE recycling_logs
+         SET material_id=?, quantity=?, unit=?, quantity_kg=?,
+             co2_avoided=?, water_saved=?, points_earned=?, notes=?
+         WHERE id=?`,
+        [material_id, quantity, unit, qty_kg, co2_avoided, water_saved, points_earned, notes ?? null, id],
+        (err3) => {
+          if (err3) return res.status(500).json({ error: "Erro ao atualizar registro." });
+
+          const ptsDiff   = points_earned - oldLog.points_earned;
+          const kgDiff    = qty_kg        - oldLog.quantity_kg;
+          const co2Diff   = co2_avoided   - oldLog.co2_avoided;
+          const waterDiff = water_saved   - oldLog.water_saved;
+
+          db.query(
+            `UPDATE users SET
+               eco_points  = eco_points  + ?,
+               total_kg    = total_kg    + ?,
+               co2_avoided = co2_avoided + ?,
+               water_saved = water_saved + ?,
+               level = CASE
+                 WHEN (eco_points + ?) >= 5000 THEN 'Guardião'
+                 WHEN (eco_points + ?) >= 2000 THEN 'Floresta'
+                 WHEN (eco_points + ?) >= 800  THEN 'Árvore'
+                 WHEN (eco_points + ?) >= 200  THEN 'Broto'
+                 ELSE 'Semente'
+               END
+             WHERE id = ?`,
+            [ptsDiff, kgDiff, co2Diff, waterDiff, ptsDiff, ptsDiff, ptsDiff, ptsDiff, user_id],
+            () => res.json({ message: "Registro atualizado com sucesso!", points_diff: ptsDiff })
+          );
+        }
+      );
+    });
+  });
+});
+
+router.delete("/recycling/log/:id", (req, res) => {
+  const { id } = req.params;
+  const { user_id } = req.body;
+
+  if (!user_id) return res.status(400).json({ error: "user_id obrigatório." });
+
+  db.query("SELECT * FROM recycling_logs WHERE id = ? AND user_id = ?", [id, user_id], (err, rows) => {
+    if (err || rows.length === 0)
+      return res.status(404).json({ error: "Registro não encontrado." });
+
+    const log = rows[0];
+
+    db.query("DELETE FROM recycling_logs WHERE id = ?", [id], (err2) => {
+      if (err2) return res.status(500).json({ error: "Erro ao excluir registro." });
+
+      db.query(
+        `UPDATE users SET
+           eco_points  = GREATEST(0, eco_points  - ?),
+           total_kg    = GREATEST(0, total_kg    - ?),
+           co2_avoided = GREATEST(0, co2_avoided - ?),
+           water_saved = GREATEST(0, water_saved - ?),
+           level = CASE
+             WHEN GREATEST(0, eco_points - ?) >= 5000 THEN 'Guardião'
+             WHEN GREATEST(0, eco_points - ?) >= 2000 THEN 'Floresta'
+             WHEN GREATEST(0, eco_points - ?) >= 800  THEN 'Árvore'
+             WHEN GREATEST(0, eco_points - ?) >= 200  THEN 'Broto'
+             ELSE 'Semente'
+           END
+         WHERE id = ?`,
+        [log.points_earned, log.quantity_kg, log.co2_avoided, log.water_saved,
+         log.points_earned, log.points_earned, log.points_earned, log.points_earned, user_id],
+        () => res.json({ message: "Registro excluído com sucesso!" })
+      );
+    });
+  });
+});
+
 router.get("/recycling/history/:user_id", (req, res) => {
   const { user_id } = req.params;
   const { limit = 50, offset = 0 } = req.query;

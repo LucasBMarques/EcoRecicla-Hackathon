@@ -1,6 +1,6 @@
 import "../styles/pointModal.css";
 
-export default function PointModal({ point, onClose, onDelete, isOwner }) {
+export default function PointModal({ point, onClose, onDelete, onEdit, isOwner }) {
   if (!point) return null;
 
   const materials = Array.isArray(point.materials)
@@ -58,6 +58,9 @@ export default function PointModal({ point, onClose, onDelete, isOwner }) {
 
         {isOwner && (
           <div className="modal-footer">
+            <button className="btn-edit" onClick={() => { onClose(); onEdit(point); }}>
+              ✏️ Editar
+            </button>
             <button className="btn-delete" onClick={() => onDelete(point.id)}>
               🗑️ Deletar
             </button>

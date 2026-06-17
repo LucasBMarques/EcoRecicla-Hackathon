@@ -34,7 +34,9 @@ export default function Footer({ setPage }) {
               </button>
             </li>
             <li>
-              <span className="footer-link-disabled">Ranking</span>
+              <button className="footer-link-btn" onClick={() => setPage("ranking")}>
+                Ranking
+              </button>
             </li>
             <li>
               <button className="footer-link-btn" onClick={() => setPage("settings")}>

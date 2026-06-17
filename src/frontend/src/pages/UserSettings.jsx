@@ -88,10 +88,11 @@ export default function UserSettings({ setPage }) {
     setRankingLoading(true);
     try {
       const data = await getRanking();
-      setRankingData(data);
+      const safeData = Array.isArray(data) ? data : [];
+      setRankingData(safeData);
 
       const currentUser = JSON.parse(localStorage.getItem("user"));
-      const userPosition = data.find(u => u.id === currentUser?.id);
+      const userPosition = safeData.find(u => u.id === currentUser?.id);
       if (userPosition) {
         setStats(prev => ({
           ...prev,
@@ -103,7 +104,7 @@ export default function UserSettings({ setPage }) {
         // Usuário não está no ranking (sem pontos)
         setStats(prev => ({
           ...prev,
-          ranking: data.length + 1,
+          ranking: safeData.length + 1,
           score: 0,
         }));
       }

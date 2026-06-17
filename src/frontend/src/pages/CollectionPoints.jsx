@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { createCollectionPoint, getMaterials, deleteCollectionPoint } from "../services/api";
+import { createCollectionPoint, getMaterials, deleteCollectionPoint, updateCollectionPoint } from "../services/api";
 import Toast from "../components/Toast";
 import PointModal from "../components/PointModal";
 import { useToast } from "../hooks/useToast";
@@ -44,6 +44,10 @@ function CollectionPoints({ setPage }) {
   const [points, setPoints] = useState([]);
   const [selectedPoint, setSelectedPoint] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [editingPoint, setEditingPoint] = useState(null);
+  const [editForm, setEditForm] = useState({ name: "", phone: "", opening_hours: "" });
+  const [editMaterials, setEditMaterials] = useState([]);
+  const [editLoading, setEditLoading] = useState(false);
   const [searchMaterial, setSearchMaterial] = useState("");
   const [userID, setUserID] = useState(null);
   const { toasts, addToast, removeToast } = useToast();
@@ -217,18 +221,86 @@ function CollectionPoints({ setPage }) {
     setShowModal(true);
   };
 
+  const handleEditPoint = (point) => {
+    setEditingPoint(point);
+    setEditForm({
+      name: point.name,
+      phone: point.phone || "",
+      opening_hours: point.opening_hours || "",
+    });
+    const pointMaterials = point.materials
+      ?.split(", ")
+      .map((name) => allMaterials.find((m) => m.name === name)?.id)
+      .filter(Boolean) || [];
+    setEditMaterials(pointMaterials);
+  };
+
+  const handleEditMaterialChange = (materialId) => {
+    setEditMaterials((prev) =>
+      prev.includes(materialId) ? prev.filter((id) => id !== materialId) : [...prev, materialId]
+    );
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingPoint) return;
+    if (!editForm.name.trim()) {
+      addToast("O nome do ponto é obrigatório", "error");
+      return;
+    }
+    if (editMaterials.length === 0) {
+      addToast("Selecione pelo menos um material", "error");
+      return;
+    }
+    setEditLoading(true);
+
+    const materialsNames = editMaterials
+      .map((id) => allMaterials.find((m) => m.id === id)?.name)
+      .filter(Boolean)
+      .join(", ");
+
+    try {
+      const res = await updateCollectionPoint(editingPoint.id, {
+        user_id: userID,
+        name: editForm.name,
+        phone: editForm.phone || null,
+        opening_hours: editForm.opening_hours || null,
+        materials: materialsNames,
+      });
+
+      if (res.message) {
+        addToast("Ponto atualizado com sucesso!", "success");
+        setPoints((prev) =>
+          prev.map((p) =>
+            p.id === editingPoint.id
+              ? { ...p, name: editForm.name, phone: editForm.phone, opening_hours: editForm.opening_hours, materials: materialsNames }
+              : p
+          )
+        );
+        setEditingPoint(null);
+      } else {
+        addToast(res.error || "Erro ao atualizar ponto", "error");
+      }
+    } catch {
+      addToast("Erro ao atualizar ponto", "error");
+    } finally {
+      setEditLoading(false);
+    }
+  };
+
   const handleDeletePoint = async (id) => {
     if (!window.confirm("Tem certeza que deseja deletar este ponto?")) return;
-    
+
     try {
-      const res = await deleteCollectionPoint(id);
+      const res = await deleteCollectionPoint(id, userID);
       if (res.message) {
         addToast("Ponto deletado com sucesso!", "success");
         setPoints(points.filter((p) => p.id !== id));
         setShowModal(false);
+      } else {
+        addToast(res.error || "Erro ao deletar ponto", "error");
       }
     } catch {
-        addToast("Erro ao deletar ponto", "error");
+      addToast("Erro ao deletar ponto", "error");
     }
   };
 
@@ -257,8 +329,98 @@ function CollectionPoints({ setPage }) {
           point={selectedPoint}
           onClose={() => setShowModal(false)}
           onDelete={handleDeletePoint}
+          onEdit={handleEditPoint}
           isOwner={selectedPoint.user_id === userID}
         />
+      )}
+
+      {editingPoint && (
+        <div style={{
+          position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 1100,
+          display: "flex", alignItems: "center", justifyContent: "center", padding: 20,
+        }}>
+          <div style={{
+            background: "white", borderRadius: 16, padding: 32,
+            width: "100%", maxWidth: 520, maxHeight: "90vh", overflowY: "auto",
+            boxShadow: "0 8px 40px rgba(0,0,0,0.2)",
+          }}>
+            <h2 style={{ margin: "0 0 20px", color: "#1b5e3f", fontSize: 18 }}>✏️ Editar Ponto de Coleta</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Nome *</label>
+                <input
+                  type="text"
+                  value={editForm.name}
+                  onChange={(e) => setEditForm((p) => ({ ...p, name: e.target.value }))}
+                  required
+                  style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, boxSizing: "border-box" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Telefone (opcional)</label>
+                <input
+                  type="text"
+                  value={editForm.phone}
+                  onChange={(e) => setEditForm((p) => ({ ...p, phone: e.target.value }))}
+                  style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, boxSizing: "border-box" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 6 }}>Horário de Funcionamento (opcional)</label>
+                <input
+                  type="text"
+                  value={editForm.opening_hours}
+                  onChange={(e) => setEditForm((p) => ({ ...p, opening_hours: e.target.value }))}
+                  placeholder="Ex: Seg-Sex: 8h-18h"
+                  style={{ width: "100%", padding: "12px 14px", border: "1.5px solid #ddd", borderRadius: 10, fontSize: 14, boxSizing: "border-box" }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: 12, fontWeight: 700, color: "#555", textTransform: "uppercase", letterSpacing: 0.5, display: "block", marginBottom: 10 }}>Materiais Aceitos *</label>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))", gap: 8 }}>
+                  {allMaterials.map((material) => (
+                    <label key={material.id} style={{
+                      display: "flex", alignItems: "center", gap: 8, padding: "8px 10px",
+                      border: `2px solid ${editMaterials.includes(material.id) ? "#1b9a3d" : "#ddd"}`,
+                      borderRadius: 8, cursor: "pointer",
+                      background: editMaterials.includes(material.id) ? "#f0f9f0" : "white",
+                      fontSize: 13, fontWeight: 500,
+                    }}>
+                      <input
+                        type="checkbox"
+                        checked={editMaterials.includes(material.id)}
+                        onChange={() => handleEditMaterialChange(material.id)}
+                        style={{ accentColor: "#1b9a3d" }}
+                      />
+                      <span>{material.icon}</span>
+                      <span>{material.name}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
+                <button
+                  onClick={() => setEditingPoint(null)}
+                  style={{ flex: 1, padding: "13px", background: "white", color: "#555", border: "1.5px solid #ddd", borderRadius: 12, fontSize: 14, fontWeight: 700, cursor: "pointer" }}
+                >
+                  Cancelar
+                </button>
+                <button
+                  onClick={handleSaveEdit}
+                  disabled={editLoading}
+                  style={{ flex: 2, padding: "13px", background: editLoading ? "#ccc" : "linear-gradient(135deg, #1b9a3d, #0f6e56)", color: "white", border: "none", borderRadius: 12, fontSize: 14, fontWeight: 700, cursor: editLoading ? "not-allowed" : "pointer" }}
+                >
+                  {editLoading ? "⏳ Salvando..." : "💾 Salvar alterações"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {view === "form" ? (
@@ -474,51 +636,92 @@ function CollectionPoints({ setPage }) {
               </button>
             </div>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "16px" }}>
-              {filteredPoints.map((point) => (
-                <div
-                  key={point.id}
-                  onClick={() => handlePointClick(point)}
-                  style={{
-                    background: "white",
-                    borderRadius: "12px",
-                    padding: "16px",
-                    cursor: "pointer",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-                    transition: "all 0.2s",
-                    borderLeft: "4px solid #1b9a3d",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)";
-                  }}
-                >
-                  <h3 style={{ margin: "0 0 8px 0", color: "#1b5e3f", fontSize: "16px" }}>
-                    {point.name}
-                  </h3>
-                  <p style={{ margin: "0 0 8px 0", fontSize: "12px", color: "#666" }}>
-                    📍 {point.address}
-                  </p>
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
-                    {point.materials?.split(", ").map((material, idx) => (
-                      <span
-                        key={idx}
-                        style={{
-                          fontSize: "11px",
-                          background: "#f0f6f0",
-                          color: "#1b9a3d",
-                          padding: "4px 8px",
-                          borderRadius: "12px",
-                        }}
-                      >
-                        {material}
-                      </span>
-                    ))}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: "16px" }}>
+              {filteredPoints.map((point) => {
+                const isOwner = point.user_id === userID;
+                return (
+                  <div
+                    key={point.id}
+                    style={{
+                      background: "white",
+                      borderRadius: "12px",
+                      padding: "16px",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+                      transition: "all 0.2s",
+                      borderLeft: `4px solid ${isOwner ? "#1565c0" : "#1b9a3d"}`,
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: "8px",
+                    }}
+                  >
+                    <div
+                      onClick={() => handlePointClick(point)}
+                      style={{ cursor: "pointer" }}
+                      onMouseEnter={(e) => e.currentTarget.parentElement.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)"}
+                      onMouseLeave={(e) => e.currentTarget.parentElement.style.boxShadow = "0 2px 8px rgba(0,0,0,0.1)"}
+                    >
+                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 4 }}>
+                        <h3 style={{ margin: 0, color: "#1b5e3f", fontSize: "15px" }}>{point.name}</h3>
+                        {isOwner && (
+                          <span style={{ fontSize: "10px", background: "#e3f2fd", color: "#1565c0", padding: "2px 8px", borderRadius: "10px", fontWeight: 700 }}>
+                            Meu ponto
+                          </span>
+                        )}
+                      </div>
+                      <p style={{ margin: "0 0 8px 0", fontSize: "12px", color: "#666" }}>
+                        📍 {point.address}
+                      </p>
+                      {point.phone && (
+                        <p style={{ margin: "0 0 4px 0", fontSize: "12px", color: "#666" }}>📞 {point.phone}</p>
+                      )}
+                      {point.opening_hours && (
+                        <p style={{ margin: "0 0 8px 0", fontSize: "12px", color: "#666" }}>🕐 {point.opening_hours}</p>
+                      )}
+                      <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
+                        {point.materials?.split(", ").map((material, idx) => (
+                          <span
+                            key={idx}
+                            style={{
+                              fontSize: "11px",
+                              background: "#f0f6f0",
+                              color: "#1b9a3d",
+                              padding: "4px 8px",
+                              borderRadius: "12px",
+                            }}
+                          >
+                            {material}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {isOwner && (
+                      <div style={{ display: "flex", gap: "8px", paddingTop: "8px", borderTop: "1px solid #f0f0f0" }}>
+                        <button
+                          onClick={() => handleEditPoint(point)}
+                          style={{
+                            flex: 1, padding: "7px 10px", background: "#e3f2fd", color: "#1565c0",
+                            border: "1px solid #1565c0", borderRadius: "8px",
+                            fontSize: "12px", fontWeight: 700, cursor: "pointer",
+                          }}
+                        >
+                          ✏️ Editar
+                        </button>
+                        <button
+                          onClick={() => handleDeletePoint(point.id)}
+                          style={{
+                            flex: 1, padding: "7px 10px", background: "#ffebee", color: "#c62828",
+                            border: "1px solid #c62828", borderRadius: "8px",
+                            fontSize: "12px", fontWeight: 700, cursor: "pointer",
+                          }}
+                        >
+                          🗑️ Excluir
+                        </button>
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
