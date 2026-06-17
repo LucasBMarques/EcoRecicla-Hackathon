@@ -115,15 +115,15 @@ INSERT IGNORE INTO materials (name, icon, co2_factor, water_factor, points_per_k
 ('Papel', '📄', 1.0500, 26.0000, 12, '["kg","g","caixa"]', 'Jornais, revistas, papelão.', 'Mantenha seco e sem gordura.'),
 ('Plástico', '♻️', 1.5300, 17.0000, 18, '["kg","g","unidade"]', 'PET, PEAD, PVC.', 'Enxágue e remova tampas.'),
 ('Vidro', '🥃', 0.3100, 4.0000, 8, '["kg","g","garrafa","unidade"]', 'Garrafas, potes, frascos.', 'Enxágue e remova tampas metálicas.'),
-('Metal', '🔩', 4.0000, 95.0000, 35, '["kg","g","lata","unidade"]', 'Alumínio, aço, latas.', 'Esmague as latas para reduzir volume.'),
-('Eletrônicos', '📱', 2.5000, 0.0000, 40, '["kg","unidade"]', 'Celulares, computadores.', 'Retire pilhas antes de descartar.'),
+('Metal', '🔩', 1.8000, 40.0000, 35, '["kg","g","lata","unidade"]', 'Alumínio, aço, latas.', 'Esmague as latas para reduzir volume.'),
+('Eletrônicos', '📱', 2.5000, 30.0000, 40, '["kg","unidade"]', 'Celulares, computadores.', 'Retire pilhas antes de descartar.'),
 ('Óleo Vegetal', '🫙', 3.2000, 1000.0000, 30, '["kg","g"]', 'Óleo de cozinha usado.', 'Armazene em garrafa PET tampada.'),
-('Lâmpadas', '💡', 0.8000, 0.0000, 15, '["unidade","kg"]', 'Fluorescentes, LED.', 'Embale com cuidado para não quebrar.'),
-('Madeira', '🪵', 0.5000, 0.0000, 6, '["kg","g"]', 'Paletes, móveis.', 'Remova pregos e parafusos.'),
+('Lâmpadas', '💡', 0.8000, 5.0000, 15, '["unidade","kg"]', 'Fluorescentes, LED.', 'Embale com cuidado para não quebrar.'),
+('Madeira', '🪵', 0.5000, 10.0000, 6, '["kg","g"]', 'Paletes, móveis.', 'Remova pregos e parafusos.'),
 ('Têxtil', '👕', 0.9200, 10.0000, 20, '["kg","g","unidade"]', 'Roupas, calçados, tecidos.', 'Higienize antes de entregar.'),
-('Pilhas/Baterias', '🔋', 1.8000, 0.0000, 25, '["unidade","kg"]', 'Pilhas AA, AAA, baterias.', 'Guarde em saco plástico separado.'),
-('Entulho', '🏗️', 0.2000, 0.0000, 5, '["kg","g"]', 'Resíduos de construção, concreto e tijolos.', 'Separe por tipo para facilitar a reciclagem.'),
-('Aluminio', '🥫', 5.0000, 100.0000, 40, '["kg","g","lata","unidade"]', 'Latas e peças de alumínio.', 'Esmague para reduzir volume.');
+('Pilhas/Baterias', '🔋', 1.8000, 20.0000, 25, '["unidade","kg"]', 'Pilhas AA, AAA, baterias.', 'Guarde em saco plástico separado.'),
+('Entulho', '🏗️', 0.2000, 2.0000, 5, '["kg","g"]', 'Resíduos de construção, concreto e tijolos.', 'Separe por tipo para facilitar a reciclagem.'),
+('Aluminio', '🥫', 9.0000, 170.0000, 40, '["kg","g","lata","unidade"]', 'Latas e peças de alumínio.', 'Esmague para reduzir volume.');
 
 INSERT IGNORE INTO badges (name, description, icon, condition_type, condition_value) VALUES
 ('Primeiro Passo', 'Seu primeiro registro.', '🌱', 'logs_count', 1),

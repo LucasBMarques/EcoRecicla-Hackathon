@@ -3,9 +3,7 @@ const API = "http://localhost:3001/api";
 export const loginUser = async (data) => {
   const response = await fetch(`${API}/auth/login`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
   });
   return response.json();
@@ -14,9 +12,7 @@ export const loginUser = async (data) => {
 export const registerUser = async (data) => {
   const response = await fetch(`${API}/auth/register`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
   });
   return response.json();
@@ -25,12 +21,9 @@ export const registerUser = async (data) => {
 export const validateSession = async (token) => {
   const response = await fetch(`${API}/auth/validate-session`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ token })
   });
-
   const data = await response.json();
   return { ok: response.ok, data };
 };
@@ -38,9 +31,7 @@ export const validateSession = async (token) => {
 export const updateProfile = async (data) => {
   const response = await fetch(`${API}/auth/update-profile`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
   });
   return response.json();
@@ -49,12 +40,9 @@ export const updateProfile = async (data) => {
 export const deleteAccount = async (userId) => {
   const response = await fetch(`${API}/auth/delete-account`, {
     method: "DELETE",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ userId })
   });
-
   const data = await response.json();
   return { ok: response.ok, data };
 };
@@ -67,9 +55,7 @@ export const getMaterials = async () => {
 export const createCollectionPoint = async (data) => {
   const response = await fetch(`${API}/collection-points`, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
   });
   return response.json();
@@ -80,9 +66,11 @@ export const getCollectionPoints = async () => {
   return response.json();
 };
 
-export const deleteCollectionPoint = async (id) => {
+export const deleteCollectionPoint = async (id, user_id) => {
   const response = await fetch(`${API}/collection-points/${id}`, {
     method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ user_id }),
   });
   return response.json();
 };
@@ -90,9 +78,7 @@ export const deleteCollectionPoint = async (id) => {
 export const updateCollectionPoint = async (id, data) => {
   const response = await fetch(`${API}/collection-points/${id}`, {
     method: "PUT",
-    headers: {
-      "Content-Type": "application/json"
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data)
   });
   return response.json();

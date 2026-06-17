@@ -77,23 +77,30 @@ function App() {
       return (
         <>
           <Navbar currentPage={page} setPage={handleSetPage} />
-          <Mapa setPage={handleSetPage} />;
+          <Mapa setPage={handleSetPage} />
         </>
       );
-      
 
     case "collection-points":
-      return <CollectionPoints setPage={handleSetPage} />;
-        
+      return (
+        <>
+          <Navbar currentPage={page} setPage={handleSetPage} />
+          <CollectionPoints setPage={handleSetPage} />
+        </>
+      );
 
     case "settings":
       return <UserSettings setPage={handleSetPage} />;
 
-    case "recycling-dashboard": 
+    case "ranking":
+      localStorage.setItem("settingsTab", "ranking");
+      return <UserSettings setPage={handleSetPage} />;
+
+    case "recycling-dashboard":
       return (
-       <>
+        <>
           <Navbar currentPage={page} setPage={handleSetPage} />
-          <RecyclingDashboard setPage={handleSetPage} />;
+          <RecyclingDashboard setPage={handleSetPage} />
         </>
       );
 
