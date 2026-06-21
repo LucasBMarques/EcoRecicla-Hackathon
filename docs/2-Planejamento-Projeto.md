@@ -147,7 +147,7 @@ O projeto pode utilizar a aba **Projects** do GitHub, porém é **OBRIGATÓRIO p
 | Responsável | Papel | Tarefa | Início | Prazo | Status |
 |-------------|--------|--------|--------|--------|--------|
 |Lucas Barbosa Marques|Tech Lead|Tela de configurações do usuário, tela de login e cadastro| 25/03 | 01/04 | ✔️ |
-|Maria Eduarda Botelho|Arquiteto de Dados|Tela principal : Home| 31/03 | 15/05 |📝|
+|Maria Eduarda Botelho|Arquiteto de Dados|Tela principal : Home| 31/03 | 14/06 |✔️ |
 |Carolina Eller Marinho|Facilitador Ágil| Tela de registro de reciclagem e dashboard | 31\03 | 05\04 | ✔️ |
 |Arthur Jorge Soares| QA | Tela de cadastro de ponto de coleta|27/03| 03/04 | ✔️ |
 
@@ -186,7 +186,10 @@ O projeto pode utilizar a aba **Projects** do GitHub, porém é **OBRIGATÓRIO p
 
 | Responsável | Papel | Tarefa | Início | Prazo | Status |
 |-------------|--------|--------|--------|--------|--------|
-|             |        | Correção de bugs de usabilidade e Code Review | 22/05 | 05/06 | ❌ |
+| Maria Eduarda | Arquiteto de Dados  | Implementação da tela de Notificações | 16/06 | 25/06 | ✔️ |
+| Maria Eduarda | Arquiteto de Dados  | Update para alteração de senha | 16/06 | 25/06 | ✔️ |
+| Maria Eduarda | Arquiteto de Dados  | Tornar funcional o checkbos de Ranking Público | 16/06 | 25/06 | ✔️ |
+|  |   | Correção de bugs de usabilidade e Code Review | 22/05 | 05/06 | ❌ |
 |             |        | Finalizar relatórios e dashboards | 01/06 | 15/06 | ❌ |
 |             |        | Preencher Relatório APC | 10/06 | 20/06 | ❌ |
 |             |        | Testes finais e consolidar README | 15/06 | 25/06 | ❌ |
