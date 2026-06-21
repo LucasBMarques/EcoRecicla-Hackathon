@@ -198,3 +198,21 @@ export const getUserProfile = async (userId) => {
   const response = await fetch(`${API}/auth/profile/${userId}`);
   return response.json();
 };
+
+export const updatePreferences = async (data) => {
+  const response = await fetch(`${API}/auth/update-preferences`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return response.json();
+};
+export const getPreferences = async (userId) => {
+  const response = await fetch(`${API}/auth/preferences/${userId}`);
+  return response.json();
+};
+
+export const getUserPosition = async (userId) => {
+  const response = await fetch(`${API}/ranking/position/${userId}`);
+  return response.json();
+};

@@ -13,10 +13,14 @@ CREATE TABLE IF NOT EXISTS users (
     photo LONGBLOB,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     eco_points INT NOT NULL DEFAULT 0,
-    level ENUM('Semente','Broto','Árvore','Floresta','Guardião') NOT NULL DEFAULT 'Semente',
+    level ENUM('Semente','Broto','Árvore','Floresta','Guardião')
+    NOT NULL DEFAULT 'Semente',
     total_kg DECIMAL(10,3) NOT NULL DEFAULT 0.000,
     co2_avoided DECIMAL(10,3) NOT NULL DEFAULT 0.000,
-    water_saved DECIMAL(10,3) NOT NULL DEFAULT 0.000
+    water_saved DECIMAL(10,3) NOT NULL DEFAULT 0.000,
+    receive_notifications BOOLEAN NOT NULL DEFAULT TRUE,
+    receive_newsletter BOOLEAN NOT NULL DEFAULT TRUE,
+    public_ranking BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 CREATE TABLE IF NOT EXISTS collection_points (

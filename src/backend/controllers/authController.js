@@ -1,17 +1,34 @@
 const db = require("../config/db");
 
 exports.register = (req, res) => {
+
   const { name, email, password } = req.body;
 
-  const sql = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+  const sql = `
+    INSERT INTO users (
+      name,
+      email,
+      password
+    )
+    VALUES (?, ?, ?)
+  `;
 
-  db.query(sql, [name, email, password], (err, result) => {
-    if (err) {
-      return res.status(500).json({ error: "Erro ao cadastrar usuário" });
+  db.query(
+    sql,
+    [name, email, password],
+    (err, result) => {
+
+      if (err) {
+        return res.status(500).json({
+          error: "Erro ao cadastrar usuário"
+        });
+      }
+
+      res.json({
+        message: "Usuário cadastrado com sucesso"
+      });
     }
-
-    res.json({ message: "Usuário cadastrado com sucesso" });
-  });
+  );
 };
 
 exports.login = (req, res) => {
@@ -42,7 +59,7 @@ exports.login = (req, res) => {
       level: result[0].level || "Semente",
       total_kg: result[0].total_kg || 0,
       co2_avoided: result[0].co2_avoided || 0,
-      water_saved: result[0].water_saved || 0
+      water_saved: result[0].water_saved || 0,
     };
 
     res.json({ message: "Login realizado com sucesso", user, token });
@@ -88,7 +105,7 @@ exports.validateSession = (req, res) => {
       level: result[0].level || "Semente",
       total_kg: result[0].total_kg || 0,
       co2_avoided: result[0].co2_avoided || 0,
-      water_saved: result[0].water_saved || 0
+      water_saved: result[0].water_saved || 0,
     };
 
     return res.json({ valid: true, user });
@@ -239,6 +256,66 @@ exports.deleteAccount = (req, res) => {
 
         return res.json({ message: "Conta excluída com sucesso" });
       });
+    });
+  });
+};
+exports.updatePreferences = (req, res) => {
+  const { userId, notifications_enabled, weekly_report_enabled, public_ranking_enabled } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ error: "ID do usuário não fornecido" });
+  }
+
+  const sql = `
+    UPDATE users
+    SET
+      receive_notifications = ?,
+      receive_newsletter = ?,
+      public_ranking = ?
+    WHERE id = ?
+  `;
+
+  db.query(
+    sql,
+    [
+      notifications_enabled ? 1 : 0,
+      weekly_report_enabled ? 1 : 0,
+      public_ranking_enabled ? 1 : 0,
+      userId,
+    ],
+    (err) => {
+      if (err) {
+        console.error("Erro ao atualizar preferências:", err);
+        return res.status(500).json({ error: "Erro ao atualizar preferências" });
+      }
+      res.json({ message: "Preferências atualizadas com sucesso" });
+    }
+  );
+};
+
+exports.getPreferences = (req, res) => {
+  const { userId } = req.params;
+
+  if (!userId) {
+    return res.status(400).json({ error: "ID do usuário não fornecido" });
+  }
+
+  const sql = "SELECT receive_notifications, receive_newsletter, public_ranking FROM users WHERE id = ?";
+
+  db.query(sql, [userId], (err, result) => {
+    if (err) {
+      console.error("Erro ao buscar preferências:", err);
+      return res.status(500).json({ error: "Erro ao buscar preferências" });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: "Usuário não encontrado" });
+    }
+
+    res.json({
+      notifications_enabled: result[0].receive_notifications === 1,
+      weekly_report_enabled: result[0].receive_newsletter === 1,
+      public_ranking_enabled: result[0].public_ranking === 1,
     });
   });
 };

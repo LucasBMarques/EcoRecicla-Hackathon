@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { updatePassword, deleteAccount, getRanking, getRecyclingStats, getRecyclingHistory } from "../services/api";
+import { updatePassword, deleteAccount, getRanking, getRecyclingStats, getRecyclingHistory, updatePreferences, getPreferences, getUserPosition } from "../services/api";
 import "../styles/userSettings.css";
 
 export default function UserSettings({ setPage }) {
@@ -16,6 +16,7 @@ export default function UserSettings({ setPage }) {
     country: "",
     city: "",
   });
+
   const [photo, setPhoto] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [passwordData, setPasswordData] = useState({
@@ -43,6 +44,11 @@ export default function UserSettings({ setPage }) {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [statsData, setStatsData] = useState(null);
   const [statsLoading, setStatsLoading] = useState(false);
+  const [preferences, setPreferences] = useState({
+    notifications_enabled: true,
+    weekly_report_enabled: true,
+    public_ranking_enabled: false,
+  });
 
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("user"));
@@ -55,6 +61,7 @@ export default function UserSettings({ setPage }) {
         country: userData.country || "",
         city: userData.city || "",
       });
+
       if (userData.photo) {
         setPhotoPreview(`data:image/jpeg;base64,${userData.photo}`);
       }
@@ -70,6 +77,8 @@ export default function UserSettings({ setPage }) {
       loadStats();
     } else if (activeTab === "history") {
       loadHistory();
+    } else if (activeTab === "settings") {
+      loadPreferences();
     }
   }, [activeTab]);
 
@@ -84,28 +93,43 @@ export default function UserSettings({ setPage }) {
     });
   };
 
+  const loadPreferences = async () => {
+    try {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      const data = await getPreferences(userData.id);
+      if (data && !data.error) {
+        setPreferences({
+          notifications_enabled: data.notifications_enabled,
+          weekly_report_enabled: data.weekly_report_enabled,
+          public_ranking_enabled: data.public_ranking_enabled,
+        });
+      }
+    } catch (err) {
+      console.error("Erro ao carregar preferências:", err);
+    }
+  };
+
   const loadRanking = async () => {
     setRankingLoading(true);
     try {
-      const data = await getRanking();
+      const currentUser = JSON.parse(localStorage.getItem("user"));
+
+      // Carrega o ranking público e a posição real do usuário em paralelo
+      const [data, positionData] = await Promise.all([
+        getRanking(),
+        getUserPosition(currentUser?.id),
+      ]);
+
       const safeData = Array.isArray(data) ? data : [];
       setRankingData(safeData);
 
-      const currentUser = JSON.parse(localStorage.getItem("user"));
-      const userPosition = safeData.find(u => u.id === currentUser?.id);
-      if (userPosition) {
+      // A posição vem do endpoint que considera TODOS os usuários
+      if (positionData && !positionData.error) {
         setStats(prev => ({
           ...prev,
-          ranking: userPosition.position,
-          score: userPosition.eco_points,
-          level: getLevelEmoji(userPosition.level) + " " + userPosition.level,
-        }));
-      } else {
-        // Usuário não está no ranking (sem pontos)
-        setStats(prev => ({
-          ...prev,
-          ranking: safeData.length + 1,
-          score: 0,
+          ranking: positionData.position,
+          score: positionData.eco_points,
+          level: getLevelEmoji(positionData.level) + " " + positionData.level,
         }));
       }
     } catch (err) {
@@ -189,6 +213,21 @@ export default function UserSettings({ setPage }) {
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
     setPasswordData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handlePreferenceChange = async (key) => {
+    const newValue = !preferences[key];
+    const updatedPreferences = { ...preferences, [key]: newValue };
+    setPreferences(updatedPreferences);
+
+    try {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      await updatePreferences({ userId: userData.id, ...updatedPreferences });
+      localStorage.setItem("user", JSON.stringify({ ...userData, ...updatedPreferences }));
+    } catch (err) {
+      console.error("Erro ao salvar preferência:", err);
+      setPreferences(preferences);
+    }
   };
 
   const compressImage = (dataUrl) => {
@@ -725,11 +764,14 @@ export default function UserSettings({ setPage }) {
                       </p>
                     ) : (
                       <div className="leaderboard">
-                        {rankingData.slice(0, 10).map((rankUser, index) => {
+                        {rankingData.slice(0, 10).map((rankUser) => {
                           const currentUserId = JSON.parse(localStorage.getItem("user"))?.id;
                           const isCurrentUser = currentUserId === rankUser.id;
+                          // Usa a posição REAL vinda do backend (considera todos os usuários,
+                          // inclusive quem optou por não exibir o ranking publicamente),
+                          // garantindo consistência com o card "Sua Posição".
                           const medals = ["🥇", "🥈", "🥉"];
-                          const medal = medals[index] || `${index + 1}º`;
+                          const medal = medals[rankUser.position - 1] || `${rankUser.position}º`;
 
                           return (
                             <div
@@ -939,15 +981,27 @@ export default function UserSettings({ setPage }) {
                 <h3>📍 Preferências</h3>
                 <div className="preferences-group">
                   <label className="checkbox-label">
-                    <input type="checkbox" defaultChecked />
+                    <input
+                      type="checkbox"
+                      checked={preferences.notifications_enabled}
+                      onChange={() => handlePreferenceChange("notifications_enabled")}
+                    />
                     <span>Receber notificações de novos pontos de coleta</span>
                   </label>
                   <label className="checkbox-label">
-                    <input type="checkbox" defaultChecked />
+                    <input
+                      type="checkbox"
+                      checked={preferences.weekly_report_enabled}
+                      onChange={() => handlePreferenceChange("weekly_report_enabled")}
+                    />
                     <span>Receber boletim semanal de reciclagem</span>
                   </label>
                   <label className="checkbox-label">
-                    <input type="checkbox" />
+                    <input
+                      type="checkbox"
+                      checked={preferences.public_ranking_enabled}
+                      onChange={() => handlePreferenceChange("public_ranking_enabled")}
+                    />
                     <span>Mostrar meu ranking publicamente</span>
                   </label>
                 </div>

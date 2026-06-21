@@ -10,5 +10,7 @@ router.post("/auth/update-profile", authController.updateProfile);
 router.put("/auth/update-password", authController.updatePassword);
 router.delete("/auth/delete-account", authController.deleteAccount);
 router.get("/auth/profile/:userId", authController.getUserProfile);
+router.put("/auth/update-preferences", authController.updatePreferences);
+router.get("/auth/preferences/:userId", authController.getPreferences);
 
 module.exports = router;
