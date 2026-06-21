@@ -1,4 +1,5 @@
 const db = require("../config/db");
+const { createWelcomeNotifications } = require("./notificationsController");
 
 exports.register = (req, res) => {
 
@@ -24,6 +25,7 @@ exports.register = (req, res) => {
         });
       }
 
+      createWelcomeNotifications(result.insertId);
       res.json({
         message: "Usuário cadastrado com sucesso"
       });

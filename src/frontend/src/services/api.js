@@ -216,3 +216,18 @@ export const getUserPosition = async (userId) => {
   const response = await fetch(`${API}/ranking/position/${userId}`);
   return response.json();
 };
+
+export const getNotifications = async (userId) => {
+  const response = await fetch(`${API}/notifications/${userId}`);
+  return response.json();
+};
+
+export const markNotificationRead = async (notifId) => {
+  const response = await fetch(`${API}/notifications/${notifId}/read`, { method: "PUT" });
+  return response.json();
+};
+
+export const markAllNotificationsRead = async (userId) => {
+  const response = await fetch(`${API}/notifications/${userId}/read-all`, { method: "PUT" });
+  return response.json();
+};

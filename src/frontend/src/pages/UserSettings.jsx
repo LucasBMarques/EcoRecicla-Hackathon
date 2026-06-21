@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { updatePassword, deleteAccount, getRanking, getRecyclingStats, getRecyclingHistory, updatePreferences, getPreferences, getUserPosition } from "../services/api";
+import { updatePassword, deleteAccount, getRanking, getRecyclingStats, getRecyclingHistory, updatePreferences, getPreferences, getUserPosition, getNotifications, markNotificationRead, markAllNotificationsRead } from "../services/api";
 import "../styles/userSettings.css";
 
 export default function UserSettings({ setPage }) {
@@ -44,6 +44,9 @@ export default function UserSettings({ setPage }) {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [statsData, setStatsData] = useState(null);
   const [statsLoading, setStatsLoading] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [notifLoading, setNotifLoading] = useState(false);
+
   const [preferences, setPreferences] = useState({
     notifications_enabled: true,
     weekly_report_enabled: true,
@@ -79,6 +82,8 @@ export default function UserSettings({ setPage }) {
       loadHistory();
     } else if (activeTab === "settings") {
       loadPreferences();
+    } else if (activeTab === "notifications") {
+      loadNotifications();
     }
   }, [activeTab]);
 
@@ -91,6 +96,40 @@ export default function UserSettings({ setPage }) {
       level: "🌿 Sustentável",
       ranking: null,
     });
+  };
+
+  const loadNotifications = async () => {
+    setNotifLoading(true);
+    try {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      const data = await getNotifications(userData.id);
+      setNotifications(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Erro ao carregar notificações:", err);
+    } finally {
+      setNotifLoading(false);
+    }
+  };
+
+  const handleMarkRead = async (notifId) => {
+    try {
+      await markNotificationRead(notifId);
+      setNotifications((prev) =>
+        prev.map((n) => (n.id === notifId ? { ...n, read_at: new Date().toISOString() } : n))
+      );
+    } catch (err) {
+      console.error("Erro ao marcar notificação:", err);
+    }
+  };
+
+  const handleMarkAllRead = async () => {
+    try {
+      const userData = JSON.parse(localStorage.getItem("user"));
+      await markAllNotificationsRead(userData.id);
+      setNotifications((prev) => prev.map((n) => ({ ...n, read_at: new Date().toISOString() })));
+    } catch (err) {
+      console.error("Erro ao marcar todas:", err);
+    }
   };
 
   const loadPreferences = async () => {
@@ -478,6 +517,17 @@ export default function UserSettings({ setPage }) {
           >
             ⚙️ Configurações
           </button>
+          <button
+            className={`tab-btn ${activeTab === "notifications" ? "active" : ""}`}
+            onClick={() => setActiveTab("notifications")}
+          >
+            🔔 Notificações
+            {notifications.filter((n) => !n.read_at).length > 0 && (
+              <span className="notif-badge">
+                {notifications.filter((n) => !n.read_at).length}
+              </span>
+            )}
+          </button>
         </div>
 
         <div className="tabs-content">
@@ -767,11 +817,8 @@ export default function UserSettings({ setPage }) {
                         {rankingData.slice(0, 10).map((rankUser) => {
                           const currentUserId = JSON.parse(localStorage.getItem("user"))?.id;
                           const isCurrentUser = currentUserId === rankUser.id;
-                          // Usa a posição REAL vinda do backend (considera todos os usuários,
-                          // inclusive quem optou por não exibir o ranking publicamente),
-                          // garantindo consistência com o card "Sua Posição".
-                          const medals = ["🥇", "🥈", "🥉"];
-                          const medal = medals[rankUser.position - 1] || `${rankUser.position}º`;
+                          const medals = { 1: "🥇", 2: "🥈", 3: "🥉" };
+                          const medal = medals[rankUser.position] || `${rankUser.position}º`;
 
                           return (
                             <div
@@ -870,6 +917,54 @@ export default function UserSettings({ setPage }) {
                     </div>
                   )}
                 </>
+              )}
+            </div>
+          )}
+
+          {activeTab === "notifications" && (
+            <div className="tab-panel">
+              <div className="notif-header">
+                <h2>🔔 Notificações</h2>
+                {notifications.some((n) => !n.read_at) && (
+                  <button className="mark-all-btn" onClick={handleMarkAllRead}>
+                    ✓ Marcar todas como lidas
+                  </button>
+                )}
+              </div>
+
+              {notifLoading ? (
+                <p className="notif-empty">Carregando notificações...</p>
+              ) : notifications.length === 0 ? (
+                <p className="notif-empty">Nenhuma notificação por enquanto.</p>
+              ) : (
+                <div className="notif-list">
+                  {notifications.map((n) => (
+                    <div
+                      key={n.id}
+                      className={`notif-item ${n.read_at ? "notif-read" : "notif-unread"}`}
+                    >
+                      <div className="notif-body">
+                        <strong className="notif-title">{n.title}</strong>
+                        <p className="notif-message">{n.message}</p>
+                        <small className="notif-date">
+                          {new Date(n.created_at).toLocaleDateString("pt-BR", {
+                            day: "2-digit", month: "short", year: "numeric",
+                            hour: "2-digit", minute: "2-digit",
+                          })}
+                        </small>
+                      </div>
+                      {!n.read_at && (
+                        <button
+                          className="notif-read-btn"
+                          onClick={() => handleMarkRead(n.id)}
+                          title="Marcar como lida"
+                        >
+                          ✓
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           )}

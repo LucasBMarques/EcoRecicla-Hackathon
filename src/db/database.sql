@@ -151,3 +151,13 @@ INSERT IGNORE INTO material_types (name, icon, color) VALUES
 ('Têxtil', '👕', '#DB7093'),
 ('Pilhas/Baterias', '🔋', '#4B0082'),
 ('Aluminio', '🥫', '#B0C4DE');
+CREATE TABLE IF NOT EXISTS notifications (
+    id         INT AUTO_INCREMENT PRIMARY KEY,
+    user_id    INT NOT NULL,
+    type       ENUM('welcome', 'collection_point', 'newsletter') NOT NULL,
+    title      VARCHAR(200) NOT NULL,
+    message    TEXT NOT NULL,
+    read_at    TIMESTAMP NULL DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);

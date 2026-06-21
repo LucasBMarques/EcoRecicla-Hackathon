@@ -1,0 +1,185 @@
+const db = require("../config/db");
+
+// Busca notificações de um usuário (respeitando preferências)
+exports.getNotifications = (req, res) => {
+  const { userId } = req.params;
+
+  const sql = `
+    SELECT n.id, n.type, n.title, n.message, n.read_at, n.created_at
+    FROM notifications n
+    INNER JOIN users u ON u.id = n.user_id
+    WHERE n.user_id = ?
+      AND (
+        (n.type = 'collection_point' AND u.receive_notifications = TRUE)
+        OR
+        (n.type = 'newsletter'       AND u.receive_newsletter     = TRUE)
+        OR
+         n.type = 'welcome'
+      )
+    ORDER BY n.created_at DESC
+    LIMIT 50
+  `;
+
+  db.query(sql, [userId], (err, results) => {
+    if (err) return res.status(500).json({ error: "Erro ao buscar notificações" });
+    res.json(results);
+  });
+};
+
+// Marca uma notificação como lida
+exports.markAsRead = (req, res) => {
+  const { id } = req.params;
+
+  db.query(
+    "UPDATE notifications SET read_at = NOW() WHERE id = ?",
+    [id],
+    (err) => {
+      if (err) return res.status(500).json({ error: "Erro ao marcar como lida" });
+      res.json({ message: "Notificação marcada como lida" });
+    }
+  );
+};
+
+// Marca todas as notificações do usuário como lidas
+exports.markAllAsRead = (req, res) => {
+  const { userId } = req.params;
+
+  db.query(
+    "UPDATE notifications SET read_at = NOW() WHERE user_id = ? AND read_at IS NULL",
+    [userId],
+    (err) => {
+      if (err) return res.status(500).json({ error: "Erro ao marcar notificações" });
+      res.json({ message: "Todas as notificações marcadas como lidas" });
+    }
+  );
+};
+
+// Conta notificações não lidas (para badge no menu)
+exports.getUnreadCount = (req, res) => {
+  const { userId } = req.params;
+
+  const sql = `
+    SELECT COUNT(*) AS total
+    FROM notifications n
+    INNER JOIN users u ON u.id = n.user_id
+    WHERE n.user_id = ?
+      AND n.read_at IS NULL
+      AND (
+        (n.type = 'collection_point' AND u.receive_notifications = TRUE)
+        OR
+        (n.type = 'newsletter'       AND u.receive_newsletter     = TRUE)
+        OR
+         n.type = 'welcome'
+      )
+  `;
+
+  db.query(sql, [userId], (err, results) => {
+    if (err) return res.status(500).json({ error: "Erro ao contar notificações" });
+    res.json({ unread: results[0].total });
+  });
+};
+
+// ── Helpers internos (chamados por outros controllers) ──────────────────────
+
+// Disparado no register: boas-vindas + primeira newsletter
+exports.createWelcomeNotifications = (userId) => {
+  const notifications = [
+    {
+      user_id: userId,
+      type: "welcome",
+      title: "🌱 Bem-vindo(a) ao EcoRecicla!",
+      message:
+        "Sua conta foi criada com sucesso. Comece registrando sua primeira reciclagem e acumule pontos eco!",
+    },
+    {
+      user_id: userId,
+      type: "newsletter",
+      title: "📰 Boletim EcoRecicla — Edição de Boas-Vindas",
+      message:
+        "Você sabia que reciclar 1 kg de alumínio economiza até 5 kWh de energia? Cada grama que você recicla conta! Explore o mapa de pontos de coleta e comece hoje mesmo.",
+    },
+  ];
+
+  notifications.forEach(({ user_id, type, title, message }) => {
+    db.query(
+      "INSERT INTO notifications (user_id, type, title, message) VALUES (?, ?, ?, ?)",
+      [user_id, type, title, message],
+      (err) => {
+        if (err) console.error(`Erro ao criar notificação ${type}:`, err);
+      }
+    );
+  });
+};
+
+// Disparado quando um novo ponto de coleta é cadastrado
+exports.createCollectionPointNotification = (pointName, pointAddress) => {
+  // Extrai o bairro do endereço (tudo antes da primeira vírgula ou o endereço inteiro)
+  const neighborhood = pointAddress.includes(",")
+    ? pointAddress.split(",")[1].trim()
+    : pointAddress;
+
+  const title = "📍 Novo ponto de coleta disponível!";
+  const message = `O ponto "${pointName}" foi cadastrado no bairro ${neighborhood}. Confira no mapa!`;
+
+  // Envia para todos que aceitam notificações de pontos
+  const sql = `
+    INSERT INTO notifications (user_id, type, title, message)
+    SELECT id, 'collection_point', ?, ?
+    FROM users
+    WHERE receive_notifications = TRUE
+  `;
+
+  db.query(sql, [title, message], (err) => {
+    if (err) console.error("Erro ao criar notificações de ponto de coleta:", err);
+  });
+};
+
+// Dispara newsletter semanal para quem está no prazo (cadastro + múltiplos de 7 dias)
+exports.dispatchWeeklyNewsletter = (req, res) => {
+  const messages = [
+    "♻️ Lembrete semanal: pequenas ações fazem grandes diferenças! Que tal registrar uma nova reciclagem hoje?",
+    "🌍 Você sabia? O Brasil recicla apenas 4% do seu lixo. Seja parte da mudança registrando suas reciclagens!",
+    "💧 Reciclar 1 tonelada de papel salva 26.000 litros de água. Continue contribuindo com o planeta!",
+    "🔋 Pilhas e baterias não devem ir ao lixo comum. Leve ao ponto de coleta mais próximo de você!",
+    "🌱 Sua pontuação eco cresce a cada reciclagem. Confira seu ranking e inspire outros usuários!",
+  ];
+
+  // Seleciona usuários que aceitam newsletter E estão há exato múltiplo de 7 dias cadastrados
+  const sql = `
+    SELECT id, DATEDIFF(NOW(), created_at) AS days_since
+    FROM users
+    WHERE receive_newsletter = TRUE
+      AND DATEDIFF(NOW(), created_at) > 0
+      AND MOD(DATEDIFF(NOW(), created_at), 7) = 0
+  `;
+
+  db.query(sql, (err, users) => {
+    if (err) {
+      if (res) return res.status(500).json({ error: "Erro ao buscar usuários" });
+      return console.error(err);
+    }
+
+    if (users.length === 0) {
+      if (res) return res.json({ message: "Nenhum usuário elegível hoje", sent: 0 });
+      return;
+    }
+
+    let sent = 0;
+    users.forEach((user) => {
+      const weekNumber = Math.floor(user.days_since / 7);
+      const msg = messages[(weekNumber - 1) % messages.length];
+      const title = `📰 Boletim EcoRecicla — Semana ${weekNumber}`;
+
+      db.query(
+        "INSERT INTO notifications (user_id, type, title, message) VALUES (?, 'newsletter', ?, ?)",
+        [user.id, title, msg],
+        (err2) => {
+          if (err2) console.error("Erro ao inserir newsletter:", err2);
+          else sent++;
+        }
+      );
+    });
+
+    if (res) res.json({ message: "Newsletter disparada", sent: users.length });
+  });
+};
