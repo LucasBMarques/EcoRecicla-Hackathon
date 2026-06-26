@@ -33,6 +33,7 @@
 | RF-23 | O sistema deve exibir mensagens de sucesso e erro nas operações realizadas. | 🟡 MÉDIA |
 | RF-24 | O sistema deve permitir atualização dos dados do usuário. | 🟡 MÉDIA |
 | RF-25 | O sistema deve permitir navegação entre as páginas da aplicação. | 🟡 MÉDIA |
+<<<<<<< HEAD
 | RF-26 | O sistema deve permitir que o usuário registre atividades de reciclagem informando material, quantidade e unidade. | 🔴 ALTA |
 | RF-27 | O sistema deve calcular automaticamente o impacto ambiental (CO₂ evitado e água economizada) com base no material reciclado. | 🔴 ALTA |
 | RF-28 | O sistema deve atribuir eco_points ao usuário com base na quantidade e tipo de material reciclado. | 🔴 ALTA |
@@ -55,6 +56,15 @@
 | RF-45 | O sistema deve permitir que o usuário configure suas preferências de notificações e visibilidade no ranking público. | 🟢 BAIXA |
 | RF-46 | O sistema deve permitir que o usuário exclua permanentemente sua conta e todos os seus dados. | 🟡 MÉDIA |
 
+=======
+| RF-26 | O sistema deve permitir que o usuário registre uma reciclagem informando material, quantidade e unidade. | 🔴 ALTA |
+| RF-27 | sistema deve calcular e exibir em tempo real o impacto ambiental estimado (CO₂, água e pontos) antes de confirmar o registro. | 🔴 ALTA |
+| RF-28 |sistema deve salvar o registro de reciclagem e atualizar os totais do perfil do usuário. | 🔴 ALTA | 
+| RF-29 | sistema deve permitir que o usuário edite um registro de reciclagem já salvoMÉDIARF-30O sistema deve permitir que o usuário exclua um registro de reciclagem. | 🟡 MÉDIA |
+| RF-31 | sistema deve exibir o histórico de reciclagens do usuário em ordem cronológica. | 🔴 ALTA | 
+| RF-32 | sistema deve exibir um dashboard com totais acumulados (kg, CO₂, água e pontos) e gráficos de evolução mensal e por material. | 🟡 MÉDIA |
+| RF-33 | sistema deve desbloquear conquistas (badges) automaticamente quando o usuário atingir metas de kg, pontos ou número de registros. | 🟡 MÉDIA |
+>>>>>>> ef14d754e4de3c88010de833fe9fa5206b4d633d
 ---
 
 # 3.2 Histórias de Usuário
@@ -261,12 +271,19 @@ Como usuário,
 Quero navegar entre as páginas da aplicação,
 Para utilizar os recursos do sistema.
 
+<<<<<<< HEAD
 ---
 
 ### História 26 (relacionada ao RF-26)
 
 Como usuário,
 Quero registrar minha atividade de reciclagem informando o material e a quantidade,
+=======
+### História 26 (relacionada ao RF-26)
+
+Como usuário,
+Quero registrar o que reciclei informando o material e a quantidade,
+>>>>>>> ef14d754e4de3c88010de833fe9fa5206b4d633d
 Para acompanhar minha contribuição ambiental.
 
 ---
@@ -274,54 +291,85 @@ Para acompanhar minha contribuição ambiental.
 ### História 27 (relacionada ao RF-27)
 
 Como usuário,
+<<<<<<< HEAD
 Quero que o sistema calcule automaticamente o CO₂ evitado e a água economizada ao reciclar,
 Para entender o impacto real das minhas ações.
+=======
+Quero ver o impacto estimado antes de confirmar o registro,
+Para saber quanto CO₂ e água vou economizar com aquela reciclagem.
+>>>>>>> ef14d754e4de3c88010de833fe9fa5206b4d633d
 
 ---
 
 ### História 28 (relacionada ao RF-28)
 
 Como usuário,
+<<<<<<< HEAD
 Quero ganhar eco_points ao registrar reciclagens,
 Para ser recompensado pelo meu engajamento com o meio ambiente.
+=======
+Quero poder corrigir ou remover um registro que fiz errado,
+Para manter meu histórico correto.
+>>>>>>> ef14d754e4de3c88010de833fe9fa5206b4d633d
 
 ---
 
 ### História 29 (relacionada ao RF-29)
 
 Como usuário,
+<<<<<<< HEAD
 Quero que meu nível evolua automaticamente conforme acumulo eco_points,
 Para acompanhar minha progressão na plataforma.
+=======
+Quero visualizar todo o meu histórico de reciclagens,
+Para lembrar do que já reciclei e quando.
+>>>>>>> ef14d754e4de3c88010de833fe9fa5206b4d633d
 
 ---
 
 ### História 30 (relacionada ao RF-30)
 
 Como usuário,
+<<<<<<< HEAD
 Quero visualizar todo o meu histórico de reciclagens,
 Para acompanhar minha evolução ao longo do tempo.
+=======
+Quero ver um painel com meus totais e gráficos de evolução,
+Para entender meu impacto acumulado ao longo do tempo.
+>>>>>>> ef14d754e4de3c88010de833fe9fa5206b4d633d
 
 ---
 
 ### História 31 (relacionada ao RF-31)
 
 Como usuário,
+<<<<<<< HEAD
 Quero poder editar ou excluir registros de reciclagem,
 Para corrigir informações lançadas incorretamente.
+=======
+Quero ganhar conquistas conforme reciclo mais,
+Para me sentir motivada a continuar reciclando.
+>>>>>>> ef14d754e4de3c88010de833fe9fa5206b4d633d
 
 ---
 
 ### História 32 (relacionada ao RF-32)
 
 Como usuário,
+<<<<<<< HEAD
 Quero visualizar minhas estatísticas de reciclagem (kg, CO₂ e água),
 Para entender o total do meu impacto ambiental.
+=======
+Quero ver meu nível atual no sistema,
+Para acompanhar minha evolução como recicladora.
+>>>>>>> ef14d754e4de3c88010de833fe9fa5206b4d633d
 
 ---
 
 ### História 33 (relacionada ao RF-33)
 
 Como usuário,
+<<<<<<< HEAD
 Quero anexar uma foto como comprovante da reciclagem realizada,
 Para documentar minhas atividades na plataforma.
 
@@ -428,6 +476,10 @@ Para controlar como minha conta aparece para outros usuários.
 Como usuário,
 Quero poder excluir permanentemente minha conta,
 Para remover todos os meus dados da plataforma quando desejar.
+=======
+Quero agendar uma coleta de resíduos,
+Para organizar o descarte com antecedência.
+>>>>>>> ef14d754e4de3c88010de833fe9fa5206b4d633d
 
 # 3.3 Requisitos Não Funcionais
 
@@ -450,8 +502,15 @@ Para remover todos os meus dados da plataforma quando desejar.
 | RNF-13 | O sistema deve ser desenvolvido utilizando React no front-end. | 🟡 MÉDIA |
 | RNF-14 | O sistema deve utilizar Node.js no back-end. | 🟡 MÉDIA |
 | RNF-15 | O sistema deve utilizar MySQL como banco de dados. | 🔴 ALTA |
+<<<<<<< HEAD
 | RNF-16 | O sistema deve exibir o mapa de pontos de coleta utilizando biblioteca de mapas interativos (Leaflet/OpenStreetMap). | 🟡 MÉDIA |
 | RNF-17 | O sistema deve suportar upload de imagens com tamanho máximo de 10MB nos formatos JPEG, PNG e WebP. | 🟢 BAIXA |
+=======
+| RNF-16 | O sistema deve exibir o cálculo de impacto em tempo real, sem atraso perceptível ao usuário. | 🔴 ALTA |
+| RNF-17 | O sistema deve garantir que os totais do usuário nunca fiquem com valores negativos após edição ou exclusão de registros. | 🔴 ALTA |
+| RNF-18 | O sistema deve evitar registros duplicados de conquistas para o mesmo usuário. | 🟡 MÉDIA |
+| RNF-19 | O dashboard deve exibir dados dos últimos 6 meses sem necessidade de ação adicional do usuário. | 🟡 MÉDIA |
+>>>>>>> ef14d754e4de3c88010de833fe9fa5206b4d633d
 ---
 
 # 3.4 Restrições do Projeto

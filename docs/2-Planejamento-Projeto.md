@@ -177,8 +177,13 @@ O projeto pode utilizar a aba **Projects** do GitHub, porém é **OBRIGATÓRIO p
 
 | Responsável | Papel | Tarefa | Início | Prazo | Status |
 |-------------|--------|--------|--------|--------|--------|
+<<<<<<< HEAD
 |             |        | Aplicar roteiro de teste com usuários reais | 24/04 | 15/05 | ✔️ |
 |             |        | Consolidar dados e preencher Seção 6 do template | 16/05 | 22/05 | ✔️ |
+=======
+| Arthur Jorge Soares| QA     | Aplicar roteiro de teste com usuários reais | 24/04 | 15/05 | ❌ |
+| Arthur Jorge Soares| QA      | Consolidar dados e preencher Seção 6 do template | 16/05 | 22/05 | ❌ |
+>>>>>>> ef14d754e4de3c88010de833fe9fa5206b4d633d
 
 ---
 
