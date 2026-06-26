@@ -169,7 +169,7 @@ O projeto pode utilizar a aba **Projects** do GitHub, porém é **OBRIGATÓRIO p
 |  Arthur Jorge Soares| QA  | documentação técnica RF e RNF| 06/05 | 09/05 | ✔️ |
 | Maria Eduarda Botelho|Arquiteto de Dados  |Engenharia reversa de diagramas | 06/05 | 10/05 | ✔️ |
 |Carolina Eller Marinho|Facilitador Ágil   | Quadro de tarefas Kanban| 06/05 | 10/05 | ✔️ |
-|  Lucas Barbosa Marques|Tech Lead  | Back-end principais implementação | 16/04 | 23/04 | ❌ |
+|  Lucas Barbosa Marques|Tech Lead  | Back-end principais implementação | 16/04 | 23/04 | ✔️ |
 
 ---
 
@@ -177,8 +177,8 @@ O projeto pode utilizar a aba **Projects** do GitHub, porém é **OBRIGATÓRIO p
 
 | Responsável | Papel | Tarefa | Início | Prazo | Status |
 |-------------|--------|--------|--------|--------|--------|
-|             |        | Aplicar roteiro de teste com usuários reais | 24/04 | 15/05 | ❌ |
-|             |        | Consolidar dados e preencher Seção 6 do template | 16/05 | 22/05 | ❌ |
+|             |        | Aplicar roteiro de teste com usuários reais | 24/04 | 15/05 | ✔️ |
+|             |        | Consolidar dados e preencher Seção 6 do template | 16/05 | 22/05 | ✔️ |
 
 ---
 
@@ -189,10 +189,10 @@ O projeto pode utilizar a aba **Projects** do GitHub, porém é **OBRIGATÓRIO p
 | Maria Eduarda | Arquiteto de Dados  | Implementação da tela de Notificações | 16/06 | 25/06 | ✔️ |
 | Maria Eduarda | Arquiteto de Dados  | Update para alteração de senha | 16/06 | 25/06 | ✔️ |
 | Maria Eduarda | Arquiteto de Dados  | Tornar funcional o checkbos de Ranking Público | 16/06 | 25/06 | ✔️ |
-|  |   | Correção de bugs de usabilidade e Code Review | 22/05 | 05/06 | ❌ |
-|             |        | Finalizar relatórios e dashboards | 01/06 | 15/06 | ❌ |
-|             |        | Preencher Relatório APC | 10/06 | 20/06 | ❌ |
-|             |        | Testes finais e consolidar README | 15/06 | 25/06 | ❌ |
+|  |   | Correção de bugs de usabilidade e Code Review | 22/05 | 05/06 | ✔️ |
+|             |        | Finalizar relatórios e dashboards | 01/06 | 15/06 | ✔️ |
+|             |        | Preencher Relatório APC | 10/06 | 20/06 | ✔️ |
+|             |        | Testes finais e consolidar README | 15/06 | 25/06 | ✔️ |
 
 ---
 
