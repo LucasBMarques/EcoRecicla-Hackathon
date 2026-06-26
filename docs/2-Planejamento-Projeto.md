@@ -177,8 +177,8 @@ O projeto pode utilizar a aba **Projects** do GitHub, porém é **OBRIGATÓRIO p
 
 | Responsável | Papel | Tarefa | Início | Prazo | Status |
 |-------------|--------|--------|--------|--------|--------|
-|             |        | Aplicar roteiro de teste com usuários reais | 24/04 | 15/05 | ❌ |
-|             |        | Consolidar dados e preencher Seção 6 do template | 16/05 | 22/05 | ❌ |
+| Arthur Jorge Soares| QA     | Aplicar roteiro de teste com usuários reais | 24/04 | 15/05 | ❌ |
+| Arthur Jorge Soares| QA      | Consolidar dados e preencher Seção 6 do template | 16/05 | 22/05 | ❌ |
 
 ---
 

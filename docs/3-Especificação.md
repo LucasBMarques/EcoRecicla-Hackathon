@@ -33,7 +33,13 @@
 | RF-23 | O sistema deve exibir mensagens de sucesso e erro nas operações realizadas. | 🟡 MÉDIA |
 | RF-24 | O sistema deve permitir atualização dos dados do usuário. | 🟡 MÉDIA |
 | RF-25 | O sistema deve permitir navegação entre as páginas da aplicação. | 🟡 MÉDIA |
-
+| RF-26 | O sistema deve permitir que o usuário registre uma reciclagem informando material, quantidade e unidade. | 🔴 ALTA |
+| RF-27 | sistema deve calcular e exibir em tempo real o impacto ambiental estimado (CO₂, água e pontos) antes de confirmar o registro. | 🔴 ALTA |
+| RF-28 |sistema deve salvar o registro de reciclagem e atualizar os totais do perfil do usuário. | 🔴 ALTA | 
+| RF-29 | sistema deve permitir que o usuário edite um registro de reciclagem já salvoMÉDIARF-30O sistema deve permitir que o usuário exclua um registro de reciclagem. | 🟡 MÉDIA |
+| RF-31 | sistema deve exibir o histórico de reciclagens do usuário em ordem cronológica. | 🔴 ALTA | 
+| RF-32 | sistema deve exibir um dashboard com totais acumulados (kg, CO₂, água e pontos) e gráficos de evolução mensal e por material. | 🟡 MÉDIA |
+| RF-33 | sistema deve desbloquear conquistas (badges) automaticamente quando o usuário atingir metas de kg, pontos ou número de registros. | 🟡 MÉDIA |
 ---
 
 # 3.2 Histórias de Usuário
@@ -240,6 +246,68 @@ Como usuário,
 Quero navegar entre as páginas da aplicação,
 Para utilizar os recursos do sistema.
 
+### História 26 (relacionada ao RF-26)
+
+Como usuário,
+Quero registrar o que reciclei informando o material e a quantidade,
+Para acompanhar minha contribuição ambiental.
+
+---
+
+### História 27 (relacionada ao RF-27)
+
+Como usuário,
+Quero ver o impacto estimado antes de confirmar o registro,
+Para saber quanto CO₂ e água vou economizar com aquela reciclagem.
+
+---
+
+### História 28 (relacionada ao RF-28)
+
+Como usuário,
+Quero poder corrigir ou remover um registro que fiz errado,
+Para manter meu histórico correto.
+
+---
+
+### História 29 (relacionada ao RF-29)
+
+Como usuário,
+Quero visualizar todo o meu histórico de reciclagens,
+Para lembrar do que já reciclei e quando.
+
+---
+
+### História 30 (relacionada ao RF-30)
+
+Como usuário,
+Quero ver um painel com meus totais e gráficos de evolução,
+Para entender meu impacto acumulado ao longo do tempo.
+
+---
+
+### História 31 (relacionada ao RF-31)
+
+Como usuário,
+Quero ganhar conquistas conforme reciclo mais,
+Para me sentir motivada a continuar reciclando.
+
+---
+
+### História 32 (relacionada ao RF-32)
+
+Como usuário,
+Quero ver meu nível atual no sistema,
+Para acompanhar minha evolução como recicladora.
+
+---
+
+### História 33 (relacionada ao RF-33)
+
+Como usuário,
+Quero agendar uma coleta de resíduos,
+Para organizar o descarte com antecedência.
+
 # 3.3 Requisitos Não Funcionais
 
 ## Tabela de Requisitos Não Funcionais
@@ -261,6 +329,10 @@ Para utilizar os recursos do sistema.
 | RNF-13 | O sistema deve ser desenvolvido utilizando React no front-end. | 🟡 MÉDIA |
 | RNF-14 | O sistema deve utilizar Node.js no back-end. | 🟡 MÉDIA |
 | RNF-15 | O sistema deve utilizar MySQL como banco de dados. | 🔴 ALTA |
+| RNF-16 | O sistema deve exibir o cálculo de impacto em tempo real, sem atraso perceptível ao usuário. | 🔴 ALTA |
+| RNF-17 | O sistema deve garantir que os totais do usuário nunca fiquem com valores negativos após edição ou exclusão de registros. | 🔴 ALTA |
+| RNF-18 | O sistema deve evitar registros duplicados de conquistas para o mesmo usuário. | 🟡 MÉDIA |
+| RNF-19 | O dashboard deve exibir dados dos últimos 6 meses sem necessidade de ação adicional do usuário. | 🟡 MÉDIA |
 ---
 
 # 3.4 Restrições do Projeto
