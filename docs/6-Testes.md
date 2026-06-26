@@ -76,7 +76,6 @@ Abaixo estão consolidadas as pontuações finais obtidas por cada participante,
 Com base nos resultados coletados e visando a evolução da plataforma para a **Sprint 4**, o grupo estabeleceu o seguinte plano de ação:
 
 * **(-)** Tornar o acesso ao **Painel de Reciclagem** mais destacado na barra de navegação, pois usuários novatos demoraram para encontrá-lo. Recomenda-se o uso de um ícone mais evidente ou uma label textual mais direta (ex: "Meu Painel" ou "Minhas Reciclagens").
-* **(-)** Implementar uma **mensagem de boas-vindas ou dica contextual** na primeira vez que o usuário logar no sistema após se cadastrar, criando um onboarding mínimo que guie o usuário pelas abas principais.
 * **(-)** Incluir uma **notificação ou modal de confirmação visual mais claro** após o envio do formulário de reciclagem (ex: tela de sucesso com resumo detalhado do impacto gerado), reforçando o feedback do sistema.
 * **(+)** O **fluxo de cadastro e login** cumpriu com maestria seu papel: rápido, direto, seguro e com poucos campos. Deve ser mantido exatamente na estrutura atual.
 * **(+)** A **visualização do mapa interativo** foi elogiada pela fluidez e facilidade de identificação dos pontos de coleta por usuários intermediários e experientes. Será mantida e enriquecida futuramente com filtros avançados de materiais.
@@ -88,9 +87,9 @@ Com base nos resultados coletados e visando a evolução da plataforma para a **
 
 A comprovação da realização do teste prático de usabilidade com os usuários convidados está documentada abaixo por meio de capturas de tela e registros visuais coletados pelas equipes de aplicação:
 
-* ![Tela de Cadastro e Login](images/) - *Registro do participante novato preenchendo o formulário simplificado de cadastro na plataforma.*
-* ![Interação com o Mapa](images/) - *Momento em que o Participante C realizou a busca e filtragem de pontos de coleta próximos.*
-* ![Acesso ao Painel](images/) - *Dificuldade mapeada: Usuário procurando onde se localizava o painel de histórico de impacto na barra superior.*
+* ![Tela de Cadastro e Login](images/telaCadastro.png) - *Registro do participante novato preenchendo o formulário simplificado de cadastro na plataforma.*
+* ![Interação com o Mapa](images/telaMapa.png) - *Momento em que o Participante C realizou a busca e filtragem de pontos de coleta próximos.*
+* ![Acesso ao Painel](images/telaPainel.png) - *Dificuldade mapeada: Usuário procurando onde se localizava o painel de histórico de impacto na barra superior.*
 
 ---
 
