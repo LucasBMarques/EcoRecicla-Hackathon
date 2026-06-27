@@ -8,6 +8,9 @@ O objetivo da interface é proporcionar uma experiência simples, intuitiva e ag
 
 # 5.1 Galeria de Telas (Por Sprint)
 
+> Video demostrativo do site
+> <video src="./images/video-Ecorecicla.mp4" controls width="600"></video>
+
 ## 🟢 Sprint 1 – Estrutura Inicial e Autenticação
 
 ### Funcionalidade
