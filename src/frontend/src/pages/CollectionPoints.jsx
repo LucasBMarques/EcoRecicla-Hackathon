@@ -126,18 +126,44 @@ function CollectionPoints({ setPage }) {
     setForm((prev) => ({ ...prev, address: enderecoCompleto }));
     setGeoLoading(true);
 
-    try {
-      const geoRes = await fetch(
-        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(enderecoCompleto)}&format=json&limit=1&countrycodes=br`
-      );
-      const geoData = await geoRes.json();
+    const enderecoCandidatos = [
+      `${cepData.logradouro}, ${form.number}${form.complement ? ", " + form.complement : ""}, ${cepData.bairro}, ${cepData.localidade} - ${cepData.uf}, Brasil`,
+      `${cepData.logradouro}, ${form.number}, ${cepData.localidade} - ${cepData.uf}, Brasil`,
+      `${cepData.logradouro}, ${cepData.bairro}, ${cepData.localidade} - ${cepData.uf}, Brasil`,
+      `${cepData.bairro}, ${cepData.localidade} - ${cepData.uf}, Brasil`,
+      `${cepData.cep}, ${cepData.localidade} - ${cepData.uf}, Brasil`,
+    ];
 
-      if (geoData.length > 0) {
-        setLatitude(geoData[0].lat);
-        setLongitude(geoData[0].lon);
-        addToast("Localização encontrada!", "success");
+    try {
+      let match = null;
+      let matchIndex = -1;
+
+      for (let i = 0; i < enderecoCandidatos.length; i += 1) {
+        const geoRes = await fetch(
+          `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(enderecoCandidatos[i])}&format=json&limit=1&countrycodes=br&addressdetails=1`
+        );
+
+        if (!geoRes.ok) continue;
+
+        const geoData = await geoRes.json();
+        if (Array.isArray(geoData) && geoData.length > 0) {
+          match = geoData[0];
+          matchIndex = i;
+          break;
+        }
+      }
+
+      if (match) {
+        setLatitude(match.lat);
+        setLongitude(match.lon);
+
+        if (matchIndex <= 1) {
+          addToast("Localização encontrada!", "success");
+        } else {
+          addToast("Localização aproximada encontrada. Confira no mapa antes de salvar.", "warning");
+        }
       } else {
-        addToast("Localização não encontrada", "warning");
+        addToast("Localização não encontrada. Tente sem complemento ou confirme o número.", "warning");
       }
     } catch {
       addToast("Erro ao buscar localização", "error");
