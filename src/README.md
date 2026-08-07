@@ -197,4 +197,6 @@ Variáveis esperadas em produção:
 - `CORS_ORIGIN`
 - `VITE_API_URL` somente se o frontend for hospedado separadamente
 
+Se estiver usando Railway, você também pode definir `MYSQL_PRIVATE_URL` ou `DATABASE_URL` com o valor de `{{ MySQL.MYSQL_PRIVATE_URL }}`.
+
 Para o Railway, o `package.json` da raiz já contém os scripts `build` e `start` necessários para publicar o projeto como um serviço único.

@@ -23,6 +23,8 @@ Para deploy, também defina `PORT` e, se quiser restringir o acesso, `CORS_ORIGI
 
 Se você optar por um deploy único com o backend servindo o frontend, o frontend pode usar a própria origem atual e não precisa de `VITE_API_URL`.
 
+No Railway, você também pode configurar uma única variável `MYSQL_PRIVATE_URL` ou `DATABASE_URL` apontando para `{{ MySQL.MYSQL_PRIVATE_URL }}`.
+
 ### Criar estrutura e dados iniciais
 
 Opção A: MySQL Workbench
