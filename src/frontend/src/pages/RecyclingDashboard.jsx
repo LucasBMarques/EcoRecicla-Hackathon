@@ -1,10 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 
-import { updateRecyclingLog, deleteRecyclingLog } from "../services/api";
+import { API_URL, updateRecyclingLog, deleteRecyclingLog } from "../services/api";
 import Toast from "../components/Toast";
 import { useToast } from "../hooks/useToast";
-
-const API = "http://localhost:3001/api";
 
 const UNIT_LABELS = {
   kg: "Quilogramas (kg)",
@@ -197,17 +195,17 @@ export default function RecyclingDashboard({ setPage }) {
   const [editLogError, setEditLogError] = useState("");
 
   const loadStats = useCallback((uid) =>
-    fetch(`${API}/recycling/stats/${uid}`).then(r => r.json()).then(setStats).catch(e => void e), []);
+    fetch(`${API_URL}/recycling/stats/${uid}`).then(r => r.json()).then(setStats).catch(e => void e), []);
 
   const loadBadges = useCallback((uid) =>
-    fetch(`${API}/recycling/badges/${uid}`).then(r => r.json()).then(setBadges).catch(e => void e), []);
+    fetch(`${API_URL}/recycling/badges/${uid}`).then(r => r.json()).then(setBadges).catch(e => void e), []);
 
   const loadHistory = useCallback((uid) =>
-    fetch(`${API}/recycling/history/${uid}?limit=50`).then(r => r.json()).then(setHistory).catch(e => void e), []);
+    fetch(`${API_URL}/recycling/history/${uid}?limit=50`).then(r => r.json()).then(setHistory).catch(e => void e), []);
 
   const loadSchedules = useCallback((uid) => {
     setSchedulesLoading(true);
-    fetch(`${API}/schedules/${uid}`)
+    fetch(`${API_URL}/schedules/${uid}`)
       .then(r => r.json())
       .then(data => setSchedules(Array.isArray(data) ? data : []))
       .catch(() => setSchedules([]))
@@ -217,7 +215,7 @@ export default function RecyclingDashboard({ setPage }) {
   useEffect(() => {
     const u = JSON.parse(localStorage.getItem("user"));
     setUser(u);
-    fetch(`${API}/materials`).then(r => r.json()).then(setMaterials).catch(e => void e);
+    fetch(`${API_URL}/materials`).then(r => r.json()).then(setMaterials).catch(e => void e);
     if (u?.id) {
       loadStats(u.id);
       loadBadges(u.id);
@@ -231,7 +229,7 @@ export default function RecyclingDashboard({ setPage }) {
     setCalculating(true);
     setError("");
     try {
-      const r = await fetch(`${API}/recycling/calculate`, {
+      const r = await fetch(`${API_URL}/recycling/calculate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ material_id: selectedMaterial.id, quantity, unit }),
@@ -268,7 +266,7 @@ export default function RecyclingDashboard({ setPage }) {
       try {
         const fd = new FormData();
         fd.append("photo", photoFile);
-        const r = await fetch(`${API}/upload/photo`, { method: "POST", body: fd });
+        const r = await fetch(`${API_URL}/upload/photo`, { method: "POST", body: fd });
         const d = await r.json();
         photo_url = d.url;
       } catch (e) {
@@ -277,7 +275,7 @@ export default function RecyclingDashboard({ setPage }) {
     }
 
     try {
-      const r = await fetch(`${API}/recycling/log`, {
+      const r = await fetch(`${API_URL}/recycling/log`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -301,7 +299,7 @@ export default function RecyclingDashboard({ setPage }) {
       if (user?.id) {
         // Buscar perfil atualizado do backend
         try {
-          const updatedUserProfile = await fetch(`${API}/auth/profile/${user.id}`).then(r => r.json());
+          const updatedUserProfile = await fetch(`${API_URL}/auth/profile/${user.id}`).then(r => r.json());
           localStorage.setItem("user", JSON.stringify(updatedUserProfile));
           setUser(updatedUserProfile);
         } catch (err) {
@@ -350,7 +348,7 @@ export default function RecyclingDashboard({ setPage }) {
       if (user?.id) {
         loadHistory(user.id);
         loadStats(user.id);
-        const updatedUser = await fetch(`${API}/auth/profile/${user.id}`).then(r => r.json());
+        const updatedUser = await fetch(`${API_URL}/auth/profile/${user.id}`).then(r => r.json());
         localStorage.setItem("user", JSON.stringify(updatedUser));
         setUser(updatedUser);
       }
@@ -370,7 +368,7 @@ export default function RecyclingDashboard({ setPage }) {
       if (user?.id) {
         loadHistory(user.id);
         loadStats(user.id);
-        const updatedUser = await fetch(`${API}/auth/profile/${user.id}`).then(r => r.json());
+        const updatedUser = await fetch(`${API_URL}/auth/profile/${user.id}`).then(r => r.json());
         localStorage.setItem("user", JSON.stringify(updatedUser));
         setUser(updatedUser);
       }
@@ -384,7 +382,7 @@ export default function RecyclingDashboard({ setPage }) {
     setSchedLoading(true);
     setError("");
     try {
-      const r = await fetch(`${API}/schedules`, {
+      const r = await fetch(`${API_URL}/schedules`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -413,7 +411,7 @@ export default function RecyclingDashboard({ setPage }) {
   const handleDeleteSchedule = async (id) => {
     if (!window.confirm("Deseja excluir este agendamento?")) return;
     try {
-      const r = await fetch(`${API}/schedules/${id}`, { method: "DELETE" });
+      const r = await fetch(`${API_URL}/schedules/${id}`, { method: "DELETE" });
       const data = await r.json();
       if (data.error) throw new Error(data.error);
       setSchedules(prev => prev.filter(s => s.id !== id));
@@ -425,7 +423,7 @@ export default function RecyclingDashboard({ setPage }) {
   const handleCancelSchedule = async (id) => {
     if (!window.confirm("Deseja cancelar este agendamento?")) return;
     try {
-      const r = await fetch(`${API}/schedules/${id}/status`, {
+      const r = await fetch(`${API_URL}/schedules/${id}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: "cancelado" }),
@@ -441,7 +439,7 @@ export default function RecyclingDashboard({ setPage }) {
   const handleSaveEdit = async () => {
     if (!editingSchedule?.scheduled_date) { alert("Selecione uma data."); return; }
     try {
-      const r = await fetch(`${API}/schedules/${editingSchedule.id}`, {
+      const r = await fetch(`${API_URL}/schedules/${editingSchedule.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

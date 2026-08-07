@@ -1,4 +1,12 @@
-const API = "http://localhost:3001/api";
+const fallbackBaseUrl =
+  typeof window !== "undefined" &&
+  window.location.hostname !== "localhost" &&
+  window.location.hostname !== "127.0.0.1"
+    ? window.location.origin
+    : "http://localhost:3001";
+
+export const API_URL = ((import.meta.env.VITE_API_URL || fallbackBaseUrl).replace(/\/$/, "")) + "/api";
+const API = API_URL;
 
 export const loginUser = async (data) => {
   const response = await fetch(`${API}/auth/login`, {

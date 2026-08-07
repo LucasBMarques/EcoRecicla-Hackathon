@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { updatePassword, deleteAccount, getRanking, getRecyclingStats, getRecyclingHistory, updatePreferences, getPreferences, getUserPosition, getNotifications, markNotificationRead, markAllNotificationsRead } from "../services/api";
+import { API_URL, updatePassword, deleteAccount, getRanking, getRecyclingStats, getRecyclingHistory, updatePreferences, getPreferences, getUserPosition, getNotifications, markNotificationRead, markAllNotificationsRead } from "../services/api";
 import "../styles/userSettings.css";
 
 export default function UserSettings({ setPage }) {
@@ -308,7 +308,7 @@ export default function UserSettings({ setPage }) {
     setLoading(true);
 
     try {
-      const response = await fetch("http://localhost:3001/api/auth/update-profile", {
+      const response = await fetch(`${API_URL}/auth/update-profile`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

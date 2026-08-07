@@ -119,7 +119,7 @@ GET /health → { "status": "ok" }
 
 ### Configuração do banco (`src/backend/config/db.js`)
 
-Arquivo responsável pela criação do pool de conexões com o MySQL. As credenciais devem ser configuradas via variáveis de ambiente (`.env`) antes de rodar o projeto.
+O arquivo usa variáveis de ambiente quando disponíveis e mantém valores locais como fallback. Para deploy, defina `DB_HOST`, `DB_USER`, `DB_PASSWORD` e `DB_NAME`.
 
 ---
 
@@ -169,11 +169,32 @@ cd src/backend
 npm install
 npm run dev        # porta 3001
 
+# Variáveis esperadas em produção:
+# PORT, DB_HOST, DB_USER, DB_PASSWORD, DB_NAME, CORS_ORIGIN
+
 # 2. Frontend (em outro terminal)
 cd src/frontend
 npm install
 npm run dev        # porta 5173
 
+# Em produção, defina VITE_API_URL com a URL pública do backend
+
 # 3. Banco de dados
 # Importar src/db/database.sql no MySQL Workbench
 ```
+
+## Deploy único recomendado
+
+O backend agora pode servir também o frontend buildado a partir de `src/frontend/dist`. Isso permite subir a aplicação como um único serviço Node em plataformas como Render ou Railway.
+
+Variáveis esperadas em produção:
+
+- `PORT`
+- `DB_HOST`
+- `DB_USER`
+- `DB_PASSWORD`
+- `DB_NAME`
+- `CORS_ORIGIN`
+- `VITE_API_URL` somente se o frontend for hospedado separadamente
+
+Para o Railway, o `package.json` da raiz já contém os scripts `build` e `start` necessários para publicar o projeto como um serviço único.

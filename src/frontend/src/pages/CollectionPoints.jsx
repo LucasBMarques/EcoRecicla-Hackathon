@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { createCollectionPoint, getMaterials, deleteCollectionPoint, updateCollectionPoint } from "../services/api";
+import { API_URL, createCollectionPoint, getMaterials, deleteCollectionPoint, updateCollectionPoint } from "../services/api";
 import Toast from "../components/Toast";
 import PointModal from "../components/PointModal";
 import { useToast } from "../hooks/useToast";
@@ -69,7 +69,7 @@ function CollectionPoints({ setPage }) {
       });
 
     
-    fetch("http://localhost:3001/api/collection-points")
+    fetch(`${API_URL}/collection-points`)
       .then((res) => res.json())
       .then((data) => {
         setPoints(Array.isArray(data) ? data : []);
@@ -199,7 +199,7 @@ function CollectionPoints({ setPage }) {
         setCepData(null);
         
         
-        fetch("http://localhost:3001/api/collection-points")
+        fetch(`${API_URL}/collection-points`)
           .then((res) => res.json())
           .then((data) => {
             setPoints(Array.isArray(data) ? data : []);
