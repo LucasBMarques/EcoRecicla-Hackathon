@@ -20,6 +20,20 @@ exports.register = (req, res) => {
     (err, result) => {
 
       if (err) {
+        console.error("Erro ao cadastrar usuário:", err);
+
+        if (err.code === "ER_DUP_ENTRY") {
+          return res.status(409).json({
+            error: "Este e-mail já está cadastrado"
+          });
+        }
+
+        if (err.code === "ER_NO_SUCH_TABLE") {
+          return res.status(500).json({
+            error: "Banco de dados não inicializado (tabela users não encontrada)"
+          });
+        }
+
         return res.status(500).json({
           error: "Erro ao cadastrar usuário"
         });

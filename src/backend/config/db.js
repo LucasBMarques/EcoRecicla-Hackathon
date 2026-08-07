@@ -2,7 +2,14 @@ const fs = require("fs");
 const path = require("path");
 const mysql = require("mysql2");
 
-const connectionUrl = process.env.MYSQL_PRIVATE_URL || process.env.DATABASE_URL;
+const connectionUrl =
+  process.env.MYSQL_PRIVATE_URL ||
+  process.env.DATABASE_URL ||
+  process.env.MYSQL_URL;
+
+function isRealUrl(value) {
+  return typeof value === "string" && /^mysql(?:2|s)?:\/\//i.test(value.trim());
+}
 
 function parseConnectionUrl(urlString) {
   const url = new URL(urlString);
@@ -16,16 +23,24 @@ function parseConnectionUrl(urlString) {
   };
 }
 
-const connection = connectionUrl
+function getRailwayDatabaseConfig() {
+  return {
+    host: process.env.MYSQLHOST || process.env.DB_HOST || "localhost",
+    port: Number(process.env.MYSQLPORT || process.env.DB_PORT) || 3306,
+    user: process.env.MYSQLUSER || process.env.DB_USER || "root",
+    password: process.env.MYSQLPASSWORD || process.env.DB_PASSWORD || "Arthur2003.",
+    database:
+      process.env.MYSQLDATABASE ||
+      process.env.MYSQL_DATABASE ||
+      process.env.DB_NAME ||
+      "ecorecicla",
+    multipleStatements: true,
+  };
+}
+
+const connection = isRealUrl(connectionUrl)
   ? mysql.createConnection(parseConnectionUrl(connectionUrl))
-  : mysql.createConnection({
-      host: process.env.DB_HOST || "localhost",
-      port: Number(process.env.DB_PORT) || 3306,
-      user: process.env.DB_USER || "root",
-      password: process.env.DB_PASSWORD || "Arthur2003.",
-      database: process.env.DB_NAME || "ecorecicla",
-      multipleStatements: true,
-    });
+  : mysql.createConnection(getRailwayDatabaseConfig());
 
 function initializeSchema() {
   const schemaPath = path.join(__dirname, "../../db/database.sql");
