@@ -44,6 +44,12 @@ const connection = isRealUrl(connectionUrl)
 
 function initializeSchema() {
   const schemaPath = path.join(__dirname, "../../db/database.sql");
+
+  if (!fs.existsSync(schemaPath)) {
+    console.warn(`Schema SQL não encontrado em ${schemaPath}. Pulando inicialização automática.`);
+    return;
+  }
+
   const schemaSql = fs
     .readFileSync(schemaPath, "utf8")
     .replace(/^CREATE DATABASE IF NOT EXISTS ecorecicla;\s*/i, "")

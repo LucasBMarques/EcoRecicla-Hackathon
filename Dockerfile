@@ -10,6 +10,7 @@ RUN cd src/frontend && npm ci
 
 COPY src/backend ./src/backend
 COPY src/frontend ./src/frontend
+COPY src/db ./src/db
 
 RUN cd src/frontend && npm run build
 
@@ -22,6 +23,7 @@ ENV NODE_ENV=production
 COPY --from=build /app/src/backend ./
 COPY --from=build /app/src/backend/node_modules ./node_modules
 COPY --from=build /app/src/frontend/dist ../frontend/dist
+COPY --from=build /app/src/db ../db
 
 EXPOSE 3001
 
